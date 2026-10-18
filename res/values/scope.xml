@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Recommendations only; the real scope is per-user. -->
+    <string-array name="xposed_scope">
+        <item>android</item>
+    </string-array>
+</resources>

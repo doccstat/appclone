@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="paper">#FFF4F2ED</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="ink">#FF191813</color>
+    <color name="muted">#FF6E6A61</color>
+    <color name="line">#FFE3DFD6</color>
+    <color name="accent">#FF146C56</color>
+    <color name="accent_tint">#1A146C56</color>
+    <color name="on_accent">#FFFFFFFF</color>
+    <color name="danger">#FFA33A2A</color>
+    <color name="ripple">#22000000</color>
+</resources>

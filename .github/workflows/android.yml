@@ -1,0 +1,52 @@
+name: Android build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          # setup-android's default also requests the removed legacy "tools" package.
+          packages: platform-tools
+      - name: Install pinned SDK components
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Fetch pinned Xposed API 82 jar
+        run: |
+          curl -fsSLo "$RUNNER_TEMP/api-82.jar" \
+            https://api.xposed.info/de/robv/android/xposed/api/82/api-82.jar
+          echo 'f48c635f1c7469fdec0e00ad2ea0b7a6b2f5b55065784a35b7ca3a84615e8e25  '"$RUNNER_TEMP/api-82.jar" \
+            | sha256sum -c -
+      - name: Check package metadata and release guards
+        run: |
+          python3 tests/check_package.py
+          python3 -m unittest discover -s tests/build_tests -v
+      - name: Build development APK without release signing
+        env:
+          XPOSED_API_JAR: ${{ runner.temp }}/api-82.jar
+          BUILD_DIR: dist
+        run: python3 build.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: development-apk-not-for-release
+          path: |
+            dist/AppClone-unsigned.apk
+            dist/AppClone-unsigned.apk.sha256
+          if-no-files-found: error
+          retention-days: 7

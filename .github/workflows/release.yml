@@ -1,0 +1,111 @@
+name: Signed release
+
+# Every main push builds the manifest-declared version and replaces the matching
+# stable GitHub release. Distribution then mirrors that release to LSPosed.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: signed-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'doccstat/appclone' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          packages: platform-tools
+      - name: Install pinned SDK components
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Fetch pinned Xposed API 82 jar
+        run: |
+          curl -fsSLo "$RUNNER_TEMP/api-82.jar" \
+            https://api.xposed.info/de/robv/android/xposed/api/82/api-82.jar
+          echo 'f48c635f1c7469fdec0e00ad2ea0b7a6b2f5b55065784a35b7ca3a84615e8e25  '"$RUNNER_TEMP/api-82.jar" \
+            | sha256sum -c -
+      - name: Validate package metadata and release guards
+        run: |
+          python3 tests/check_package.py
+          python3 -m unittest discover -s tests/build_tests -v
+      - name: Build with the permanent key and verify the pinned certificate
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          SIGNING_KEYSTORE: ${{ runner.temp }}/appclone-release.keystore
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          SIGNING_CERT_SHA256: ${{ vars.ANDROID_SIGNING_CERT_SHA256 }}
+          XPOSED_API_JAR: ${{ runner.temp }}/api-82.jar
+          BUILD_DIR: dist
+        run: |
+          set -euo pipefail
+          umask 077
+          trap 'rm -f "$SIGNING_KEYSTORE"' EXIT
+          test -n "$KEYSTORE_BASE64"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode >"$SIGNING_KEYSTORE"
+          python3 build.py --release
+      - name: Replace the stable GitHub release for this version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # An old rerun must not overwrite a newer push's assets.
+          head_sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$head_sha" != "$GITHUB_SHA" ]; then
+            echo 'A newer main commit exists; skipping this superseded build.'
+            exit 0
+          fi
+          version_code=$(python3 -c 'import xml.etree.ElementTree as ET; r=ET.parse("AndroidManifest.xml").getroot(); print(r.attrib["{http://schemas.android.com/apk/res/android}versionCode"])')
+          version_name=$(python3 -c 'import xml.etree.ElementTree as ET; r=ET.parse("AndroidManifest.xml").getroot(); print(r.attrib["{http://schemas.android.com/apk/res/android}versionName"])')
+          tag="$version_code-$version_name"
+          cat >dist/release-notes.md <<EOF
+          ## App Clone $version_name
+
+          - Raises AOSP clone-profile limits so many clone users can run at once.
+          - Adds a launcher app for creating clones, installing apps into them,
+            and deleting profiles.
+          - Pins home-screen shortcuts with labels such as \`12: Chrome\`.
+          - Keeps app data separate per clone user.
+
+          Requirements: Android 16+ and an Xposed framework that supports the
+          legacy Xposed API 82 (LSPosed or Vector). Scope the module to
+          \`system\` (\`android\`). Tested on Pixel 11 Pro Fold, Android 17.
+
+          The APK is signed with the permanent release key; its SHA-256 checksum
+          is included with this release.
+          EOF
+          releases=$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases?per_page=100")
+          if jq -e --arg tag "$tag" '[.[][] | select(.tag_name == $tag)] | length > 0' <<<"$releases" >/dev/null; then
+            gh api "repos/$GITHUB_REPOSITORY/git/refs/tags/$tag" --method PATCH \
+              -f "sha=$GITHUB_SHA" -F force=true
+            gh release upload "$tag" --repo "$GITHUB_REPOSITORY" --clobber \
+              dist/AppClone.apk dist/AppClone.apk.sha256
+            gh release edit "$tag" --repo "$GITHUB_REPOSITORY" \
+              --title "$version_name" --notes-file dist/release-notes.md \
+              --draft=false --prerelease=false --latest
+          else
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+              --title "$version_name" --notes-file dist/release-notes.md --latest \
+              dist/AppClone.apk dist/AppClone.apk.sha256
+          fi
+          # GITHUB_TOKEN release writes do not trigger release-event workflows.
+          gh workflow run distribute-release.yml --repo "$GITHUB_REPOSITORY" --ref main

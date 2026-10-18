@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lixingchi.appclone" android:versionCode="1" android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="36" android:targetSdkVersion="36" />
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+    <application
+        android:label="App Clone"
+        android:icon="@drawable/ic_launcher"
+        android:theme="@style/Theme.AppClone"
+        android:allowBackup="false"
+        android:hasCode="true">
+        <meta-data android:name="xposedmodule" android:value="true" />
+        <meta-data android:name="xposedminversion" android:value="93" />
+        <meta-data android:name="xposeddescription" android:value="Raise AOSP clone-profile creation and running-user limits on AOSP-derived firmware. Scope: system." />
+        <meta-data android:name="xposedscope" android:resource="@array/xposed_scope" />
+        <activity android:name=".MainActivity" android:exported="true"
+            android:label="App Clone">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".CloneDetailActivity" android:exported="false"
+            android:label="Clone" android:parentActivityName=".MainActivity" />
+        <activity android:name=".SettingsActivity" android:exported="false"
+            android:label="Shortcut settings" android:parentActivityName=".MainActivity" />
+        <activity android:name=".LaunchActivity" android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    </application>
+</manifest>
