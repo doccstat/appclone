@@ -17,6 +17,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public final class MainHook implements IXposedHookLoadPackage {
     private static final String TAG = "AppClone: ";
     private static final String USER_TYPE_DETAILS = "com.android.server.pm.UserTypeDetails";
+    private static final String USER_MANAGER_SERVICE = "com.android.server.pm.UserManagerService";
     private static final String USER_CONTROLLER = "com.android.server.am.UserController";
     private static boolean installed;
 
@@ -29,7 +30,9 @@ public final class MainHook implements IXposedHookLoadPackage {
         ok += tryInstall("clone type limits", () -> hookCloneTypeLimits(cl));
         ok += tryInstall("max supported users", () -> hookMaxSupportedUsers(cl));
         ok += tryInstall("max running users", () -> hookMaxRunningUsers(cl));
-        XposedBridge.log(TAG + "hooks installed: " + ok + "/3 sdk=" + Build.VERSION.SDK_INT);
+        ok += tryInstall("clone total fallback", () -> hookCanAddMoreUsersOfType(cl));
+        ok += tryInstall("clone profile fallback", () -> hookCanAddMoreProfilesToUser(cl));
+        XposedBridge.log(TAG + "hooks installed: " + ok + "/5 sdk=" + Build.VERSION.SDK_INT);
     }
 
     private interface Hook {
@@ -67,6 +70,33 @@ public final class MainHook implements IXposedHookLoadPackage {
                 new XC_MethodReplacement() {
                     @Override protected Object replaceHookedMethod(MethodHookParam param) {
                         return ClonePolicy.LIMIT;
+                    }
+                });
+    }
+
+    /**
+     * OEM fallback: force the CLONE total cap, leaving every other user type alone.
+     * AOSP already derives this from {@link #hookCloneTypeLimits}; this only matters
+     * when firmware replaces {@code canAddMoreUsersOfType} with its own check.
+     */
+    private static void hookCanAddMoreUsersOfType(ClassLoader cl) {
+        XposedHelpers.findAndHookMethod(USER_MANAGER_SERVICE, cl, "canAddMoreUsersOfType",
+                String.class, new XC_MethodHook() {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        if (ClonePolicy.isCloneType((String) param.args[0])) param.setResult(true);
+                    }
+                });
+    }
+
+    /**
+     * OEM fallback: force the CLONE per-parent cap, leaving managed and private
+     * profiles alone. AOSP already derives this from {@link #hookCloneTypeLimits}.
+     */
+    private static void hookCanAddMoreProfilesToUser(ClassLoader cl) {
+        XposedHelpers.findAndHookMethod(USER_MANAGER_SERVICE, cl, "canAddMoreProfilesToUser",
+                String.class, int.class, boolean.class, new XC_MethodHook() {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        if (ClonePolicy.isCloneType((String) param.args[0])) param.setResult(true);
                     }
                 });
     }

@@ -22,6 +22,12 @@ def test_entry_class_exists():
     assert "class MainHook" in source.read_text()
 
 
+def test_hook_covers_clone_fallbacks():
+    source = (ROOT / "src/com/lixingchi/appclone/MainHook.java").read_text()
+    assert "canAddMoreUsersOfType" in source
+    assert "canAddMoreProfilesToUser" in source
+
+
 def test_scope_is_system():
     scope = (ROOT / "res" / "values" / "scope.xml").read_text()
     assert "<item>android</item>" in scope, scope
