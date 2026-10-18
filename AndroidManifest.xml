@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lixingchi.appclone" android:versionCode="1" android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="36" android:targetSdkVersion="36" />
+    package="com.lixingchi.appclone" android:versionCode="2" android:versionName="1.1">
+    <uses-sdk android:minSdkVersion="33" android:targetSdkVersion="36" />
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />

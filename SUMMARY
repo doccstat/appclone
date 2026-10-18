@@ -1,1 +1,1 @@
-Raises AOSP clone-profile limits so many clone users can run at once, with app install, shortcuts, and labels.
+Raises AOSP clone-profile limits on Android 13+ so many clone users can run at once, with app install, shortcuts, and labels.

@@ -19,7 +19,9 @@ Source and support: <https://github.com/doccstat/appclone>.
 
 ## Requirements
 
-- Android 16+ (API 36+). Verified on Android 17 (API 37), Pixel 11 Pro Fold.
+- Android 13+ (API 33+).
+  Verified on Android 17 (API 37), Pixel 11 Pro Fold. Android 13–16 have the
+  same AOSP clone user type and limit checks but are not yet device-tested.
 - Root with LSPosed (or another legacy-Xposed-API framework) that can load a
   module into `system_server`.
 - Root access for the launcher app (`su`), granted through KernelSU or another

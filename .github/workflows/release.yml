@@ -86,9 +86,10 @@ jobs:
           - Pins home-screen shortcuts with labels such as \`12: Chrome\`.
           - Keeps app data separate per clone user.
 
-          Requirements: Android 16+ and an Xposed framework that supports the
+          Requirements: Android 13+ and an Xposed framework that supports the
           legacy Xposed API 82 (LSPosed or Vector). Scope the module to
-          \`system\` (\`android\`). Tested on Pixel 11 Pro Fold, Android 17.
+          \`system\` (\`android\`). Device-tested on Pixel 11 Pro Fold, Android 17;
+          Android 13–16 use the same AOSP clone type but are not yet tested.
 
           The APK is signed with the permanent release key; its SHA-256 checksum
           is included with this release.

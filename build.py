@@ -93,7 +93,7 @@ def main():
         with zipfile.ZipFile(classes_jar, 'w') as jar:
             for cls in sorted((build / 'classes').rglob('*.class')):
                 jar.write(cls, cls.relative_to(build / 'classes'))
-        run(tool('d8'), '--lib', android, '--classpath', api, '--min-api', '36',
+        run(tool('d8'), '--lib', android, '--classpath', api, '--min-api', '33',
             '--output', build / 'dex', classes_jar)
         with zipfile.ZipFile(build / 'unsigned.apk', 'a', compression=zipfile.ZIP_DEFLATED) as apk:
             apk.write(build / 'dex/classes.dex', 'classes.dex')
