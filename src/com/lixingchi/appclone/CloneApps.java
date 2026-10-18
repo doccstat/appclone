@@ -13,7 +13,9 @@ import android.os.UserManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** Clone profiles and their launcher apps, read without a shell. */
 final class CloneApps {
@@ -56,6 +58,49 @@ final class CloneApps {
             }
         });
         return targets;
+    }
+
+    /** One app and every clone that has it; the pin picker chooses app first. */
+    static final class Group {
+        final Apps.App app;
+        final List<Target> targets = new ArrayList<>();
+
+        Group(Apps.App app) {
+            this.app = app;
+        }
+    }
+
+    static List<Group> pinGroups(Context context) {
+        return groups(assignments(context));
+    }
+
+    /** Groups rows by launcher activity, keeping all clones that have that app. */
+    static List<Group> groups(List<Target> targets) {
+        Map<String, Group> byApp = new LinkedHashMap<>();
+        for (Target target : targets) {
+            String key = target.app.pkg + "/" + target.app.activity;
+            Group group = byApp.get(key);
+            if (group == null) {
+                group = new Group(target.app);
+                byApp.put(key, group);
+            }
+            group.targets.add(target);
+        }
+        List<Group> groups = new ArrayList<>(byApp.values());
+        for (Group group : groups) {
+            Collections.sort(group.targets, new Comparator<Target>() {
+                @Override public int compare(Target a, Target b) {
+                    return a.name.compareToIgnoreCase(b.name);
+                }
+            });
+        }
+        Collections.sort(groups, new Comparator<Group>() {
+            @Override public int compare(Group a, Group b) {
+                int byLabel = a.app.label.compareToIgnoreCase(b.app.label);
+                return byLabel != 0 ? byLabel : a.app.pkg.compareTo(b.app.pkg);
+            }
+        });
+        return groups;
     }
 
     static Bitmap icon(Context context, String pkg, int userId) {

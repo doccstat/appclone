@@ -43,8 +43,8 @@ Source and support: <https://github.com/doccstat/appclone>.
   **Open** to run it there, **Delete clone** to remove the profile and its data.
 - **Delete all profiles** (⋮ menu) removes every clone; your main user is
   untouched.
-- **Pin a shortcut** (⋮ menu) pins a home-screen shortcut for one app in one
-  clone. The launcher asks you to confirm.
+- **Pin a shortcut** (⋮ menu) lists each clone app once; pick the app, then the
+  clone profile if the app is in more than one. The launcher asks you to confirm.
 - **Shortcut settings** (⋮ menu) controls shortcut labels:
   - *Prefix clone app names* uses `{id}: {name}` by default, so a shortcut reads
     `12: Chrome`. The format accepts `{id}`, `{name}`, and `{clone}`; the buttons

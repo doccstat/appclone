@@ -295,21 +295,44 @@ public final class MainActivity extends Activity {
     }
 
     private void pickShortcut() {
-        final List<CloneApps.Target> targets = CloneApps.assignments(this);
-        if (targets.isEmpty()) {
+        final List<CloneApps.Group> groups = CloneApps.pinGroups(this);
+        if (groups.isEmpty()) {
             Toast.makeText(this, "No clone apps to pin", Toast.LENGTH_SHORT).show();
             return;
         }
-        CharSequence[] labels = new CharSequence[targets.size()];
-        for (int i = 0; i < targets.size(); i++) {
-            CloneApps.Target target = targets.get(i);
-            labels[i] = target.app.label + "  \u00b7  " + target.name;
+        CharSequence[] labels = new CharSequence[groups.size()];
+        for (int i = 0; i < groups.size(); i++) {
+            CloneApps.Group group = groups.get(i);
+            labels[i] = group.targets.size() == 1
+                    ? group.app.label + "  \u00b7  " + group.targets.get(0).name
+                    : group.app.label + "  \u00b7  " + group.targets.size() + " profiles";
         }
         new AlertDialog.Builder(this)
                 .setTitle("Pin a clone app")
                 .setItems(labels, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
-                        Shortcuts.pin(MainActivity.this, targets.get(which));
+                        CloneApps.Group group = groups.get(which);
+                        if (group.targets.size() == 1) {
+                            Shortcuts.pin(MainActivity.this, group.targets.get(0));
+                        } else {
+                            pickProfile(group);
+                        }
+                    }
+                })
+                .show();
+    }
+
+    private void pickProfile(final CloneApps.Group group) {
+        CharSequence[] labels = new CharSequence[group.targets.size()];
+        for (int i = 0; i < group.targets.size(); i++) {
+            CloneApps.Target target = group.targets.get(i);
+            labels[i] = target.name + "  \u00b7  User " + target.userId;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(group.app.label)
+                .setItems(labels, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        Shortcuts.pin(MainActivity.this, group.targets.get(which));
                     }
                 })
                 .show();
