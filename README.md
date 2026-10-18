@@ -17,6 +17,12 @@ Source and support: <https://github.com/doccstat/appclone>.
 - Auto-pin a shortcut when an app is added to a clone.
 - Delete one profile or all profiles; the main user is untouched.
 
+## Screenshots
+
+| Profiles | New profile | Creating clones |
+| --- | --- | --- |
+| ![Clone profiles and menu](docs/screenshots/profiles.png) | ![New profile dialog](docs/screenshots/new-profile.png) | ![Creating clone profiles](docs/screenshots/creating.png) |
+
 ## Requirements
 
 - Android 13+ (API 33+).
