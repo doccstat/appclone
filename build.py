@@ -52,10 +52,10 @@ def main():
         tools = candidates[0]
     api = Path(os.environ['XPOSED_API_JAR'])
     if hashlib.sha256(api.read_bytes()).hexdigest() != API_SHA256:
-        raise SystemExit('Unexpected Xposed API 82 jar; see motoappclone/README.md for URL and hash')
+        raise SystemExit(f'Unexpected Xposed API 82 jar; expected sha256 {API_SHA256}')
     out = Path(os.environ.get('BUILD_DIR', Path.home() / '.cache/appclone')).resolve()
-    if out == ROOT or ROOT in out.parents:
-        raise SystemExit('BUILD_DIR must be outside the source tree')
+    if out != ROOT / 'dist' and (out == ROOT or ROOT in out.parents):
+        raise SystemExit('BUILD_DIR must be outside the source tree (or exactly ./dist)')
     out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ, PATH=str(java) + os.pathsep + os.environ.get('PATH', ''),
                PYTHONDONTWRITEBYTECODE='1')
