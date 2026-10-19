@@ -21,7 +21,7 @@ Source and support: <https://github.com/doccstat/appclone>.
 
 | Profiles | New profile | Creating clones |
 | --- | --- | --- |
-| ![Clone profiles and menu](docs/screenshots/profiles.png) | ![New profile dialog](docs/screenshots/new-profile.png) | ![Creating clone profiles](docs/screenshots/creating.png) |
+| ![Clone profiles and menu](https://raw.githubusercontent.com/Xposed-Modules-Repo/com.lixingchi.appclone/refs/heads/main/docs/screenshots/profiles.png) | ![New profile dialog](https://raw.githubusercontent.com/Xposed-Modules-Repo/com.lixingchi.appclone/refs/heads/main/docs/screenshots/new-profile.png) | ![Creating clone profiles](https://raw.githubusercontent.com/Xposed-Modules-Repo/com.lixingchi.appclone/refs/heads/main/docs/screenshots/creating.png) |
 
 ## Requirements
 
