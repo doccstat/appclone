@@ -93,5 +93,8 @@ PARTICULAR PURPOSE.
 
 ## Support
 
-Report issues at <https://github.com/doccstat/appclone/issues> with the device
-model, Android version, module version, and reproduction steps.
+Report issues with the [bug report form](https://github.com/doccstat/appclone/issues/new/choose).
+It asks for the device/ROM build, module and framework versions, reproduction
+steps, LSPosed/Vector logs, and the output of `pm create-user`/`dumpsys user`.
+Without the exact error and framework logs, an OEM-specific failure usually
+cannot be diagnosed.

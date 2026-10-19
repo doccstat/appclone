@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: App Clone support
+    url: https://github.com/doccstat/appclone#support
+    about: Read the support requirements before opening an issue.
