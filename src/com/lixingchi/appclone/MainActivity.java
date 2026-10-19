@@ -22,6 +22,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,6 +36,8 @@ public final class MainActivity extends Activity {
     private List<Clones.Clone> clones = new ArrayList<>();
     private String error;
     private boolean loading;
+    private static final int REQUEST_EXPORT = 1;
+    private String pendingReport;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -181,6 +185,7 @@ public final class MainActivity extends Activity {
         menu.getMenu().add(0, 1, 0, "Shortcut settings");
         menu.getMenu().add(0, 2, 1, "Pin a shortcut");
         menu.getMenu().add(0, 3, 2, "Delete all profiles");
+        menu.getMenu().add(0, 4, 3, "Export diagnostics");
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == 1) {
@@ -194,6 +199,8 @@ public final class MainActivity extends Activity {
                     } else {
                         confirmDeleteAll();
                     }
+                } else if (item.getItemId() == 4) {
+                    exportDiagnostics();
                 } else {
                     return false;
                 }
@@ -273,7 +280,8 @@ public final class MainActivity extends Activity {
                 for (int i = 0; i < howMany; i++) {
                     String cloneName = append ? base + "-" + (start + i) : base;
                     if (Clones.create(cloneName) < 0) {
-                        failure = "Stopped after " + made + " (clone creation failed)";
+                        failure = Clones.lastCreateError != null
+                                ? Clones.lastCreateError : "clone creation failed";
                         break;
                     }
                     made++;
@@ -283,15 +291,78 @@ public final class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override public void run() {
                         progress.dismiss();
-                        Toast.makeText(MainActivity.this,
-                                failureFinal != null ? failureFinal
-                                        : madeFinal + (madeFinal == 1 ? " profile created" : " profiles created"),
-                                Toast.LENGTH_LONG).show();
+                        if (failureFinal != null) {
+                            showCreateFailure(madeFinal, failureFinal);
+                        } else {
+                            Toast.makeText(MainActivity.this,
+                                    madeFinal + (madeFinal == 1 ? " profile created" : " profiles created"),
+                                    Toast.LENGTH_LONG).show();
+                        }
                         refresh();
                     }
                 });
             }
         }, "clone-create").start();
+    }
+
+    private void showCreateFailure(int made, String error) {
+        String message = (made > 0 ? made + (made == 1 ? " profile" : " profiles")
+                + " created before the failure.\n\n" : "")
+                + error + "\n\nExport the diagnostics file and attach it to the issue.";
+        new AlertDialog.Builder(this)
+                .setTitle("Clone creation failed")
+                .setMessage(message)
+                .setPositiveButton("Export logs", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        exportDiagnostics();
+                    }
+                })
+                .setNegativeButton("Close", null)
+                .show();
+    }
+
+    private void exportDiagnostics() {
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setMessage("Collecting diagnostics\u2026");
+        progress.setCancelable(false);
+        progress.show();
+        new Thread(new Runnable() {
+            @Override public void run() {
+                final String report = Diagnostics.collect(MainActivity.this);
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        progress.dismiss();
+                        pendingReport = report;
+                        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_TITLE, Diagnostics.fileName());
+                        startActivityForResult(intent, REQUEST_EXPORT);
+                    }
+                });
+            }
+        }, "diagnostics").start();
+    }
+
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQUEST_EXPORT) return;
+        if (resultCode != RESULT_OK || data == null || data.getData() == null
+                || pendingReport == null) {
+            pendingReport = null;
+            return;
+        }
+        try (OutputStream out = getContentResolver().openOutputStream(data.getData())) {
+            if (out == null) throw new IllegalStateException("no output stream");
+            out.write(pendingReport.getBytes(StandardCharsets.UTF_8));
+            Toast.makeText(this, "Diagnostics saved. Attach the file to the issue.",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Could not save diagnostics: " + e,
+                    Toast.LENGTH_LONG).show();
+        } finally {
+            pendingReport = null;
+        }
     }
 
     private void pickShortcut() {

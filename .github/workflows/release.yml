@@ -84,6 +84,8 @@ jobs:
           - Adds a launcher app for creating clones, installing apps into them,
             and deleting profiles.
           - Picks an app first, then the clone profile when pinning a shortcut.
+          - Adds an **Export logs** button when clone creation fails; the saved
+            file includes the failed command, users, and filtered logcat.
           - Labels shortcuts such as \`12: Chrome\`.
           - Keeps app data separate per clone user.
 

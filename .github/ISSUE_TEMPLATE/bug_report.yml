@@ -11,6 +11,10 @@ body:
         Reports without the exact error or framework logs are usually not actionable.
         **Review logs and screenshots before attaching them; remove personal data.**
 
+        On App Clone 1.3+, reproduce the failure and tap **Export logs** in the
+        error dialog; attach the saved `appclone-diagnostics-*.txt` file. The
+        manual commands below are a fallback.
+
   - type: input
     id: device
     attributes:
@@ -33,7 +37,7 @@ body:
     attributes:
       label: App Clone version
       description: Shown in the LSPosed/Vector module list.
-      placeholder: 1.2 (versionCode 3)
+      placeholder: 1.3 (versionCode 4)
     validations:
       required: true
 

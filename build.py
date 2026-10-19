@@ -87,8 +87,10 @@ def main():
             '-d', build / 'classes', *sources)
         if self_check:
             for test in ('com.lixingchi.appclone.LabelsTest',
-                         'com.lixingchi.appclone.PinGroupsTest'):
-                run(jtool('java'), '-ea', '-cp', build / 'classes', test)
+                         'com.lixingchi.appclone.PinGroupsTest',
+                         'com.lixingchi.appclone.DiagnosticsTest'):
+                run(jtool('java'), '-ea', '-cp',
+                    os.pathsep.join(map(str, (build / 'classes', android))), test)
             return
         classes_jar = build / 'classes.jar'
         with zipfile.ZipFile(classes_jar, 'w') as jar:

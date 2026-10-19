@@ -8,8 +8,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="3"' in manifest
-    assert 'android:versionName="1.2"' in manifest
+    assert 'android:versionCode="4"' in manifest
+    assert 'android:versionName="1.3"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="App Clone"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
@@ -45,6 +45,7 @@ def test_build_self_check_package():
     build = (ROOT / "build.py").read_text()
     assert "com.lixingchi.appclone.LabelsTest" in build
     assert "com.lixingchi.appclone.PinGroupsTest" in build
+    assert "com.lixingchi.appclone.DiagnosticsTest" in build
     assert "API_SHA256" in build
 
 

@@ -16,6 +16,7 @@ Source and support: <https://github.com/doccstat/appclone>.
 - Label shortcuts with the clone id, app name, or clone name.
 - Auto-pin a shortcut when an app is added to a clone.
 - Delete one profile or all profiles; the main user is untouched.
+- Export a diagnostics file when clone creation fails.
 
 ## Screenshots
 
@@ -45,6 +46,8 @@ Source and support: <https://github.com/doccstat/appclone>.
 
 - The list shows every clone profile and whether it is running.
 - **New profile** creates one or more clones; the name is suggested for you.
+  If creation fails, the error dialog offers **Export logs**; attach the saved
+  `appclone-diagnostics-*.txt` file to the issue.
 - Tap a profile to pick its apps. Tap an app row to install it into the clone,
   **Open** to run it there, **Delete clone** to remove the profile and its data.
 - **Delete all profiles** (⋮ menu) removes every clone; your main user is
@@ -96,5 +99,6 @@ PARTICULAR PURPOSE.
 Report issues with the [bug report form](https://github.com/doccstat/appclone/issues/new/choose).
 It asks for the device/ROM build, module and framework versions, reproduction
 steps, LSPosed/Vector logs, and the output of `pm create-user`/`dumpsys user`.
-Without the exact error and framework logs, an OEM-specific failure usually
-cannot be diagnosed.
+If creation fails, tap **Export logs** in the dialog and attach the saved
+`appclone-diagnostics-*.txt` file. Without the exact error and framework logs,
+an OEM-specific failure usually cannot be diagnosed.

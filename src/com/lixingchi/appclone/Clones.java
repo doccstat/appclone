@@ -1,5 +1,7 @@
 package com.lixingchi.appclone;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,6 +25,9 @@ final class Clones {
 
     /** Set by {@link #list()} when the underlying command failed. */
     static String lastError;
+
+    /** Command and output of the last failed {@link #create(String)} call. */
+    static volatile String lastCreateError;
 
     private static final Pattern LINE =
             Pattern.compile("\\d+: id=(\\d+), name=(.*?), type=([^,]+),(.*)");
@@ -59,10 +64,17 @@ final class Clones {
 
     /** Creates one clone and starts it so it becomes initialized. Returns its id, or -1. */
     static int create(String name) {
-        Shell.Result created = Shell.root("pm create-user --profileOf 0 --user-type "
-                + ClonePolicy.CLONE_TYPE + " " + quote(name));
+        lastCreateError = null;
+        String command = "pm create-user --profileOf 0 --user-type "
+                + ClonePolicy.CLONE_TYPE + " " + quote(name);
+        Shell.Result created = Shell.root(command);
         Matcher matcher = CREATED.matcher(created.out);
-        if (!matcher.find()) return -1;
+        if (!matcher.find()) {
+            lastCreateError = "$ " + command + "\nexit=" + created.code + "\n"
+                    + (created.trim().isEmpty() ? "(no output)" : created.trim());
+            Log.w("AppClone", "create-user failed: " + lastCreateError);
+            return -1;
+        }
         int id = Integer.parseInt(matcher.group(1));
         Shell.root("am start-user " + id);
         return id;
