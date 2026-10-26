@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lixingchi.appclone" android:versionCode="5" android:versionName="1.4">
+    package="com.lixingchi.appclone" android:versionCode="6" android:versionName="1.5">
     <uses-sdk android:minSdkVersion="33" android:targetSdkVersion="36" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
@@ -28,9 +29,16 @@
         <activity android:name=".CloneDetailActivity" android:exported="false"
             android:label="Clone" android:parentActivityName=".MainActivity" />
         <activity android:name=".SettingsActivity" android:exported="false"
-            android:label="Shortcut settings" android:parentActivityName=".MainActivity" />
+            android:label="Settings" android:parentActivityName=".MainActivity" />
         <activity android:name=".LaunchActivity" android:exported="true"
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <receiver android:name=".BootReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".BootJob" android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

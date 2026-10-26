@@ -23,6 +23,8 @@ final class Diagnostics {
         out.append("Fingerprint: ").append(Build.FINGERPRINT).append('\n');
         out.append("Review this file for personal data before attaching it.\n");
 
+        BootPolicy boot = BootPolicy.get(context);
+        section(out, "Reboot policy", boot.mode() + "\n" + boot.status());
         section(out, "Last create error",
                 Clones.lastCreateError == null ? "none this session" : Clones.lastCreateError);
         section(out, "cmd user list -v", shell("cmd user list -v"));

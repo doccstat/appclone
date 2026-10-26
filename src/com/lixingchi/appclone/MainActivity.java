@@ -178,7 +178,7 @@ public final class MainActivity extends Activity {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("Stop " + clone.name + "?")
                             .setMessage("Stops all apps and notifications in this profile without deleting data. "
-                                    + "Start or opening an app restarts it. Profiles may start again after a reboot.")
+                                    + "Start or opening an app restarts it. Settings controls what happens after reboot.")
                             .setNegativeButton("Cancel", null)
                             .setPositiveButton("Stop", (dialog, which) -> setRunning(clone.id, false))
                             .show();
@@ -229,7 +229,7 @@ public final class MainActivity extends Activity {
 
     private void showMenu(View anchor) {
         PopupMenu menu = new PopupMenu(this, anchor);
-        menu.getMenu().add(0, 1, 0, "Shortcut settings");
+        menu.getMenu().add(0, 1, 0, "Settings");
         menu.getMenu().add(0, 2, 1, "Pin a shortcut");
         menu.getMenu().add(0, 3, 2, "Delete all profiles");
         menu.getMenu().add(0, 4, 3, "Export diagnostics");

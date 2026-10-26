@@ -86,7 +86,8 @@ jobs:
             and deleting profiles.
           - Starts or stops individual profiles without deleting their app data.
           - Home-screen shortcuts and **Open** start stopped profiles before launching.
-          - Stopping pauses notifications; reboot startup behavior is unchanged.
+          - Choose **System default**, **Start all profiles**, or **Stop all profiles**
+            once after reboot and main-user unlock; stopping pauses notifications.
           - Picks an app first, then the clone profile when pinning a shortcut.
           - Adds an **Export logs** button when clone creation fails; the saved
             file includes the failed command, users, and filtered logcat.

@@ -10,6 +10,7 @@ Source and support: <https://github.com/doccstat/appclone>.
 ## Features
 
 - Create multiple clone profiles; start or stop each profile when needed.
+- Choose system default, start all, or stop all after reboot.
 - Install an app that is already installed for the main user into a clone.
 - Launch an app inside a specific clone, starting the profile if it is stopped.
 - Pin a home-screen shortcut for one app in one clone.
@@ -59,7 +60,18 @@ Source and support: <https://github.com/doccstat/appclone>.
   untouched.
 - **Pin a shortcut** (⋮ menu) lists each clone app once; pick the app, then the
   clone profile if the app is in more than one. The launcher asks you to confirm.
-- **Shortcut settings** (⋮ menu) controls shortcut labels:
+- **Settings → After reboot** (⋮ menu) offers:
+  - **System default** (initial setting): leave Android's profile startup behavior
+    alone. This does not undo the module's profile-limit hooks.
+  - **Start all profiles**: start the clones after the main user unlocks.
+  - **Stop all profiles**: stop the clones after the main user unlocks, preserving
+    stored data but pausing their apps and notifications.
+  The choice applies on the **next reboot**, not immediately. It runs once as an
+  Android job, waiting at least 10 seconds for system startup to settle. Android
+  may delay it further, and profiles can run before it executes.
+  Only the main user's clone profiles are controlled, with the same safeguards
+  as manual Start/Stop. **Settings** shows the last result; reopen it to refresh.
+- **Settings** also controls shortcut labels:
   - *Prefix clone app names* uses `{id}: {name}` by default, so a shortcut reads
     `12: Chrome`. The format accepts `{id}`, `{name}`, and `{clone}`; the buttons
     below the field insert them. Any other text, including colons, is kept.
@@ -68,10 +80,19 @@ Source and support: <https://github.com/doccstat/appclone>.
   Labels apply to shortcuts created after the change; re-pin an existing
   shortcut to rename it.
 
-Stopping is not a persistent boot preference: Android may start clone users
-again after a reboot. New profiles still start for initialization. This app adds
-no background watcher or automatic idle-stop policy. Each clone keeps its own
-`/data/user/<clone-id>/` app data. Unlock the main user before starting a clone.
+Open App Clone and grant root before relying on reboot actions. Root must be
+available after reboot; force-stopping the app or Android background restrictions
+can prevent or defer the job. Failures are recorded in Settings and exported
+diagnostics, not retried in a loop. An interrupted job resumes unfinished
+profiles; a process kill before saving progress can repeat the last operation.
+Changing the setting cancels queued work, though an in-flight operation may
+finish. No always-running service or automatic idle-stop policy is added.
+
+Reboot actions are not a permanent lock: manual Start/Stop and shortcuts still
+work after the job finishes. Queued targets can override changes made before
+it finishes. New profiles still start for initialization. Each clone keeps
+its own `/data/user/<clone-id>/` app data. Unlock the main user before starting
+a clone.
 
 ## Compatibility notes
 

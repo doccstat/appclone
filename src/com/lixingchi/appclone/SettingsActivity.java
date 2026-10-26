@@ -1,6 +1,8 @@
 package com.lixingchi.appclone;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.job.JobScheduler;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,17 +16,20 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-/** Shortcut label format and automation settings. */
+/** Reboot policy, shortcut label format, and automation settings. */
 public final class SettingsActivity extends Activity {
     private Switch prefix;
     private Switch autoPin;
     private EditText format;
     private TextView preview;
     private LinearLayout tokenRow;
+    private TextView bootStatus;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -41,10 +46,45 @@ public final class SettingsActivity extends Activity {
         head.addView(back);
         LinearLayout titles = Ui.column(this);
         titles.addView(Ui.text(this, "Settings", 24, R.color.ink, true));
-        titles.addView(Ui.text(this, "Shortcut labels and automation", 13,
+        titles.addView(Ui.text(this, "Profiles and shortcuts", 13,
                 R.color.muted, false), Ui.margins(this, 0, 2, 0, 0));
         head.addView(titles, Ui.weight(1));
         root.addView(head);
+
+        root.addView(Ui.label(this, "After reboot"), Ui.margins(this, 0, 26, 0, 8));
+        BootPolicy boot = BootPolicy.get(this);
+        RadioGroup bootChoices = new RadioGroup(this);
+        for (int i = 0; i < BootPolicy.VALUES.length; i++) {
+            RadioButton choice = new RadioButton(this);
+            choice.setId(i + 1);
+            choice.setText(BootPolicy.LABELS[i]);
+            bootChoices.addView(choice);
+            if (BootPolicy.VALUES[i].equals(boot.mode())) bootChoices.check(choice.getId());
+        }
+        root.addView(bootChoices);
+        root.addView(Ui.text(this,
+                "Applies once, at least 10 seconds after the main user unlocks after reboot; Android may delay it. "
+                        + "System default leaves profiles alone. Stop all preserves data but pauses notifications. "
+                        + "Root must already be granted and available at boot. Start and shortcuts still work afterward.",
+                13, R.color.muted, false));
+        bootStatus = Ui.text(this, boot.status(), 12, R.color.muted, false);
+        root.addView(bootStatus, Ui.margins(this, 0, 8, 0, 0));
+        bootChoices.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId < 1 || checkedId > BootPolicy.VALUES.length) return;
+            String mode = BootPolicy.VALUES[checkedId - 1];
+            try {
+                boot.save(mode);
+                JobScheduler jobs = getSystemService(JobScheduler.class);
+                if (jobs != null) jobs.cancel(BootReceiver.JOB_ID);
+            } catch (RuntimeException error) {
+                new AlertDialog.Builder(this).setTitle("Could not save reboot setting")
+                        .setMessage(error.toString()).setPositiveButton("Close", null).show();
+                bootStatus.setText("Reboot setting could not be saved. Select it again to retry.");
+                group.clearCheck();
+                return;
+            }
+            bootStatus.setText(boot.status());
+        });
 
         root.addView(Ui.label(this, "Shortcut labels"), Ui.margins(this, 0, 26, 0, 8));
 
@@ -145,6 +185,11 @@ public final class SettingsActivity extends Activity {
         });
 
         updateEnabled();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        bootStatus.setText(BootPolicy.get(this).status());
     }
 
     private Button tokenButton(final String token) {

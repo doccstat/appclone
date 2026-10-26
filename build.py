@@ -90,7 +90,8 @@ def main():
                          'com.lixingchi.appclone.PinGroupsTest',
                          'com.lixingchi.appclone.DiagnosticsTest',
                          'com.lixingchi.appclone.ProfileLifecycleTest',
-                         'com.lixingchi.appclone.ShellTest'):
+                         'com.lixingchi.appclone.ShellTest',
+                         'com.lixingchi.appclone.BootPolicyTest'):
                 run(jtool('java'), '-ea', '-cp',
                     os.pathsep.join(map(str, (build / 'classes', android))), test)
             return
