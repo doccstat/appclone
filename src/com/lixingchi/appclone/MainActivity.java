@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Lists clone profiles and creates, opens, or removes them. */
+/** Lists clone profiles and creates, starts, stops, opens, or removes them. */
 public final class MainActivity extends Activity {
     private LinearLayout list;
     private TextView status;
@@ -38,6 +38,7 @@ public final class MainActivity extends Activity {
     private boolean loading;
     private static final int REQUEST_EXPORT = 1;
     private String pendingReport;
+    private ProgressDialog stateProgress;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -168,6 +169,25 @@ public final class MainActivity extends Activity {
                 clone.running ? R.color.accent : R.color.muted, false));
         item.addView(texts, Ui.weightWithStart(this, 1, 14));
 
+        Button power = Ui.quiet(this, clone.running ? "Stop" : "Start");
+        power.setContentDescription((clone.running ? "Stop " : "Start ") + clone.name
+                + ", user " + clone.id);
+        power.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                if (clone.running) {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Stop " + clone.name + "?")
+                            .setMessage("Stops all apps and notifications in this profile without deleting data. "
+                                    + "Start or opening an app restarts it. Profiles may start again after a reboot.")
+                            .setNegativeButton("Cancel", null)
+                            .setPositiveButton("Stop", (dialog, which) -> setRunning(clone.id, false))
+                            .show();
+                } else {
+                    setRunning(clone.id, true);
+                }
+            }
+        });
+        item.addView(power);
         item.addView(Ui.text(this, "\u203a", 22, R.color.muted, false));
         item.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
@@ -178,6 +198,33 @@ public final class MainActivity extends Activity {
             }
         });
         return item;
+    }
+
+    private void setRunning(final int id, final boolean running) {
+        stateProgress = new ProgressDialog(this);
+        stateProgress.setMessage(running ? "Starting profile\u2026" : "Stopping profile\u2026");
+        stateProgress.setCancelable(false);
+        stateProgress.show();
+        new Thread(() -> {
+            final Shell.Result result = Clones.setRunning(id, running);
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed()) return;
+                stateProgress.dismiss();
+                if (!result.ok()) {
+                    new AlertDialog.Builder(this)
+                            .setTitle(running ? "Could not start profile" : "Could not stop profile")
+                            .setMessage(result.trim().isEmpty() ? "Root command failed." : result.trim())
+                            .setPositiveButton("Close", null)
+                            .show();
+                }
+                refresh();
+            });
+        }, "clone-state").start();
+    }
+
+    @Override protected void onDestroy() {
+        if (stateProgress != null) stateProgress.dismiss();
+        super.onDestroy();
     }
 
     private void showMenu(View anchor) {

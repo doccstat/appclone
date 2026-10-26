@@ -8,8 +8,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="4"' in manifest
-    assert 'android:versionName="1.3"' in manifest
+    assert 'android:versionCode="5"' in manifest
+    assert 'android:versionName="1.4"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="App Clone"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
@@ -46,7 +46,23 @@ def test_build_self_check_package():
     assert "com.lixingchi.appclone.LabelsTest" in build
     assert "com.lixingchi.appclone.PinGroupsTest" in build
     assert "com.lixingchi.appclone.DiagnosticsTest" in build
+    assert "com.lixingchi.appclone.ProfileLifecycleTest" in build
+    assert "com.lixingchi.appclone.ShellTest" in build
     assert "API_SHA256" in build
+
+
+def test_lifecycle_entrypoints():
+    source = ROOT / "src/com/lixingchi/appclone"
+    launcher = (source / "LaunchActivity.java").read_text()
+    assert launcher.index("new Thread(") < launcher.index("Apps.launch(user, app)")
+    assert "runOnUiThread" in launcher and "Could not open clone app" in launcher
+    assert "LaunchActivity.class" in (source / "CloneDetailActivity.java").read_text()
+    assert "LaunchActivity.class" in (source / "Shortcuts.java").read_text()
+    main = (source / "MainActivity.java").read_text()
+    assert 'clone.running ? "Stop" : "Start"' in main
+    assert "Clones.setRunning(id, running)" in main
+    for workflow in ("android.yml", "release.yml"):
+        assert "build.py --self-check" in (ROOT / ".github/workflows" / workflow).read_text()
 
 
 def test_no_old_identity():

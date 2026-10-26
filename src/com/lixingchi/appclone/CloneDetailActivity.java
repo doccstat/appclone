@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -231,20 +232,11 @@ public final class CloneDetailActivity extends Activity {
             open.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View view) {
                     if (app == null) return;
-                    final Apps.App target = app;
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            final Shell.Result result = Apps.launch(userId, target);
-                            if (!result.ok()) {
-                                runOnUiThread(new Runnable() {
-                                    @Override public void run() {
-                                        Toast.makeText(CloneDetailActivity.this,
-                                                firstLine(result.out), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        }
-                    }, "clone-launch").start();
+                    startActivity(new Intent(CloneDetailActivity.this, LaunchActivity.class)
+                            .putExtra(LaunchActivity.EXTRA_USER, userId)
+                            .putExtra(LaunchActivity.EXTRA_PKG, app.pkg)
+                            .putExtra(LaunchActivity.EXTRA_ACTIVITY, app.activity)
+                            .putExtra(LaunchActivity.EXTRA_LABEL, app.label));
                 }
             });
         }

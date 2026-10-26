@@ -62,6 +62,7 @@ jobs:
           trap 'rm -f "$SIGNING_KEYSTORE"' EXIT
           test -n "$KEYSTORE_BASE64"
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode >"$SIGNING_KEYSTORE"
+          python3 build.py --self-check
           python3 build.py --release
       - name: Replace the stable GitHub release for this version
         env:
@@ -83,6 +84,9 @@ jobs:
           - Raises AOSP clone-profile limits so many clone users can run at once.
           - Adds a launcher app for creating clones, installing apps into them,
             and deleting profiles.
+          - Starts or stops individual profiles without deleting their app data.
+          - Home-screen shortcuts and **Open** start stopped profiles before launching.
+          - Stopping pauses notifications; reboot startup behavior is unchanged.
           - Picks an app first, then the clone profile when pinning a shortcut.
           - Adds an **Export logs** button when clone creation fails; the saved
             file includes the failed command, users, and filtered logcat.

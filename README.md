@@ -9,9 +9,9 @@ Source and support: <https://github.com/doccstat/appclone>.
 
 ## Features
 
-- Create multiple clone profiles and keep them running.
+- Create multiple clone profiles; start or stop each profile when needed.
 - Install an app that is already installed for the main user into a clone.
-- Launch an app inside a specific clone.
+- Launch an app inside a specific clone, starting the profile if it is stopped.
 - Pin a home-screen shortcut for one app in one clone.
 - Label shortcuts with the clone id, app name, or clone name.
 - Auto-pin a shortcut when an app is added to a clone.
@@ -44,12 +44,17 @@ Source and support: <https://github.com/doccstat/appclone>.
 
 ## Usage
 
-- The list shows every clone profile and whether it is running.
+- The list shows every clone profile and whether it is running. Use **Stop**
+  to stop its apps and notifications without deleting data, or **Start** to
+  resume it. Controls support non-ephemeral clone profiles belonging to user 0.
 - **New profile** creates one or more clones; the name is suggested for you.
   If creation fails, the error dialog offers **Export logs**; attach the saved
   `appclone-diagnostics-*.txt` file to the issue.
 - Tap a profile to pick its apps. Tap an app row to install it into the clone,
   **Open** to run it there, **Delete clone** to remove the profile and its data.
+  **Open** and home-screen shortcuts automatically start a stopped profile and
+  wait for it to unlock before launching the app. Existing shortcuts work too;
+  no re-pinning is needed. If startup fails, an error is shown instead.
 - **Delete all profiles** (⋮ menu) removes every clone; your main user is
   untouched.
 - **Pin a shortcut** (⋮ menu) lists each clone app once; pick the app, then the
@@ -63,8 +68,10 @@ Source and support: <https://github.com/doccstat/appclone>.
   Labels apply to shortcuts created after the change; re-pin an existing
   shortcut to rename it.
 
-Clone users start automatically at boot. Each clone keeps its own
-`/data/user/<clone-id>/` app data.
+Stopping is not a persistent boot preference: Android may start clone users
+again after a reboot. New profiles still start for initialization. This app adds
+no background watcher or automatic idle-stop policy. Each clone keeps its own
+`/data/user/<clone-id>/` app data. Unlock the main user before starting a clone.
 
 ## Compatibility notes
 

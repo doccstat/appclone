@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 /** Installed launcher apps plus the per-clone app operations. */
 final class Apps {
@@ -64,9 +65,25 @@ final class Apps {
     }
 
     static Shell.Result launch(int userId, App app) {
-        return Shell.root("am start --user " + userId
+        synchronized (Clones.class) {
+            return launch(userId, app, Shell::root);
+        }
+    }
+
+    static Shell.Result launch(int userId, App app, Function<String, Shell.Result> run) {
+        if (app.pkg == null || app.pkg.isEmpty() || app.activity == null || app.activity.isEmpty()) {
+            return new Shell.Result(-1, "Invalid app shortcut.");
+        }
+        Shell.Result started = Clones.setRunning(userId, true, run);
+        if (!started.ok()) return started;
+        Shell.Result result = run.apply("am start --user " + userId
                 + " -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n "
-                + app.pkg + "/" + app.activity);
+                + Clones.quote(app.pkg + "/" + app.activity));
+        if (result.ok() && java.util.regex.Pattern.compile("(?m)^Error(?: type \\d+|:)")
+                .matcher(result.out).find()) {
+            return new Shell.Result(-1, result.out);
+        }
+        return result;
     }
 
     private Apps() {}

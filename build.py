@@ -88,7 +88,9 @@ def main():
         if self_check:
             for test in ('com.lixingchi.appclone.LabelsTest',
                          'com.lixingchi.appclone.PinGroupsTest',
-                         'com.lixingchi.appclone.DiagnosticsTest'):
+                         'com.lixingchi.appclone.DiagnosticsTest',
+                         'com.lixingchi.appclone.ProfileLifecycleTest',
+                         'com.lixingchi.appclone.ShellTest'):
                 run(jtool('java'), '-ea', '-cp',
                     os.pathsep.join(map(str, (build / 'classes', android))), test)
             return

@@ -41,7 +41,9 @@ jobs:
         env:
           XPOSED_API_JAR: ${{ runner.temp }}/api-82.jar
           BUILD_DIR: dist
-        run: python3 build.py
+        run: |
+          python3 build.py --self-check
+          python3 build.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: development-apk-not-for-release
