@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.lixingchi.appclone" android:versionCode="7" android:versionName="2.0">
+    package="com.lixingchi.appclone" android:versionCode="8" android:versionName="2.0.1">
     <uses-sdk android:minSdkVersion="33" android:targetSdkVersion="36" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Profile app management must include disabled and non-launcher packages. -->

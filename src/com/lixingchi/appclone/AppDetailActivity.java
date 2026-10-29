@@ -19,6 +19,7 @@ public final class AppDetailActivity extends InventoryActivity {
         LinearLayout root = Ui.column(this);
         Ui.applyInsets(root, 16, 0, 16, 8);
         toolbar = Ui.toolbar(this, root, "Clone app", true);
+        toolbar.getMenu().add("Refresh").setOnMenuItemClickListener(item -> { refresh(); return true; });
         status = Ui.text(this, "", 14, R.color.muted, false);
         root.addView(status, Ui.margins(this, 8, 4, 8, 12));
         ScrollView scroll = new ScrollView(this);
@@ -35,7 +36,7 @@ public final class AppDetailActivity extends InventoryActivity {
         setContentView(root);
     }
 
-    @Override void render() {
+    @Override void renderInventory() {
         body.removeAllViews();
         Inventory.Entry entry = inventory.app(pkg);
         add.setEnabled(entry != null);

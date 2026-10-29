@@ -85,7 +85,7 @@ public final class MainActivity extends InventoryActivity {
         setContentView(root);
     }
 
-    @Override void render() {
+    @Override void renderInventory() {
         toolbar.getMenu().findItem(2).setChecked(Settings.systemApps(this));
         add.setText(profiles ? "New profile" : "Add clone app");
         if (inventory == null) return;

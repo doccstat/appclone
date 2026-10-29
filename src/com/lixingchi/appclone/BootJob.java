@@ -34,6 +34,7 @@ public final class BootJob extends JobService {
                 try { policy.fail(run, mode, e.toString()); }
                 catch (RuntimeException storageFailure) { Log.e("AppClone", "Could not save reboot error", storageFailure); }
             } finally {
+                CloneApplication.inventory(this).invalidate();
                 new Handler(getMainLooper()).post(() -> {
                     if (active == task) {
                         active = null;

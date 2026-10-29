@@ -26,7 +26,9 @@ public final class CloneDetailActivity extends InventoryActivity {
         toolbar.getMenu().add(0, 1, 0, "Start / stop profile");
         toolbar.getMenu().add(0, 2, 1, "Show system apps").setCheckable(true).setChecked(Settings.systemApps(this));
         toolbar.getMenu().add(0, 3, 2, "Delete profile");
+        toolbar.getMenu().add(0, 4, 3, "Refresh");
         toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == 4) { refresh(); return true; }
             Inventory.Profile profile = current();
             if (profile == null) return true;
             if (item.getItemId() == 1) AppControls.power(this, profile);
@@ -55,7 +57,7 @@ public final class CloneDetailActivity extends InventoryActivity {
         return profile != null && profile.serial == serial ? profile : null;
     }
 
-    @Override void render() {
+    @Override void renderInventory() {
         toolbar.getMenu().findItem(2).setChecked(Settings.systemApps(this));
         body.removeAllViews();
         Inventory.Profile profile = current();

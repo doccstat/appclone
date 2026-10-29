@@ -48,7 +48,11 @@ System apps are hidden initially to avoid filling the list with automatically
 provisioned dependencies. **Show system apps** in the menu is a remembered,
 shared filter for both views and the add picker; hiding a row never changes the
 app itself. Apps without a launcher can be managed but cannot necessarily open.
-**Refresh** re-reads the device; failed reads show an error, not an empty list.
+Navigation and returning to the app reuse the last inventory. App Clone actions
+invalidate it; use **Refresh** in any list screen for changes made elsewhere.
+Refresh keeps the previous rows and scroll position, combines repeated requests,
+and shows failures with **Retry** rather than clearing the list. Cached rows never
+replace fresh safety checks before profile/app actions.
 
 **Add clone app** offers installed main-user apps and an explicit destination.
 Creating profiles supports a count of 1–500 and optional `-1, -2, …` numbering.
