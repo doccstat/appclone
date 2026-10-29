@@ -63,6 +63,7 @@ jobs:
           test -n "$KEYSTORE_BASE64"
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode >"$SIGNING_KEYSTORE"
           python3 build.py --self-check
+          python3 build.py --lint
           python3 build.py --release
       - name: Replace the stable GitHub release for this version
         env:
@@ -82,15 +83,19 @@ jobs:
           ## App Clone $version_name
 
           - Raises AOSP clone-profile limits so many clone users can run at once.
-          - Adds a launcher app for creating clones, installing apps into them,
-            and deleting profiles.
+          - App-first **Apps / Profiles** navigation: only cloned apps, with counts
+            and profile locations; disabled apps and stopped profiles stay visible.
+          - Material You / Material 3 Expressive 1.14.0, dynamic colours and dark mode.
+          - Explicit existing/new profile choices when adding clones; no automatic allocation.
+          - Per-clone Disable/Enable, manifest default, Force stop, shortcuts and removal.
+            Disabling pauses that app's notifications; removal deletes its profile-local data.
+          - System apps are hidden initially; the visible menu filter can include them.
           - Starts or stops individual profiles without deleting their app data.
           - Home-screen shortcuts and **Open** start stopped profiles before launching.
           - Choose **System default**, **Start all profiles**, or **Stop all profiles**
             once after reboot and main-user unlock; stopping pauses notifications.
-          - Picks an app first, then the clone profile when pinning a shortcut.
-          - Adds an **Export logs** button when clone creation fails; the saved
-            file includes the failed command, users, and filtered logcat.
+          - Pin shortcuts from the selected instance; new shortcuts bind the profile serial.
+          - **Export diagnostics** includes the failed creation command, users and filtered logcat.
           - Labels shortcuts such as \`12: Chrome\`.
           - Keeps app data separate per clone user.
 
@@ -98,6 +103,7 @@ jobs:
           legacy Xposed API 82 (LSPosed or Vector). Scope the module to
           \`system\` (\`android\`). Device-tested on Pixel 11 Pro Fold, Android 17;
           Android 13–16 use the same AOSP clone type but are not yet tested.
+          The 2.0 UI/app controls pass host checks; physical-device acceptance is pending.
 
           The APK is signed with the permanent release key; its SHA-256 checksum
           is included with this release.

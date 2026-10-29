@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lixingchi.appclone" android:versionCode="6" android:versionName="1.5">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.lixingchi.appclone" android:versionCode="7" android:versionName="2.0">
     <uses-sdk android:minSdkVersion="33" android:targetSdkVersion="36" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Profile app management must include disabled and non-launcher packages. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
@@ -10,6 +14,7 @@
         </intent>
     </queries>
     <application
+        android:name=".CloneApplication"
         android:label="App Clone"
         android:icon="@drawable/ic_launcher"
         android:theme="@style/Theme.AppClone"
@@ -26,13 +31,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AppDetailActivity" android:exported="false"
+            android:label="Clone app" android:parentActivityName=".MainActivity" />
         <activity android:name=".CloneDetailActivity" android:exported="false"
             android:label="Clone" android:parentActivityName=".MainActivity" />
         <activity android:name=".SettingsActivity" android:exported="false"
             android:label="Settings" android:parentActivityName=".MainActivity" />
         <activity android:name=".LaunchActivity" android:exported="true"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@style/Theme.AppClone.Launch" />
         <receiver android:name=".BootReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

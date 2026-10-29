@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application' version '8.11.1'
+}
+
+layout.buildDirectory = file(providers.gradleProperty('appcloneBuildDir').getOrElse(
+        "${System.getProperty('user.home')}/.cache/appclone/gradle-build"))
+def appManifest = new groovy.xml.XmlSlurper(false, false).parse(file('AndroidManifest.xml'))
+def xposedApi = System.getenv('XPOSED_API_JAR')
+if (!xposedApi || !file(xposedApi).isFile()) throw new GradleException('Set XPOSED_API_JAR to API 82')
+if (java.security.MessageDigest.getInstance('SHA-256').digest(file(xposedApi).bytes).encodeHex().toString()
+        != 'f48c635f1c7469fdec0e00ad2ea0b7a6b2f5b55065784a35b7ca3a84615e8e25') {
+    throw new GradleException('Unexpected Xposed API 82 checksum')
+}
+
+android {
+    namespace 'com.lixingchi.appclone'
+    compileSdk 36
+    buildToolsVersion '36.0.0'
+    testOptions.unitTests.includeAndroidResources = true
+    defaultConfig {
+        applicationId 'com.lixingchi.appclone'
+        minSdk 33
+        targetSdk 36
+        versionCode appManifest.'@android:versionCode'.text().toInteger()
+        versionName appManifest.'@android:versionName'.text()
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+        test.java.srcDirs = ['tests']
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release { minifyEnabled false }
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.material:material:1.14.0'
+    compileOnly files(xposedApi)
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.17'
+}

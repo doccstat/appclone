@@ -108,12 +108,20 @@ public final class ProfileLifecycleTest {
         warning.done();
         Script invalidApp = new Script();
         check(!Apps.launch(11, new Apps.App("", null, ".Main"), invalidApp).ok(), "missing package");
-        check(!Apps.launch(11, new Apps.App("", "com.example", ""), invalidApp).ok(), "empty activity");
+        check(!Apps.launch(11, new Apps.App("", "com.example", null), invalidApp).ok(), "missing activity");
         invalidApp.done();
         Script quoted = ready().then(LAUNCH.replace("/.Main'", "/.Main'\\''; echo unsafe'"), 1, "Invalid component");
         check(!Apps.launch(11, new Apps.App("", APP.pkg, ".Main'; echo unsafe"), quoted).ok(),
                 "exported shortcut component stays one quoted shell argument");
         quoted.done();
+        String resolve = "cmd package resolve-activity --brief --user 11 -a android.intent.action.MAIN"
+                + " -c android.intent.category.LAUNCHER -p 'com.example.app'";
+        Script resolved = ready().then(resolve, 0, "priority=0\ncom.example.app/.Main\n").then(LAUNCH, 0, "Starting: Intent");
+        check(Apps.launch(11, new Apps.App("Example", APP.pkg, ""), resolved).ok(), "resolve inside clone");
+        resolved.done();
+        Script noLauncher = ready().then(resolve, 0, "No activity found");
+        check(!Apps.launch(11, new Apps.App("Example", APP.pkg, ""), noLauncher).ok(), "no owner fallback");
+        noLauncher.done();
         System.out.println("ok ProfileLifecycleTest");
     }
 

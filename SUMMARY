@@ -1,1 +1,1 @@
-Raises AOSP clone-profile limits on Android 13+ so many clone users can run at once, with app install, shortcuts, labels, and failure diagnostics.
+Material You app-first clone manager for Android 13+: clone counts and locations, profiles, shortcuts, and per-instance app controls, with raised AOSP profile limits.

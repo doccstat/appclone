@@ -1,18 +1,19 @@
 package com.lixingchi.appclone;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.os.Bundle;
 
 /** Shortcut trampoline: start the clone, wait for it to unlock, then launch the app. */
-public final class LaunchActivity extends Activity {
+public final class LaunchActivity extends AppCompatActivity {
     static final String EXTRA_PKG = "pkg";
     static final String EXTRA_USER = "user";
     static final String EXTRA_ACTIVITY = "activity";
     static final String EXTRA_LABEL = "label";
+    static final String EXTRA_SERIAL = "serial";
 
-    private ProgressDialog progress;
+    private AlertDialog progress;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -21,19 +22,21 @@ public final class LaunchActivity extends Activity {
         String activity = getIntent().getStringExtra(EXTRA_ACTIVITY);
         String label = getIntent().getStringExtra(EXTRA_LABEL);
         final Apps.App app = new Apps.App(label == null ? "" : label, pkg, activity);
-        progress = new ProgressDialog(this);
-        progress.setMessage("Opening clone app\u2026");
-        progress.setCancelable(false);
-        progress.show();
+        long serial = getIntent().getLongExtra(EXTRA_SERIAL, -1);
+        progress = Ui.progress(this, "Opening clone app…");
         new Thread(() -> {
-            final Shell.Result result = Apps.launch(user, app);
+            final Shell.Result result;
+            synchronized (Clones.class) {
+                Shell.Result checked = serial < 0 ? new Shell.Result(0, "") : Clones.verify(user, serial, Shell::root);
+                result = checked.ok() ? Apps.launch(user, app) : checked;
+            }
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) return;
                 progress.dismiss();
                 if (result.ok()) {
                     finish();
                 } else {
-                    new AlertDialog.Builder(this)
+                    new MaterialAlertDialogBuilder(this)
                             .setTitle("Could not open clone app")
                             .setMessage(result.trim().isEmpty() ? "Root command failed." : result.trim())
                             .setPositiveButton("Close", null)

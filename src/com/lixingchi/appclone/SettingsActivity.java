@@ -1,7 +1,9 @@
 package com.lixingchi.appclone;
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import android.app.job.JobScheduler;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -19,13 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 /** Reboot policy, shortcut label format, and automation settings. */
-public final class SettingsActivity extends Activity {
-    private Switch prefix;
-    private Switch autoPin;
+public final class SettingsActivity extends AppCompatActivity {
+    private MaterialSwitch prefix;
+    private MaterialSwitch autoPin;
     private EditText format;
     private TextView preview;
     private LinearLayout tokenRow;
@@ -36,26 +36,14 @@ public final class SettingsActivity extends Activity {
 
         LinearLayout root = Ui.column(this);
 
-        LinearLayout head = Ui.row(this);
-        TextView back = Ui.text(this, "\u2039", 28, R.color.ink, false);
-        back.setGravity(Gravity.CENTER);
-        back.setPadding(0, 0, Ui.dp(this, 14), 0);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) { finish(); }
-        });
-        head.addView(back);
-        LinearLayout titles = Ui.column(this);
-        titles.addView(Ui.text(this, "Settings", 24, R.color.ink, true));
-        titles.addView(Ui.text(this, "Profiles and shortcuts", 13,
-                R.color.muted, false), Ui.margins(this, 0, 2, 0, 0));
-        head.addView(titles, Ui.weight(1));
-        root.addView(head);
+        Ui.toolbar(this, root, "Settings", true);
+        root.addView(Ui.text(this, "Material You · Wallpaper colours and system light/dark mode", 14, R.color.muted, false));
 
         root.addView(Ui.label(this, "After reboot"), Ui.margins(this, 0, 26, 0, 8));
         BootPolicy boot = BootPolicy.get(this);
         RadioGroup bootChoices = new RadioGroup(this);
         for (int i = 0; i < BootPolicy.VALUES.length; i++) {
-            RadioButton choice = new RadioButton(this);
+            RadioButton choice = new MaterialRadioButton(this);
             choice.setId(i + 1);
             choice.setText(BootPolicy.LABELS[i]);
             bootChoices.addView(choice);
@@ -77,7 +65,7 @@ public final class SettingsActivity extends Activity {
                 JobScheduler jobs = getSystemService(JobScheduler.class);
                 if (jobs != null) jobs.cancel(BootReceiver.JOB_ID);
             } catch (RuntimeException error) {
-                new AlertDialog.Builder(this).setTitle("Could not save reboot setting")
+                new MaterialAlertDialogBuilder(this).setTitle("Could not save reboot setting")
                         .setMessage(error.toString()).setPositiveButton("Close", null).show();
                 bootStatus.setText("Reboot setting could not be saved. Select it again to retry.");
                 group.clearCheck();
@@ -88,7 +76,8 @@ public final class SettingsActivity extends Activity {
 
         root.addView(Ui.label(this, "Shortcut labels"), Ui.margins(this, 0, 26, 0, 8));
 
-        prefix = new Switch(this);
+        prefix = new MaterialSwitch(this);
+        prefix.setContentDescription("Prefix clone app names");
         prefix.setChecked(Settings.prefix(this));
         LinearLayout prefixRow = Ui.row(this);
         prefixRow.setPadding(0, Ui.dp(this, 8), 0, Ui.dp(this, 8));
@@ -104,10 +93,8 @@ public final class SettingsActivity extends Activity {
         root.addView(Ui.divider(this));
 
         root.addView(Ui.label(this, "Format"), Ui.margins(this, 0, 18, 0, 6));
-        format = new EditText(this);
-        format.setSingleLine(true);
+        format = Ui.input(this, root, "Shortcut label format");
         format.setText(Settings.format(this));
-        root.addView(format);
         root.addView(Ui.text(this,
                 "Tokens: {id} clone user id \u00b7 {name} app name \u00b7 {clone} clone name. "
                         + "Colons and other characters are allowed.",
@@ -124,7 +111,8 @@ public final class SettingsActivity extends Activity {
 
         root.addView(Ui.label(this, "Automation"), Ui.margins(this, 0, 18, 0, 8));
 
-        autoPin = new Switch(this);
+        autoPin = new MaterialSwitch(this);
+        autoPin.setContentDescription("Auto-pin new clone apps");
         autoPin.setChecked(Settings.autoPin(this));
         LinearLayout autoRow = Ui.row(this);
         autoRow.setPadding(0, Ui.dp(this, 8), 0, Ui.dp(this, 8));
@@ -195,7 +183,7 @@ public final class SettingsActivity extends Activity {
     private Button tokenButton(final String token) {
         Button button = Ui.quiet(this, token);
         button.setTextSize(13);
-        button.setMinHeight(Ui.dp(this, 40));
+        button.setMinHeight(Ui.dp(this, 48));
         button.setPadding(Ui.dp(this, 12), 0, Ui.dp(this, 12), 0);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

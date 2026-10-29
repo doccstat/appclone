@@ -10,6 +10,9 @@ final class Settings {
     private static final String FORMAT = "format";
     private static final String AUTO_PIN = "auto_pin";
 
+    static boolean systemApps(Context context) { return get(context).getBoolean("system_apps", false); }
+    static void systemApps(Context context, boolean show) { get(context).edit().putBoolean("system_apps", show).apply(); }
+
     private static SharedPreferences get(Context context) {
         return context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
     }
