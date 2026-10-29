@@ -25,11 +25,15 @@ public final class LaunchActivity extends AppCompatActivity {
         long serial = getIntent().getLongExtra(EXTRA_SERIAL, -1);
         progress = Ui.progress(this, "Opening clone app…");
         new Thread(() -> {
-            final Shell.Result result;
-            synchronized (Clones.class) {
-                Shell.Result checked = serial < 0 ? new Shell.Result(0, "") : Clones.verify(user, serial, Shell::root);
-                result = checked.ok() ? Apps.launch(user, app) : checked;
-            }
+            Shell.Result outcome;
+            try {
+                synchronized (Clones.class) {
+                    Shell.Result checked = serial < 0 ? new Shell.Result(0, "") : Clones.verify(user, serial, Shell::root);
+                    outcome = checked.ok() ? Apps.launch(user, app) : checked;
+                }
+            } catch (RuntimeException error) { outcome = new Shell.Result(-1, error.toString()); }
+            final Shell.Result result = outcome;
+            CloneApplication.inventory(this).afterLaunch(user, result.ok());
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) return;
                 progress.dismiss();

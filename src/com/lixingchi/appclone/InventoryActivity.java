@@ -1,50 +1,63 @@
 package com.lixingchi.appclone;
 
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-/** One off-main-thread inventory read per refresh; never polls profiles. */
+/** Shares inventory reads across screens without clearing the last displayed list. */
 abstract class InventoryActivity extends AppCompatActivity {
     Inventory inventory;
     TextView status;
     LinearLayout body;
-    private boolean loading;
-    private boolean reload;
+    private CompletableFuture<Inventory> request;
+    private boolean systemApps;
+    private Button retry;
+    private String readError;
     private AlertDialog progress;
 
-    @Override protected void onResume() { super.onResume(); refresh(); }
+    @Override protected void onResume() {
+        super.onResume();
+        if (inventory != null && systemApps != Settings.systemApps(this)) display(inventory);
+        read(false);
+    }
 
-    final void refresh() {
-        if (loading) { reload = true; return; }
-        loading = true;
-        inventory = null;
-        body.removeAllViews();
-        status.setText("Reading clone apps…");
-        new Thread(() -> {
-            Inventory found = null;
-            String error = null;
-            try { found = Inventory.load(this); }
-            catch (RuntimeException failure) { error = failure.toString(); }
-            final Inventory result = found;
-            final String failure = error;
-            runOnUiThread(() -> {
-                if (isFinishing() || isDestroyed()) return;
-                loading = false;
-                inventory = result;
-                if (failure == null) render();
-                else {
-                    status.setText("Could not read clone apps: " + failure);
-                    android.widget.Button retry = Ui.primary(this, "Retry");
-                    retry.setOnClickListener(v -> refresh());
-                    body.addView(retry);
-                }
-                if (reload) { reload = false; refresh(); }
-            });
-        }, "clone-inventory").start();
+    final void refresh() { read(true); }
+
+    private void read(boolean refresh) {
+        InventoryCache cache = CloneApplication.inventory(this);
+        CompletableFuture<Inventory> next = cache.read(refresh);
+        if (request == next) return;
+        request = next;
+        readError = null;
+        if (retry != null) { body.removeView(retry); retry = null; }
+        if (inventory == null && (!next.isDone() || next.isCompletedExceptionally()) && cache.peek() != null) {
+            display(cache.peek());
+        }
+        showReadState();
+        next.whenComplete((result, failure) -> runOnUiThread(() -> {
+            if (isFinishing() || isDestroyed() || request != next) return;
+            if (!cache.current(next)) { read(false); return; }
+            if (failure == null) display(result);
+            else {
+                readError = (failure.getCause() == null ? failure : failure.getCause()).toString();
+                showReadState();
+            }
+        }));
+    }
+
+    private void display(Inventory found) {
+        View scroll = (View) body.getParent();
+        int y = scroll.getScrollY();
+        inventory = found;
+        systemApps = Settings.systemApps(this);
+        render();
+        scroll.post(() -> scroll.scrollTo(0, y));
     }
 
     final void work(String title, Supplier<Shell.Result> action, Runnable success) {
@@ -54,10 +67,12 @@ abstract class InventoryActivity extends AppCompatActivity {
     final void work(String title, Supplier<Shell.Result> action, Runnable success, boolean refreshAfter) {
         if (progress != null && progress.isShowing()) return;
         progress = Ui.progress(this, title);
+        InventoryCache cache = CloneApplication.inventory(this);
         new Thread(() -> {
             Shell.Result outcome;
             try { outcome = action.get(); }
             catch (RuntimeException error) { outcome = new Shell.Result(-1, error.toString()); }
+            finally { if (refreshAfter) cache.invalidate(); }
             final Shell.Result result = outcome;
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) return;
@@ -66,12 +81,30 @@ abstract class InventoryActivity extends AppCompatActivity {
                         .setMessage(result.trim().isEmpty() ? "Root command failed." : result.trim())
                         .setPositiveButton("Close", null).show();
                 else if (success != null) success.run();
-                if (refreshAfter && !isFinishing()) refresh();
+                if (refreshAfter && !isFinishing()) read(false);
             });
         }, "clone-action").start();
     }
 
-    abstract void render();
+    final void render() {
+        renderInventory();
+        showReadState();
+    }
+
+    private void showReadState() {
+        if (readError != null) {
+            status.setText((inventory == null ? "Could not read clone apps: " : "Refresh failed; showing previous list: ") + readError);
+            if (retry == null) {
+                retry = Ui.primary(this, "Retry");
+                retry.setOnClickListener(v -> refresh());
+            }
+            if (retry.getParent() == null) body.addView(retry);
+        } else if (request != null && !request.isDone()) {
+            status.setText(inventory == null ? "Reading clone apps…" : "Refreshing… Showing previous list.");
+        }
+    }
+
+    abstract void renderInventory();
 
     @Override protected void onDestroy() {
         if (progress != null) progress.dismiss();

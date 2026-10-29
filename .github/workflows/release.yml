@@ -85,6 +85,8 @@ jobs:
           - Raises AOSP clone-profile limits so many clone users can run at once.
           - App-first **Apps / Profiles** navigation: only cloned apps, with counts
             and profile locations; disabled apps and stopped profiles stay visible.
+          - Navigation reuses inventory instead of rescanning. **Refresh** picks up external
+            changes, keeps visible rows/scroll and combines repeated requests; errors offer Retry.
           - Material You / Material 3 Expressive 1.14.0, dynamic colours and dark mode.
           - Explicit existing/new profile choices when adding clones; no automatic allocation.
           - Per-clone Disable/Enable, manifest default, Force stop, shortcuts and removal.
