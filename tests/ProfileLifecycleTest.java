@@ -14,10 +14,12 @@ public final class ProfileLifecycleTest {
             + "4: id=14, name=Private, type=profile.PRIVATE, flags=PROFILE (parentId=0)\n"
             + "5: id=15, name=Other, type=CLONE, flags=PROFILE (parentId=0)\n";
     private static final Apps.App APP = new Apps.App("Example", "com.example.app", ".Main");
+    private static final String START = "CLASSPATH='/data/app/appclone/base.apk' app_process /system/bin com.lixingchi.appclone.ProfileStart 11";
     private static final String LAUNCH = "am start --user 11 -a android.intent.action.MAIN"
             + " -c android.intent.category.LAUNCHER -n 'com.example.app/.Main'";
 
     public static void main(String[] args) {
+        ProfileStart.apkPath = "/data/app/appclone/base.apk";
         List<Clones.Clone> clones = Clones.parse(USERS);
         check(clones.size() == 2, "only exact full/short clone types");
         check(clones.get(0).id == 11 && clones.get(1).id == 12, "sorted ids");
@@ -33,14 +35,14 @@ public final class ProfileLifecycleTest {
         ready.done();
 
         Script cold = users().then("am get-started-user-state 11", 0, "User is not started: 11")
-                .then("am start-user -w 11", 0, "Success: user started")
+                .then(START, 0, "Profile 11 is unlocked.")
                 .then("am get-started-user-state 11", 0, "RUNNING_UNLOCKED")
                 .then(LAUNCH, 0, "Starting: Intent");
         check(Apps.launch(11, APP, cold).ok(), "stopped shortcut waits before launching");
         cold.done();
 
         Script start = users().then("am get-started-user-state 11", 0, "RUNNING_UNLOCKING")
-                .then("am start-user -w 11", 0, "Success: user started")
+                .then(START, 0, "Profile 11 is unlocked.")
                 .then("am get-started-user-state 11", 0, "RUNNING_UNLOCKED");
         check(Clones.setRunning(11, true, start).ok(), "manual start also waits for unlock");
         start.done();
@@ -61,20 +63,20 @@ public final class ProfileLifecycleTest {
 
         for (String output : new String[] {"Success: user started", "Error: could not start user"}) {
             Script locked = users().then("am get-started-user-state 11", 0, "RUNNING_LOCKED")
-                    .then("am start-user -w 11", 0, output)
+                    .then(START, 0, output)
                     .then("am get-started-user-state 11", 0, "RUNNING_LOCKED");
             check(!Apps.launch(11, APP, locked).ok(), "no launch until unlocked, even with exit 0");
             locked.done();
         }
         Script timeout = users().then("am get-started-user-state 11", 0, "User is not started: 11")
-                .then("am start-user -w 11", -1, "Root command timed out");
+                .then(START, -1, "Root command timed out");
         check(!Apps.launch(11, APP, timeout).ok(), "timeout prevents launch");
         timeout.done();
         Script stateFailure = users().then("am get-started-user-state 11", 1, "Permission denied");
         check(!Apps.launch(11, APP, stateFailure).ok(), "failed query prevents launch");
         stateFailure.done();
         Script afterStartFailure = users().then("am get-started-user-state 11", 0, "RUNNING_LOCKED")
-                .then("am start-user -w 11", 0, "Success: user started")
+                .then(START, 0, "Profile 11 is unlocked.")
                 .then("am get-started-user-state 11", 1, "Permission denied");
         check(!Apps.launch(11, APP, afterStartFailure).ok(), "failed verification prevents launch");
         afterStartFailure.done();

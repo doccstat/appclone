@@ -93,7 +93,9 @@ jobs:
             Disabling pauses that app's notifications; removal deletes its profile-local data.
           - System apps are hidden initially; the visible menu filter can include them.
           - Starts or stops individual profiles without deleting their app data.
-          - Home-screen shortcuts and **Open** start stopped profiles before launching.
+          - Home-screen shortcuts and **Open** start stopped profiles and request Android's
+            cached shared-credential unlock before launching. If authentication is needed,
+            the error explains how to unlock with the main user's PIN/pattern/password.
           - Choose **System default**, **Start all profiles**, or **Stop all profiles**
             once after reboot and main-user unlock; stopping pauses notifications.
           - Pin shortcuts from the selected instance; new shortcuts bind the profile serial.

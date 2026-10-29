@@ -14,6 +14,7 @@ public final class CloneApplication extends Application {
 
     @Override public void onCreate() {
         super.onCreate();
+        ProfileStart.apkPath = getApplicationInfo().sourceDir;
         DynamicColors.applyToActivitiesIfAvailable(this);
     }
 }

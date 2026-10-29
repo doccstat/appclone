@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="8"' in manifest
-    assert 'android:versionName="2.0.1"' in manifest
+    assert 'android:versionCode="9"' in manifest
+    assert 'android:versionName="2.0.2"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="App Clone"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
@@ -62,6 +62,8 @@ def test_lifecycle_entrypoints():
     main = (source / "MainActivity.java").read_text()
     assert 'profile.clone.running ? "Stop" : "Start"' in main
     assert "Clones.setRunning(profile.clone.id, !running)" in (source / "AppControls.java").read_text()
+    assert "ProfileStart.command(id)" in (source / "Clones.java").read_text()
+    assert "ProfileStart.apkPath = getApplicationInfo().sourceDir" in (source / "CloneApplication.java").read_text()
     for workflow in ("android.yml", "release.yml"):
         workflow_text = (ROOT / ".github/workflows" / workflow).read_text()
         assert "build.py --self-check" in workflow_text
