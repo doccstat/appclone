@@ -18,6 +18,7 @@ public final class BootPolicyTest {
             + "2: id=12, name=Second, type=profile.CLONE, flags=PROFILE|INITIALIZED (parentId=0) (running)\n";
 
     public static void main(String[] args) {
+        ProfileStart.apkPath = "/data/app/appclone/base.apk";
         Memory memory = new Memory();
         BootPolicy policy = new BootPolicy(memory.prefs);
         check(BootPolicy.SYSTEM.equals(policy.mode()), "default is system, never start/stop implicitly");
@@ -38,7 +39,7 @@ public final class BootPolicyTest {
         Script starting = new Script().then("cmd user list -v", 0, USERS)
                 .then("cmd user list -v", 0, USERS)
                 .then("am get-started-user-state 11", 0, "User is not started: 11")
-                .then("am start-user -w 11", 0, "Success: user started")
+                .then("CLASSPATH='/data/app/appclone/base.apk' app_process /system/bin com.lixingchi.appclone.ProfileStart 11", 0, "Profile 11 is unlocked.")
                 .then("am get-started-user-state 11", 0, "RUNNING_UNLOCKED")
                 .then("cmd user list -v", 0, USERS)
                 .then("am get-started-user-state 12", 0, "RUNNING_UNLOCKED");

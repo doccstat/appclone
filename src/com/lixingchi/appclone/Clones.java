@@ -139,13 +139,13 @@ final class Clones {
             if (expected.equals(state.trim())) return state;
         }
         // -f stops only this profile when its related user 0 cannot be stopped (Android 13+).
-        Shell.Result result = run.apply((running ? "am start-user -w " : "am stop-user -w -f ") + id);
+        Shell.Result result = run.apply(running ? ProfileStart.command(id) : "am stop-user -w -f " + id);
         if (!result.ok()) return result;
         // am can exit 0 on failure or an aborted stop; verify the actual state.
         Shell.Result state = run.apply(stateCommand);
         if (!state.ok()) return state;
         if (!expected.equals(state.trim())) {
-            return new Shell.Result(-1, "Profile " + id + (running ? " is not ready. Unlock the main user and retry."
+            return new Shell.Result(-1, "Profile " + id + (running ? " is not ready. Unlock the main user with its PIN, pattern or password and retry."
                     : " did not stop. Refresh and retry.") + "\n" + result.trim() + "\n" + state.trim());
         }
         return result;

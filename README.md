@@ -42,7 +42,10 @@ Source and support: <https://github.com/doccstat/appclone>.
 The **Apps** tab groups by package, not launcher activity. Counts exclude the
 main user's copy. Tap an app to see every clone and its state. **Open** starts a
 stopped profile, waits for unlocked storage and opens that instance; it never
-silently opens the main user's copy or enables a disabled app.
+silently opens the main user's copy or enables a disabled app. For secured
+profiles, it asks Android to reuse the cached shared credential. If none is
+available, lock and unlock the main user with its PIN, pattern or password, then
+retry. App Clone never collects or stores your lock-screen credential.
 
 System apps are hidden initially to avoid filling the list with automatically
 provisioned dependencies. **Show system apps** in the menu is a remembered,
