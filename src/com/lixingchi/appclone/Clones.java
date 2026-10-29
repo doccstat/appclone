@@ -24,10 +24,10 @@ final class Clones {
             this.running = details.contains("(running)");
             this.details = details;
         }
-    }
 
-    /** Set by {@link #list()} when the underlying command failed. */
-    static String lastError;
+        boolean owned() { return details.contains("(parentId=0)"); }
+        boolean ephemeral() { return details.contains("EPHEMERAL"); }
+    }
 
     /** Command and output of the last failed {@link #create(String)} call. */
     static volatile String lastCreateError;
@@ -36,13 +36,14 @@ final class Clones {
             Pattern.compile("\\d+: id=(\\d+), name=(.*), type=([^,]+),(.*)");
     private static final Pattern CREATED = Pattern.compile("created user id (\\d+)");
 
-    static List<Clone> list() {
-        lastError = null;
-        Shell.Result result = Shell.root("cmd user list -v");
-        if (!result.ok()) {
-            lastError = result.trim().isEmpty()
-                    ? "Root needed: allow App Clone in your root manager" : result.trim();
-            return new ArrayList<>();
+    static List<Clone> list() { return list(Shell::root); }
+
+    static List<Clone> list(Function<String, Shell.Result> run) {
+        Shell.Result result = run.apply("cmd user list -v");
+        if (!result.ok()) throw new IllegalStateException(result.trim().isEmpty()
+                ? "Root needed: allow App Clone in your root manager" : result.trim());
+        if (!Pattern.compile("(?m)^\\s*0: id=0, name=.*?, type=full\\.SYSTEM,").matcher(result.out).find()) {
+            throw new IllegalStateException("Could not read the owner profile. Refresh and retry.\n" + result.trim());
         }
         return parse(result.out);
     }
@@ -69,6 +70,27 @@ final class Clones {
         return clones;
     }
 
+    static List<String> names(String base, int count, boolean append, List<Clone> clones) {
+        if (base.isEmpty() || base.indexOf('\0') >= 0 || base.indexOf('\n') >= 0 || base.indexOf('\r') >= 0)
+            throw new IllegalArgumentException("Enter a nonempty single-line name without NUL characters.");
+        if (count < 1 || count > 500) throw new IllegalArgumentException("Choose between 1 and 500 profiles.");
+        long last = 0;
+        if (append) {
+            Pattern suffix = Pattern.compile(Pattern.quote(base) + "-(\\d+)$");
+            for (Clone clone : clones) {
+                Matcher match = suffix.matcher(clone.name);
+                if (match.matches()) {
+                    try { last = Math.max(last, Long.parseLong(match.group(1))); }
+                    catch (NumberFormatException error) { throw new IllegalArgumentException("Existing name suffix is too large."); }
+                }
+            }
+        }
+        if (last > Long.MAX_VALUE - count) throw new IllegalArgumentException("Name suffix would overflow.");
+        List<String> result = new ArrayList<>();
+        for (int i = 1; i <= count; i++) result.add(append ? base + "-" + (last + i) : base);
+        return result;
+    }
+
     /** Single-quotes a value so spaces and metacharacters survive {@code su -c}. */
     static String quote(String value) {
         return "'" + value.replace("'", "'\\''") + "'";
@@ -81,7 +103,7 @@ final class Clones {
                 + ClonePolicy.CLONE_TYPE + " " + quote(name);
         Shell.Result created = Shell.root(command);
         Matcher matcher = CREATED.matcher(created.out);
-        if (!matcher.find()) {
+        if (!created.ok() || !matcher.find()) {
             lastCreateError = "$ " + command + "\nexit=" + created.code + "\n"
                     + (created.trim().isEmpty() ? "(no output)" : created.trim());
             Log.w("AppClone", "create-user failed: " + lastCreateError);
@@ -129,8 +151,40 @@ final class Clones {
         return result;
     }
 
-    static Shell.Result remove(int id) {
-        return Shell.root("pm remove-user " + id);
+    static Shell.Result verify(int id, long serial, Function<String, Shell.Result> run) {
+        if (id <= 0 || serial < 0) return new Shell.Result(-1, "Invalid clone identity.");
+        Shell.Result users = run.apply("cmd user list -v");
+        if (!users.ok()) return users;
+        Clone target = null;
+        for (Clone clone : parse(users.out)) if (clone.id == id) target = clone;
+        if (target == null || !target.owned() || target.ephemeral()) {
+            return new Shell.Result(-1, "Not a non-ephemeral clone of user 0: " + id);
+        }
+        Shell.Result dump = run.apply("dumpsys user");
+        if (!dump.ok()) return dump;
+        Matcher identity = Pattern.compile("(?m)^\\s*UserInfo\\{" + id
+                + ":[^\\r\\n]*\\}[^\\r\\n]* serialNo=(\\d+)(?:\\s|$)").matcher(dump.out);
+        if (!identity.find() || !Long.toString(serial).equals(identity.group(1))) {
+            return new Shell.Result(-1, "Profile identity changed. Refresh before retrying.");
+        }
+        return new Shell.Result(0, "");
+    }
+
+    static Shell.Result remove(int id, long serial) {
+        synchronized (Clones.class) { return remove(id, serial, Shell::root); }
+    }
+
+    static Shell.Result remove(int id, long serial, Function<String, Shell.Result> run) {
+        Shell.Result checked = verify(id, serial, run);
+        if (!checked.ok()) return checked;
+        Shell.Result result = run.apply("pm remove-user --wait " + id);
+        if (!result.ok() || !result.out.contains("Success")) return new Shell.Result(-1, result.out);
+        try {
+            for (Clone clone : list(run)) if (clone.id == id) {
+                return new Shell.Result(-1, "Profile still exists. Refresh before retrying.");
+            }
+            return result;
+        } catch (IllegalStateException error) { return new Shell.Result(-1, error.getMessage()); }
     }
 
     private Clones() {}

@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="6"' in manifest
-    assert 'android:versionName="1.5"' in manifest
+    assert 'android:versionCode="7"' in manifest
+    assert 'android:versionName="2.0"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="App Clone"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
@@ -38,19 +38,17 @@ def test_scope_is_system():
 def test_source_link_is_public():
     url = "https://github.com/doccstat/appclone"
     assert url in (ROOT / "README.md").read_text()
-    assert url in (ROOT / "src/com/lixingchi/appclone/MainActivity.java").read_text()
     assert url in (ROOT / "src/com/lixingchi/appclone/SettingsActivity.java").read_text()
 
 
 def test_build_self_check_package():
     build = (ROOT / "build.py").read_text()
-    assert "com.lixingchi.appclone.LabelsTest" in build
-    assert "com.lixingchi.appclone.PinGroupsTest" in build
-    assert "com.lixingchi.appclone.DiagnosticsTest" in build
-    assert "com.lixingchi.appclone.ProfileLifecycleTest" in build
-    assert "com.lixingchi.appclone.ShellTest" in build
-    assert "com.lixingchi.appclone.BootPolicyTest" in build
-    assert "API_SHA256" in build
+    assert "testReleaseUnitTest" in build and "API_SHA256" in build
+    core = (ROOT / "tests/CoreTest.java").read_text()
+    for name in ("LabelsTest", "DiagnosticsTest", "ProfileLifecycleTest", "ShellTest", "BootPolicyTest"):
+        assert name + ".main" in core
+    assert "material:1.14.0" in (ROOT / "build.gradle").read_text()
+    assert "distributionSha256Sum=" in (ROOT / "gradle/wrapper/gradle-wrapper.properties").read_text()
 
 
 def test_lifecycle_entrypoints():
@@ -58,20 +56,22 @@ def test_lifecycle_entrypoints():
     launcher = (source / "LaunchActivity.java").read_text()
     assert launcher.index("new Thread(") < launcher.index("Apps.launch(user, app)")
     assert "runOnUiThread" in launcher and "Could not open clone app" in launcher
-    assert "LaunchActivity.class" in (source / "CloneDetailActivity.java").read_text()
+    assert "LaunchActivity.class" in (source / "AppControls.java").read_text()
     assert "LaunchActivity.class" in (source / "Shortcuts.java").read_text()
     main = (source / "MainActivity.java").read_text()
-    assert 'clone.running ? "Stop" : "Start"' in main
-    assert "Clones.setRunning(id, running)" in main
+    assert 'profile.clone.running ? "Stop" : "Start"' in main
+    assert "Clones.setRunning(profile.clone.id, !running)" in (source / "AppControls.java").read_text()
     for workflow in ("android.yml", "release.yml"):
-        assert "build.py --self-check" in (ROOT / ".github/workflows" / workflow).read_text()
+        workflow_text = (ROOT / ".github/workflows" / workflow).read_text()
+        assert "build.py --self-check" in workflow_text
+        assert "build.py --lint" in workflow_text
 
 
 def test_boot_wiring():
     android = "{http://schemas.android.com/apk/res/android}"
     manifest = ET.parse(ROOT / "AndroidManifest.xml").getroot()
     permissions = {node.get(android + "name") for node in manifest.findall("uses-permission")}
-    assert permissions == {"android.permission.RECEIVE_BOOT_COMPLETED"}
+    assert permissions == {"android.permission.RECEIVE_BOOT_COMPLETED", "android.permission.QUERY_ALL_PACKAGES"}
     receiver = manifest.find("application/receiver")
     assert receiver.get(android + "name") == ".BootReceiver"
     assert receiver.get(android + "exported") == "false"
@@ -100,6 +100,8 @@ def test_boot_wiring():
 def test_no_old_identity():
     for path in ROOT.rglob("*"):
         if not path.is_file() or ".git" in path.parts or "__pycache__" in path.parts:
+            continue
+        if any(part in {".gradle", "build", "dist"} for part in path.parts):
             continue
         if path.suffix in {".png", ".jar", ".keystore", ".apk"}:
             continue

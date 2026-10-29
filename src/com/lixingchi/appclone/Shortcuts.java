@@ -26,14 +26,24 @@ final class Shortcuts {
         }
         Bitmap icon = CloneApps.icon(context, target.app.pkg, target.userId);
         if (icon == null) {
-            Toast.makeText(context, "That app is no longer in the clone", Toast.LENGTH_SHORT).show();
-            return;
+            try {
+                android.graphics.drawable.Drawable drawable = context.getPackageManager().getApplicationIcon(
+                        context.getPackageManager().getApplicationInfo(target.app.pkg,
+                                android.content.pm.PackageManager.MATCH_UNINSTALLED_PACKAGES));
+                icon = Bitmap.createBitmap(96, 96, Bitmap.Config.ARGB_8888);
+                drawable.setBounds(0, 0, 96, 96);
+                drawable.draw(new android.graphics.Canvas(icon));
+            } catch (android.content.pm.PackageManager.NameNotFoundException error) {
+                Toast.makeText(context, "App icon unavailable; refresh and retry", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
         String label = label(context, target);
         Intent intent = new Intent(context, LaunchActivity.class)
                 .setAction(Intent.ACTION_VIEW)
                 .putExtra(LaunchActivity.EXTRA_PKG, target.app.pkg)
                 .putExtra(LaunchActivity.EXTRA_USER, target.userId)
+                .putExtra(LaunchActivity.EXTRA_SERIAL, target.serial)
                 .putExtra(LaunchActivity.EXTRA_ACTIVITY, target.app.activity)
                 .putExtra(LaunchActivity.EXTRA_LABEL, label);
         ShortcutInfo shortcut = new ShortcutInfo.Builder(context,
