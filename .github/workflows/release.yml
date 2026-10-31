@@ -82,6 +82,9 @@ jobs:
           cat >dist/release-notes.md <<EOF
           ## App Clone $version_name
 
+          - Root-shell startup retries the canonical Android su path only when PATH lookup
+            cannot find the executable; started/denied/timed-out operations are never replayed.
+            Diagnostics now include app UID/PATH and a root identity check.
           - Raises AOSP clone-profile limits so many clone users can run at once.
           - App-first **Apps / Profiles** navigation: only cloned apps, with counts
             and profile locations; disabled apps and stopped profiles stay visible.

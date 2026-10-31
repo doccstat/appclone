@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="10"' in manifest
-    assert 'android:versionName="2.1.0"' in manifest
+    assert 'android:versionCode="11"' in manifest
+    assert 'android:versionName="2.1.1"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="App Clone"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
@@ -81,6 +81,16 @@ def test_background_and_launch_wiring():
     assert "setUidMode" not in bridge and "deviceidle" not in bridge
     for name in ("AppCommandTest.java", "BackgroundPolicyTest.java"):
         assert (ROOT / "tests" / name).is_file()
+
+
+def test_root_bootstrap_wiring():
+    source = ROOT / "src/com/lixingchi/appclone"
+    shell = (source / "Shell.java").read_text()
+    assert 'new ProcessBuilder("su", "-c", command)' in shell
+    assert 'new ProcessBuilder("/system/bin/su", "-c", command)' in shell
+    report = (source / "Diagnostics.java").read_text()
+    assert 'android.os.Process.myUid()' in report and 'System.getenv("PATH")' in report
+    assert 'shell("id")' in report
 
 
 def test_boot_wiring():

@@ -1,6 +1,7 @@
 package com.lixingchi.appclone;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -28,14 +29,26 @@ final class Shell {
     private static final long TIMEOUT_SECONDS = 30;
 
     static Result root(String command) {
-        return run(new ProcessBuilder("su", "-c", command), TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        return run(new ProcessBuilder("su", "-c", command),
+                new ProcessBuilder("/system/bin/su", "-c", command), TIMEOUT_SECONDS, TimeUnit.SECONDS);
     }
 
     static Result run(ProcessBuilder command, long timeout, TimeUnit unit) {
+        return run(command, null, timeout, unit);
+    }
+
+    static Result run(ProcessBuilder command, ProcessBuilder fallback, long timeout, TimeUnit unit) {
         Process process = null;
         FutureTask<String> output = null;
         try {
-            process = command.redirectErrorStream(true).start();
+            try {
+                process = command.redirectErrorStream(true).start();
+            } catch (IOException error) {
+                // Only exec ENOENT may fall back; a started command must never be replayed.
+                if (fallback == null || !missingExecutable(error)) throw error;
+                // KernelSU can virtualize this path, so File.exists/canExecute is not a reliable gate.
+                process = fallback.redirectErrorStream(true).start();
+            }
             final Process child = process;
             // Drain concurrently so a silent/hung command cannot bypass the timeout in readLine().
             output = new FutureTask<>(() -> {
@@ -53,6 +66,10 @@ final class Shell {
                 return new Result(-1, "Root command timed out. Refresh the profile state before retrying.");
             }
             return new Result(process.exitValue(), output.get(1, TimeUnit.SECONDS));
+        } catch (IOException e) {
+            return new Result(-1, fallback == null ? e.toString()
+                    : "Cannot start the root shell. Check that root is active and App Clone is allowed in your root manager, "
+                    + "then reopen the app and tap Retry. LSPosed scope alone does not grant root.\n" + e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return new Result(-1, "Root command interrupted. Refresh the profile state before retrying.");
@@ -62,6 +79,12 @@ final class Shell {
             if (process != null) process.destroyForcibly();
             if (output != null) output.cancel(true);
         }
+    }
+
+    static boolean missingExecutable(IOException error) {
+        // Android and host OpenJDK expose exec errno in different IOException message formats.
+        String message = error.getMessage();
+        return message != null && (message.contains("error=2,") || message.contains("error: 2 ("));
     }
 
     private Shell() {}

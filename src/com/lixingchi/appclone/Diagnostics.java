@@ -15,6 +15,8 @@ final class Diagnostics {
         out.append("App Clone diagnostics\n");
         out.append("Generated: ").append(stamp("yyyy-MM-dd HH:mm:ss")).append('\n');
         out.append("App: ").append(version(context)).append('\n');
+        out.append("App UID: ").append(android.os.Process.myUid()).append('\n');
+        out.append("App PATH: ").append(System.getenv("PATH")).append('\n');
         out.append("Device: ").append(Build.MANUFACTURER).append(' ')
                 .append(Build.MODEL).append('\n');
         out.append("Android: ").append(Build.VERSION.RELEASE)
@@ -27,6 +29,7 @@ final class Diagnostics {
         section(out, "Reboot policy", boot.mode() + "\n" + boot.status());
         section(out, "Last create error",
                 Clones.lastCreateError == null ? "none this session" : Clones.lastCreateError);
+        section(out, "Root access (su from PATH; /system/bin/su only if not found)", shell("id"));
         section(out, "cmd user list -v", shell("cmd user list -v"));
         section(out, "dumpsys user", shell("dumpsys user"));
         section(out, "logcat (filtered)",
