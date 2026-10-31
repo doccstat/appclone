@@ -41,7 +41,12 @@ final class AppControls {
             menu.getMenu().add(0, 3, 2, "Force stop app");
             menu.getMenu().add(0, 4, 3, "Pin shortcut");
             menu.getMenu().add(0, 5, 4, "Remove from this profile");
+            menu.getMenu().add(0, 6, 5, "Background activity");
             menu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == 6) {
+                    BackgroundControls.open(activity, entry, profile);
+                    return true;
+                }
                 if (item.getItemId() == 4) {
                     Shortcuts.pin(activity, new CloneApps.Target(profile.clone.id, profile.clone.name, entry.app, profile.serial));
                     return true;

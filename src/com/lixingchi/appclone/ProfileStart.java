@@ -8,10 +8,13 @@ public final class ProfileStart {
     static String apkPath;
 
     static String command(int user) {
-        if (user <= 0 || apkPath == null || apkPath.isEmpty())
-            throw new IllegalStateException("Clone startup is unavailable.");
-        return "CLASSPATH=" + Clones.quote(apkPath)
-                + " app_process /system/bin com.lixingchi.appclone.ProfileStart " + user;
+        if (user <= 0) throw new IllegalStateException("Invalid clone profile.");
+        return entry(ProfileStart.class) + " " + user;
+    }
+
+    static String entry(Class<?> entry) {
+        if (apkPath == null || apkPath.isEmpty()) throw new IllegalStateException("Clone commands are unavailable.");
+        return "CLASSPATH=" + Clones.quote(apkPath) + " app_process /system/bin " + entry.getName();
     }
 
     interface Device {
@@ -29,9 +32,15 @@ public final class ProfileStart {
     }
 
     static void start(int user, Device device, long timeoutMillis) throws Exception {
+        start(user, device, timeoutMillis, -1);
+    }
+
+    static void start(int user, Device device, long timeoutMillis, long expectedSerial) throws Exception {
         if (user <= 0) throw new IllegalArgumentException("Invalid clone profile.");
         long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeoutMillis);
         long serial = device.verify(user);
+        if (expectedSerial != -1 && serial != expectedSerial)
+            throw new IllegalStateException("Profile identity changed. Refresh before retrying.");
         if (device.unlocked(user)) return;
         if (!device.unlocked(0)) throw new IllegalStateException("Unlock the main user before starting a clone.");
         unchanged(device, user, serial);
@@ -68,14 +77,14 @@ public final class ProfileStart {
         }
     }
 
-    private static Object service(String name, String api) throws Exception {
+    static Object service(String name, String api) throws Exception {
         IBinder binder = (IBinder) Class.forName("android.os.ServiceManager")
                 .getMethod("getService", String.class).invoke(null, name);
         if (binder == null) throw new IllegalStateException("Missing Android service: " + name);
         return Class.forName(api + "$Stub").getMethod("asInterface", IBinder.class).invoke(null, binder);
     }
 
-    private static final class AndroidDevice implements Device {
+    static class AndroidDevice implements Device {
         private final Class<?> users = Class.forName("android.os.IUserManager");
         private final Object manager = service("user", users.getName());
 

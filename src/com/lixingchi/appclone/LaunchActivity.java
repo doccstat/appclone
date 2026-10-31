@@ -27,10 +27,7 @@ public final class LaunchActivity extends AppCompatActivity {
         new Thread(() -> {
             Shell.Result outcome;
             try {
-                synchronized (Clones.class) {
-                    Shell.Result checked = serial < 0 ? new Shell.Result(0, "") : Clones.verify(user, serial, Shell::root);
-                    outcome = checked.ok() ? Apps.launch(user, app) : checked;
-                }
+                outcome = Apps.launch(user, serial, app);
             } catch (RuntimeException error) { outcome = new Shell.Result(-1, error.toString()); }
             final Shell.Result result = outcome;
             CloneApplication.inventory(this).afterLaunch(user, result.ok());

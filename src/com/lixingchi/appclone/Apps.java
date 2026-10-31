@@ -87,32 +87,15 @@ final class Apps {
         } catch (IllegalStateException error) { return new Shell.Result(-1, error.getMessage()); }
     }
 
-    static Shell.Result launch(int userId, App app) {
-        synchronized (Clones.class) {
-            return launch(userId, app, Shell::root);
-        }
+    static Shell.Result launch(int userId, long serial, App app) {
+        synchronized (Clones.class) { return launch(userId, serial, app, Shell::root); }
     }
 
-    static Shell.Result launch(int userId, App app, Function<String, Shell.Result> run) {
-        if (!validPackage(app.pkg) || app.activity == null) return new Shell.Result(-1, "Invalid app shortcut.");
-        Shell.Result started = Clones.setRunning(userId, true, run);
-        if (!started.ok()) return started;
-        String component = app.pkg + "/" + app.activity;
-        if (app.activity.isEmpty()) {
-            Shell.Result resolved = run.apply("cmd package resolve-activity --brief --user " + userId
-                    + " -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p " + Clones.quote(app.pkg));
-            if (!resolved.ok()) return resolved;
-            component = null;
-            for (String line : resolved.out.split("\n")) if (line.trim().startsWith(app.pkg + "/")) component = line.trim();
-            if (component == null) return new Shell.Result(-1, "No enabled launcher activity in this profile. Enable the app first, or use an app with a launcher.");
-        }
-        Shell.Result result = run.apply("am start --user " + userId
-                + " -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n " + Clones.quote(component));
-        if (result.ok() && java.util.regex.Pattern.compile("(?m)^Error(?: type \\d+|:)")
-                .matcher(result.out).find()) {
-            return new Shell.Result(-1, result.out);
-        }
-        return result;
+    static Shell.Result launch(int userId, long serial, App app, Function<String, Shell.Result> run) {
+        if (app == null || !validPackage(app.pkg) || app.activity == null)
+            return new Shell.Result(-1, "Invalid app shortcut.");
+        try { return run.apply(AppCommand.command("launch", userId, serial, app.pkg, app.activity)); }
+        catch (RuntimeException error) { return new Shell.Result(-1, error.toString()); }
     }
 
     private Apps() {}

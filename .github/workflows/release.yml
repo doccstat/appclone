@@ -91,6 +91,11 @@ jobs:
           - Explicit existing/new profile choices when adding clones; no automatic allocation.
           - Per-clone Disable/Enable, manifest default, Force stop, shortcuts and removal.
             Disabling pauses that app's notifications; removal deletes its profile-local data.
+          - **Background activity** previews a clone package's Android background mode:
+            Keep current, Restrict, or Restore previous. Restrictions can delay notifications/jobs;
+            they do not stop profiles or disable apps. Prior modes are saved before mutation.
+          - Open/shortcuts combine fresh identity/package/readiness checks and launch in one
+            bounded root process; already-unlocked profiles skip startup/authentication.
           - System apps are hidden initially; the visible menu filter can include them.
           - Starts or stops individual profiles without deleting their app data.
           - Home-screen shortcuts and **Open** start stopped profiles and request Android's
@@ -107,7 +112,9 @@ jobs:
           legacy Xposed API 82 (LSPosed or Vector). Scope the module to
           \`system\` (\`android\`). Device-tested on Pixel 11 Pro Fold, Android 17;
           Android 13–16 use the same AOSP clone type but are not yet tested.
-          The 2.0 UI/app controls pass host checks; physical-device acceptance is pending.
+          The UI/app controls pass host checks; 2.1 launch and background-policy device acceptance,
+          battery effects and notification delivery are unmeasured. No automatic cleaning or
+          Google-service changes. Restore background settings before clearing App Clone's data.
 
           The APK is signed with the permanent release key; its SHA-256 checksum
           is included with this release.
