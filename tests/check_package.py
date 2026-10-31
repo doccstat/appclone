@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="11"' in manifest
-    assert 'android:versionName="2.1.1"' in manifest
+    assert 'android:versionCode="12"' in manifest
+    assert 'android:versionName="2.2.0"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="App Clone"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
@@ -59,8 +59,7 @@ def test_lifecycle_entrypoints():
     assert "runOnUiThread" in launcher and "Could not open clone app" in launcher
     assert "LaunchActivity.class" in (source / "AppControls.java").read_text()
     assert "LaunchActivity.class" in (source / "Shortcuts.java").read_text()
-    main = (source / "MainActivity.java").read_text()
-    assert 'profile.clone.running ? "Stop" : "Start"' in main
+    assert 'AppControls.power(activity, profile)' in (source / "ProfileControls.java").read_text()
     assert "Clones.setRunning(profile.clone.id, !running)" in (source / "AppControls.java").read_text()
     assert "ProfileStart.command(id)" in (source / "Clones.java").read_text()
     assert "ProfileStart.apkPath = getApplicationInfo().sourceDir" in (source / "CloneApplication.java").read_text()
@@ -91,6 +90,19 @@ def test_root_bootstrap_wiring():
     report = (source / "Diagnostics.java").read_text()
     assert 'android.os.Process.myUid()' in report and 'System.getenv("PATH")' in report
     assert 'shell("id")' in report
+
+
+def test_inline_ui_and_rename_wiring():
+    source = ROOT / "src/com/lixingchi/appclone"
+    main = (source / "MainActivity.java").read_text()
+    assert "InventoryList.Item.instance(entry, profile, false)" in main
+    assert "setupWithViewPager(pager)" in main
+    assert "setMaxLines(3)" not in main
+    assert 'Ui.quiet(activity, "Manage")' not in (source / "AppControls.java").read_text()
+    assert "Clones.rename(profile.clone.id, profile.serial, typed)" in (source / "ProfileControls.java").read_text()
+    rename = (source / "ProfileRename.java").read_text()
+    assert "Process.myUid() != 0" in rename and 'getMethod("setUserName"' in rename
+    assert "startProfile" not in rename and "stop-user" not in rename
 
 
 def test_boot_wiring():

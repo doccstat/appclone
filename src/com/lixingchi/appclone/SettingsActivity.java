@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -28,15 +27,17 @@ public final class SettingsActivity extends AppCompatActivity {
     private MaterialSwitch autoPin;
     private EditText format;
     private TextView preview;
-    private LinearLayout tokenRow;
+    private com.google.android.material.chip.ChipGroup tokenRow;
     private TextView bootStatus;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
 
+        LinearLayout screen = Ui.column(this);
+        Ui.applyInsets(screen, 0, 0, 0, 0);
+        Ui.toolbar(this, screen, "Settings", true);
         LinearLayout root = Ui.column(this);
-
-        Ui.toolbar(this, root, "Settings", true);
+        root.setPadding(Ui.dp(this, 20), Ui.dp(this, 8), Ui.dp(this, 20), Ui.dp(this, 24));
         root.addView(Ui.text(this, "Material You · Wallpaper colours and system light/dark mode", 14, R.color.muted, false));
 
         root.addView(Ui.label(this, "After reboot"), Ui.margins(this, 0, 26, 0, 8));
@@ -99,7 +100,8 @@ public final class SettingsActivity extends AppCompatActivity {
                 "Tokens: {id} clone user id \u00b7 {name} app name \u00b7 {clone} clone name. "
                         + "Colons and other characters are allowed.",
                 12, R.color.muted, false), Ui.margins(this, 0, 6, 0, 0));
-        tokenRow = Ui.row(this);
+        tokenRow = new com.google.android.material.chip.ChipGroup(this);
+        tokenRow.setChipSpacingHorizontal(Ui.dp(this, 8));
         tokenRow.addView(tokenButton("{id}"));
         tokenRow.addView(tokenButton("{name}"));
         tokenRow.addView(tokenButton("{clone}"));
@@ -136,7 +138,8 @@ public final class SettingsActivity extends AppCompatActivity {
         root.addView(Ui.text(this, "App Clone " + versionName(), 15, R.color.ink, false));
         TextView source = Ui.text(this, "Source code \u00b7 github.com/doccstat/appclone",
                 13, R.color.accent, false);
-        source.setPadding(0, Ui.dp(this, 10), 0, Ui.dp(this, 10));
+        source.setPadding(0, Ui.dp(this, 12), 0, Ui.dp(this, 12));
+        source.setMinHeight(Ui.dp(this, 48));
         source.setBackground(Ui.selectable(this));
         source.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
@@ -147,10 +150,10 @@ public final class SettingsActivity extends AppCompatActivity {
         root.addView(source, Ui.margins(this, 0, 4, 0, 0));
 
         ScrollView scroll = new ScrollView(this);
-        Ui.applyInsets(scroll, 20, 22, 20, 16);
         scroll.addView(root, new ScrollView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        setContentView(scroll);
+        screen.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
+        setContentView(screen);
 
         prefix.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override public void onCheckedChanged(CompoundButton button, boolean checked) {
@@ -180,15 +183,12 @@ public final class SettingsActivity extends AppCompatActivity {
         bootStatus.setText(BootPolicy.get(this).status());
     }
 
-    private Button tokenButton(final String token) {
-        Button button = Ui.quiet(this, token);
-        button.setTextSize(13);
-        button.setMinHeight(Ui.dp(this, 48));
-        button.setPadding(Ui.dp(this, 12), 0, Ui.dp(this, 12), 0);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMarginEnd(Ui.dp(this, 6));
-        button.setLayoutParams(params);
+    private com.google.android.material.chip.Chip tokenButton(final String token) {
+        com.google.android.material.chip.Chip button = new com.google.android.material.chip.Chip(this);
+        button.setText(token);
+        button.setCheckable(false);
+        button.setEnsureMinTouchTargetSize(true);
+        button.setContentDescription("Insert " + token + " into shortcut format");
         button.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
                 int start = Math.max(0, format.getSelectionStart());

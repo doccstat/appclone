@@ -170,6 +170,10 @@ final class Clones {
         return new Shell.Result(0, "");
     }
 
+    static synchronized Shell.Result rename(int id, long serial, String name) {
+        return Shell.root(ProfileRename.command(id, serial, name));
+    }
+
     static Shell.Result remove(int id, long serial) {
         synchronized (Clones.class) { return remove(id, serial, Shell::root); }
     }

@@ -3,9 +3,9 @@ package com.lixingchi.appclone;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import java.util.ArrayList;
+import java.util.List;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /** Installed apps in one profile; adding/removing apps is always an explicit action. */
 public final class CloneDetailActivity extends InventoryActivity {
@@ -21,12 +21,12 @@ public final class CloneDetailActivity extends InventoryActivity {
         id = getIntent().getIntExtra(EXTRA_ID, -1);
         serial = getIntent().getLongExtra(EXTRA_SERIAL, -1);
         LinearLayout root = Ui.column(this);
-        Ui.applyInsets(root, 16, 0, 16, 8);
         toolbar = Ui.toolbar(this, root, "Profile", true);
         toolbar.getMenu().add(0, 1, 0, "Start / stop profile");
         toolbar.getMenu().add(0, 2, 1, "Show system apps").setCheckable(true).setChecked(Settings.systemApps(this));
         toolbar.getMenu().add(0, 3, 2, "Delete profile");
         toolbar.getMenu().add(0, 4, 3, "Refresh");
+        toolbar.getMenu().add(0, 5, 0, "Rename profile");
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == 4) { refresh(); return true; }
             Inventory.Profile profile = current();
@@ -34,21 +34,16 @@ public final class CloneDetailActivity extends InventoryActivity {
             if (item.getItemId() == 1) AppControls.power(this, profile);
             else if (item.getItemId() == 2) {
                 Settings.systemApps(this, !Settings.systemApps(this)); render();
-            } else new MaterialAlertDialogBuilder(this).setTitle("Delete profile?")
-                    .setMessage(Inventory.location(profile) + "\n\nDeletes ALL app data in this profile, including system apps hidden by the filter. Other profiles and the main user are untouched.")
-                    .setNegativeButton("Cancel", null).setPositiveButton("Delete", (dialog, which) ->
-                            work("Deleting profile…", () -> Clones.remove(id, serial), this::finish)).show();
+            } else if (item.getItemId() == 5) ProfileControls.rename(this, profile);
+            else if (item.getItemId() == 3) ProfileControls.remove(this, profile, this::finish);
             return true;
         });
-        status = Ui.text(this, "", 14, R.color.muted, false);
-        root.addView(status, Ui.margins(this, 8, 4, 8, 12));
-        ScrollView scroll = new ScrollView(this);
-        body = Ui.column(this);
-        scroll.addView(body);
-        root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.primary(this, "Add app to profile");
+        useList(new InventoryList(this));
+        if (state != null) body.restorePosition(state.getParcelable("listPosition"));
+        root.addView(body, new LinearLayout.LayoutParams(-1, 0, 1));
+        add = Ui.addAction(this, root, "Add app to profile");
+        Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> { Inventory.Profile profile = current(); if (profile != null) AddClone.chooseApp(this, profile); });
-        root.addView(add, Ui.margins(this, 0, 8, 0, 0));
         setContentView(root);
     }
 
@@ -59,21 +54,26 @@ public final class CloneDetailActivity extends InventoryActivity {
 
     @Override void renderInventory() {
         toolbar.getMenu().findItem(2).setChecked(Settings.systemApps(this));
-        body.removeAllViews();
+        List<InventoryList.Item> rows = new ArrayList<>();
         Inventory.Profile profile = current();
         add.setEnabled(profile != null);
-        if (profile == null) { status.setText("Profile removed or replaced. Return to Profiles and refresh."); return; }
+        if (profile == null) {
+            status.setText("Profile removed or replaced. Return to Profiles and refresh.");
+            rows.add(InventoryList.Item.empty("Profile unavailable", "Return to Profiles and refresh before taking any action."));
+            body.show(rows);
+            return;
+        }
         toolbar.setTitle(profile.clone.name);
         toolbar.getMenu().findItem(1).setTitle(profile.clone.running ? "Stop profile" : "Start profile");
         int count = 0;
         for (Inventory.Entry entry : inventory.apps) {
             if (!profile.packages.contains(entry.app.pkg) || (entry.system && !Settings.systemApps(this))) continue;
             count++;
-            body.addView(AppControls.row(this, entry, profile, true), Ui.margins(this, 0, 4, 0, 4));
+            rows.add(InventoryList.Item.instance(entry, profile, true));
         }
         status.setText("User " + id + " · " + (profile.clone.running ? "Running" : "Stopped")
                 + " · " + count + " apps" + (Settings.systemApps(this) ? "" : " · System apps hidden"));
-        if (count == 0) body.addView(Ui.text(this, "No apps to show. Add an app below or show system apps from the menu.",
-                16, R.color.muted, false), Ui.margins(this, 16, 32, 16, 0));
+        if (count == 0) rows.add(InventoryList.Item.empty("No apps to show", "Add an app or show system apps from the menu."));
+        body.show(rows);
     }
 }

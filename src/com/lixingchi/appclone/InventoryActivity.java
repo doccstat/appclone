@@ -1,8 +1,7 @@
 package com.lixingchi.appclone;
 
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
@@ -14,10 +13,9 @@ import java.util.function.Supplier;
 abstract class InventoryActivity extends AppCompatActivity {
     Inventory inventory;
     TextView status;
-    LinearLayout body;
+    InventoryList body;
     private CompletableFuture<Inventory> request;
     private boolean systemApps;
-    private Button retry;
     private String readError;
     private AlertDialog progress;
 
@@ -25,6 +23,16 @@ abstract class InventoryActivity extends AppCompatActivity {
         super.onResume();
         if (inventory != null && systemApps != Settings.systemApps(this)) display(inventory);
         read(false);
+    }
+
+    final void useList(InventoryList list) {
+        body = list;
+        status = list.status;
+        status.setOnClickListener(v -> {
+            if (readError != null) new MaterialAlertDialogBuilder(this).setTitle("Could not refresh")
+                    .setMessage(readError).setNegativeButton("Close", null)
+                    .setPositiveButton("Retry", (dialog, which) -> refresh()).show();
+        });
     }
 
     final void refresh() { read(true); }
@@ -35,7 +43,6 @@ abstract class InventoryActivity extends AppCompatActivity {
         if (request == next) return;
         request = next;
         readError = null;
-        if (retry != null) { body.removeView(retry); retry = null; }
         if (inventory == null && (!next.isDone() || next.isCompletedExceptionally()) && cache.peek() != null) {
             display(cache.peek());
         }
@@ -47,17 +54,17 @@ abstract class InventoryActivity extends AppCompatActivity {
             else {
                 readError = (failure.getCause() == null ? failure : failure.getCause()).toString();
                 showReadState();
+                if (inventory != null) com.google.android.material.snackbar.Snackbar.make(body,
+                        "Refresh failed. Previous list kept.", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+                        .setAction("Retry", v -> refresh()).show();
             }
         }));
     }
 
     private void display(Inventory found) {
-        View scroll = (View) body.getParent();
-        int y = scroll.getScrollY();
         inventory = found;
         systemApps = Settings.systemApps(this);
         render();
-        scroll.post(() -> scroll.scrollTo(0, y));
     }
 
     final void work(String title, Supplier<Shell.Result> action, Runnable success) {
@@ -92,16 +99,22 @@ abstract class InventoryActivity extends AppCompatActivity {
     }
 
     private void showReadState() {
+        body.retry.setVisibility(readError == null ? View.GONE : View.VISIBLE);
+        status.setClickable(readError != null);
+        status.setFocusable(readError != null);
+        status.setContentDescription(null);
         if (readError != null) {
-            status.setText((inventory == null ? "Could not read clone apps: " : "Refresh failed; showing previous list: ") + readError);
-            if (retry == null) {
-                retry = Ui.primary(this, "Retry");
-                retry.setOnClickListener(v -> refresh());
-            }
-            if (retry.getParent() == null) body.addView(retry);
+            status.setText(inventory == null ? "Could not read clone apps. Tap for details."
+                    : "Refresh failed; showing previous list. Tap for details.");
+            status.setContentDescription(status.getText() + " " + readError);
         } else if (request != null && !request.isDone()) {
             status.setText(inventory == null ? "Reading clone apps…" : "Refreshing… Showing previous list.");
         }
+    }
+
+    @Override protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putParcelable("listPosition", body.position());
     }
 
     abstract void renderInventory();
