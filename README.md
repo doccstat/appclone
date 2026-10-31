@@ -38,6 +38,13 @@ Source and support: <https://github.com/doccstat/appclone>.
    when activating or replacing framework hooks.
 4. Open App Clone and grant root.
 
+If the root shell cannot start, confirm root is active and App Clone is allowed
+in your root manager, then reopen the app and tap **Retry**. LSPosed scope alone
+does not grant root. App Clone tries `su` through the app's PATH, then
+`/system/bin/su` only if the executable was not found; it never retries an
+operation that already started. **Export diagnostics** includes the app UID,
+PATH and a root `id` check for troubleshooting. No data clearing is needed.
+
 ## Apps and profiles
 
 The **Apps** tab groups by package, not launcher activity. Counts exclude the
