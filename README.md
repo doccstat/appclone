@@ -17,7 +17,8 @@ Source and support: <https://github.com/doccstat/appclone>.
   new ones. Different apps can share a profile; another instance of the same
   app needs another profile. No profile is selected or created automatically.
 - Per-instance **Disable (freeze)**, **Enable**, **Force stop**, shortcut and
-  removal actions. Disabled apps and stopped profiles remain visible.
+  removal actions. **Background activity** offers an explicit Android restriction
+  and restoration of the saved prior mode. Disabled apps and stopped profiles remain visible.
 - Material You with **Material 3 Expressive**, wallpaper-derived colours where
   supported, and system light/dark mode. Uses Google's Material Components
   **1.14.0**, not a custom imitation of its controls.
@@ -46,6 +47,11 @@ silently opens the main user's copy or enables a disabled app. For secured
 profiles, it asks Android to reuse the cached shared credential. If none is
 available, lock and unlock the main user with its PIN, pattern or password, then
 retry. App Clone never collects or stores your lock-screen credential.
+
+Open and shortcuts use one bounded, short-lived root process for fresh profile,
+serial, package and readiness checks plus the target-user launch. Already-unlocked
+profiles skip startup and authentication. This reduces root invocations, not a
+promise to retain app processes or a measured launch-speed improvement.
 
 System apps are hidden initially to avoid filling the list with automatically
 provisioned dependencies. **Show system apps** in the menu is a remembered,
@@ -78,15 +84,44 @@ Owner, work and private profiles are excluded.
 | Enable app | Explicitly sets the app enabled. Does not start a stopped profile. |
 | Use manifest default state | Removes the enabled-state override. This is not restoration of an arbitrary earlier override. |
 | Force stop app | Stops it now without deleting data or disabling it. Notifications may stop until it is opened again; this is not a permanent freeze. |
+| Background activity | Shows the current package background mode. Keep current, explicitly Restrict, or Restore previous; restrictions can delay notifications and jobs without stopping the profile. |
 | Pin shortcut | Pins this app/profile pair using the configured label. |
 | Remove from this profile | Deletes only that app's data in the selected profile. Does not delete the profile or its other apps. |
 
 Changing system dependencies can break other apps in that profile. There is no
 automatic freezing, screen-off watcher, idle-stop service, global GMS change or
-bulk debloating. These controls use explicit Android per-user commands; Hail
+bulk debloating. These controls use explicit Android per-user commands/APIs; Hail
 installation, device-owner enrollment and additional root modules are not needed.
 Suspension is deliberately not presented as a battery-saving freeze: it does not
 prevent background execution.
+
+### Background activity
+
+In either app or profile details, open the instance's menu → **Background activity**.
+Opening or cancelling the dialog changes nothing. **Restrict** sets only that
+clone package's `RUN_ANY_IN_BACKGROUND` AppOp to `ignore`. It is not Android's
+complete Battery settings preset, a force-stop or a cached-process freezer.
+It does not change standby buckets, Doze exemptions, Google services, package
+installation/enablement or reboot policy. Android still controls process memory
+and profile lifetime; the setting does not guarantee delivery or battery savings.
+
+Before applying, App Clone saves the exact prior package mode in private app
+preferences, bound to the profile serial, package, UID and installation timestamp.
+**Restore previous** checks current identity and mode before restoring; a detected
+external change or app replacement is reported rather than overwritten. Failed or
+interrupted writes retain the restore record. Shared/system-UID apps and UID-wide
+overrides are not independently managed here. Unknown APIs/modes fail visibly.
+Only supported package modes are restored, not AppOps access history or other
+battery settings. An external write of the same mode cannot be distinguished.
+
+**Forget saved setting** has a separate confirmation: it removes only the local
+restore record, leaving Android unchanged. Restore is then unavailable. Restore
+before clearing App Clone's data or uninstalling it: Android's restriction can
+remain after the local restore record is lost. Records survive normal app updates
+and restarts. Existing manual **Force stop app** remains a separate choice; it
+keeps the profile unlocked but the next app launch is cold.
+
+### Shortcuts and removal
 
 New shortcuts record the profile serial so a recycled user ID cannot silently
 retarget them. Old shortcuts continue to work but lack that check; re-pin them

@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="9"' in manifest
-    assert 'android:versionName="2.0.2"' in manifest
+    assert 'android:versionCode="10"' in manifest
+    assert 'android:versionName="2.1.0"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="App Clone"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
@@ -54,7 +54,7 @@ def test_build_self_check_package():
 def test_lifecycle_entrypoints():
     source = ROOT / "src/com/lixingchi/appclone"
     launcher = (source / "LaunchActivity.java").read_text()
-    assert launcher.index("new Thread(") < launcher.index("Apps.launch(user, app)")
+    assert launcher.index("new Thread(") < launcher.index("Apps.launch(user, serial, app)")
     assert "CloneApplication.inventory(this).afterLaunch(user, result.ok())" in launcher
     assert "runOnUiThread" in launcher and "Could not open clone app" in launcher
     assert "LaunchActivity.class" in (source / "AppControls.java").read_text()
@@ -68,6 +68,19 @@ def test_lifecycle_entrypoints():
         workflow_text = (ROOT / ".github/workflows" / workflow).read_text()
         assert "build.py --self-check" in workflow_text
         assert "build.py --lint" in workflow_text
+
+
+def test_background_and_launch_wiring():
+    source = ROOT / "src/com/lixingchi/appclone"
+    assert 'AppCommand.command("launch"' in (source / "Apps.java").read_text()
+    assert "Clones.verify(" not in (source / "LaunchActivity.java").read_text()
+    assert "BackgroundControls.open(activity, entry, profile)" in (source / "AppControls.java").read_text()
+    bridge = (source / "AppCommand.java").read_text()
+    assert "android:run_any_in_background" in bridge
+    assert "Process.myUid() != 0" in bridge
+    assert "setUidMode" not in bridge and "deviceidle" not in bridge
+    for name in ("AppCommandTest.java", "BackgroundPolicyTest.java"):
+        assert (ROOT / "tests" / name).is_file()
 
 
 def test_boot_wiring():

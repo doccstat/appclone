@@ -105,6 +105,37 @@ public final class MaterialScreensTest {
         controller.destroy();
     }
 
+    @Test public void backgroundChoicesAreExplicitAndDoNotChangePolicyOnDisplayOrCancel() {
+        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create();
+        MainActivity activity = controller.get();
+        android.content.SharedPreferences prefs = activity.getSharedPreferences("background-ui-test", 0);
+        prefs.edit().clear().commit();
+        BackgroundPolicy policy = new BackgroundPolicy(prefs, command -> { throw new AssertionError("unexpected root: " + command); });
+        Inventory inventory = fixture();
+        BackgroundPolicy.State state = new BackgroundPolicy.State(1110123, 1234, 0, -1);
+        BackgroundControls.show(activity, inventory.app("com.chat"), inventory.profile(11), policy, state);
+        AlertDialog dialog = (AlertDialog) org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertTrue(text(dialog.getWindow().getDecorView()).contains("Personal · User 11"));
+        assertTrue(text(dialog.getWindow().getDecorView()).contains("Notifications and jobs may be delayed"));
+        assertEquals("Restrict", dialog.getButton(AlertDialog.BUTTON_POSITIVE).getText().toString());
+        assertEquals("Keep current", dialog.getButton(AlertDialog.BUTTON_NEGATIVE).getText().toString());
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        assertTrue(prefs.getAll().isEmpty());
+        prefs.edit().putString("11:42:com.chat", state.encode()).commit();
+        BackgroundControls.show(activity, inventory.app("com.chat"), inventory.profile(11), policy, state.withMode(1));
+        dialog = (AlertDialog) org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertEquals("Restore previous", dialog.getButton(AlertDialog.BUTTON_POSITIVE).getText().toString());
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).performClick();
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        dialog = (AlertDialog) org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertTrue(text(dialog.getWindow().getDecorView()).contains("Android's current setting stays unchanged"));
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        assertEquals(state, policy.previous(11, 42, "com.chat"));
+        controller.destroy();
+    }
+
     @Test public void profileHandlesUsePublicSdkWithoutOverflow() {
         for (int id : new int[] {0, 11, 900, Integer.MAX_VALUE / 100000}) {
             assertEquals(id, CloneApps.userHandle(id).hashCode());
