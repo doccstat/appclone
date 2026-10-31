@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,7 +25,8 @@ import java.util.Locale;
 /** App-first inventory, with the complete profile view one tab away. */
 public final class MainActivity extends InventoryActivity {
     private boolean profiles;
-    private EditText search;
+    private final EditText[] searches = new EditText[2];
+    private final InventoryList[] pages = new InventoryList[2];
     private Button add;
     private MaterialToolbar toolbar;
     private String pendingReport;
@@ -32,7 +36,6 @@ public final class MainActivity extends InventoryActivity {
         super.onCreate(state);
         profiles = state != null && state.getBoolean("profiles");
         LinearLayout root = Ui.column(this);
-        Ui.applyInsets(root, 16, 0, 16, 8);
         toolbar = Ui.toolbar(this, root, "App Clone", false);
         pendingReport = (String) getLastCustomNonConfigurationInstance();
         toolbar.getMenu().add(0, 1, 0, "Settings");
@@ -53,35 +56,55 @@ public final class MainActivity extends InventoryActivity {
             return true;
         });
         TabLayout tabs = new TabLayout(this);
-        tabs.addTab(tabs.newTab().setText("Apps"), !profiles);
-        tabs.addTab(tabs.newTab().setText("Profiles"), profiles);
+        tabs.setTabMode(TabLayout.MODE_FIXED);
         root.addView(tabs);
-        search = Ui.input(this, root, "Search apps, profiles or user IDs");
-        search.setId(View.generateViewId());
-        if (state != null) search.setText(state.getString("query", ""));
-        status = Ui.text(this, "", 14, R.color.muted, false);
-        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
-        root.addView(status, Ui.margins(this, 8, 4, 8, 8));
-        ScrollView scroll = new ScrollView(this);
-        body = Ui.column(this);
-        scroll.addView(body);
-        root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.primary(this, profiles ? "New profile" : "Add clone app");
+        for (int i = 0; i < pages.length; i++) {
+            final int page = i;
+            pages[i] = new InventoryList(this);
+            if (state != null) pages[i].restorePosition(state.getParcelable("position" + i));
+            LinearLayout searchForm = Ui.column(this);
+            searches[i] = Ui.input(this, searchForm, i == 0 ? "Search apps or profiles" : "Search profiles or user IDs");
+            com.google.android.material.textfield.TextInputLayout field =
+                    (com.google.android.material.textfield.TextInputLayout) searchForm.getChildAt(0);
+            field.setStartIconDrawable(R.drawable.ic_search);
+            field.setEndIconMode(com.google.android.material.textfield.TextInputLayout.END_ICON_CLEAR_TEXT);
+            searches[i].setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+            if (state != null) searches[i].setText(state.getString("query" + i, ""));
+            pages[i].header.addView(searchForm, 0);
+            searches[i].addTextChangedListener(new TextWatcher() {
+                public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
+                public void onTextChanged(CharSequence s, int a, int b, int c) {
+                    if (page == (profiles ? 1 : 0)) { render(); pages[page].top(); }
+                }
+                public void afterTextChanged(Editable s) {}
+            });
+        }
+        useList(pages[profiles ? 1 : 0]);
+        ViewPager pager = new ViewPager(this);
+        pager.setOffscreenPageLimit(1);
+        root.addView(pager, new LinearLayout.LayoutParams(-1, 0, 1));
+        add = Ui.addAction(this, root, profiles ? "New profile" : "Add clone app");
+        Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> {
             if (inventory == null) { refresh(); return; }
             if (profiles) AddClone.create(this, null); else AddClone.chooseApp(this, null);
         });
-        root.addView(add, Ui.margins(this, 0, 8, 0, 0));
-        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            public void onTabSelected(TabLayout.Tab tab) { profiles = tab.getPosition() == 1; render(); }
-            public void onTabUnselected(TabLayout.Tab tab) {}
-            public void onTabReselected(TabLayout.Tab tab) {}
+        pager.setAdapter(new PagerAdapter() {
+            public int getCount() { return pages.length; }
+            public boolean isViewFromObject(View view, Object object) { return view == object; }
+            public CharSequence getPageTitle(int position) { return position == 0 ? "Apps" : "Profiles"; }
+            public Object instantiateItem(ViewGroup parent, int position) { parent.addView(pages[position]); return pages[position]; }
+            public void destroyItem(ViewGroup parent, int position, Object object) { parent.removeView((View) object); }
         });
-        search.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
-            public void onTextChanged(CharSequence s, int a, int b, int c) { render(); }
-            public void afterTextChanged(Editable s) {}
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override public void onPageSelected(int position) {
+                profiles = position == 1;
+                useList(pages[position]);
+                render();
+            }
         });
+        tabs.setupWithViewPager(pager);
+        pager.setCurrentItem(profiles ? 1 : 0, false);
         setContentView(root);
     }
 
@@ -89,8 +112,8 @@ public final class MainActivity extends InventoryActivity {
         toolbar.getMenu().findItem(2).setChecked(Settings.systemApps(this));
         add.setText(profiles ? "New profile" : "Add clone app");
         if (inventory == null) return;
-        body.removeAllViews();
-        String query = search.getText().toString().toLowerCase(Locale.ROOT);
+        List<InventoryList.Item> rows = new ArrayList<>();
+        String query = searches[profiles ? 1 : 0].getText().toString().toLowerCase(Locale.ROOT);
         int shown = 0;
         if (profiles) {
             int running = 0;
@@ -98,27 +121,10 @@ public final class MainActivity extends InventoryActivity {
                 if (profile.clone.running) running++;
                 if (!Inventory.location(profile).toLowerCase(Locale.ROOT).contains(query)) continue;
                 shown++;
-                LinearLayout row = Ui.column(this);
-                row.setPadding(Ui.dp(this, 16), Ui.dp(this, 12), Ui.dp(this, 16), Ui.dp(this, 12));
-                row.setBackground(Ui.shape(this, R.color.surface, 20));
-                row.addView(Ui.text(this, Inventory.location(profile), 18, R.color.ink, true));
                 int count = 0;
                 for (Inventory.Entry entry : inventory.apps) if ((!entry.system || Settings.systemApps(this))
                         && profile.packages.contains(entry.app.pkg)) count++;
-                row.addView(Ui.text(this, count + " apps · " + (profile.clone.running ? "Running" : "Stopped"),
-                        14, R.color.muted, false));
-                LinearLayout actions = Ui.row(this);
-                Button manage = Ui.quiet(this, "View apps");
-                manage.setOnClickListener(v -> startActivity(new Intent(this, CloneDetailActivity.class)
-                        .putExtra(CloneDetailActivity.EXTRA_ID, profile.clone.id)
-                        .putExtra(CloneDetailActivity.EXTRA_SERIAL, profile.serial)));
-                actions.addView(manage, Ui.weight(1));
-                Button power = Ui.quiet(this, profile.clone.running ? "Stop" : "Start");
-                power.setContentDescription((profile.clone.running ? "Stop " : "Start ") + Inventory.location(profile));
-                power.setOnClickListener(v -> AppControls.power(this, profile));
-                actions.addView(power, Ui.weight(1));
-                row.addView(actions);
-                body.addView(row, Ui.margins(this, 0, 4, 0, 4));
+                rows.add(InventoryList.Item.profile(profile, count));
             }
             status.setText(inventory.profiles.size() + " profiles · " + running + " running"
                     + (Settings.systemApps(this) ? "" : " · System apps hidden"));
@@ -132,29 +138,18 @@ public final class MainActivity extends InventoryActivity {
                 }
                 if (!(entry.app.label + " " + entry.app.pkg + " " + locations).toLowerCase(Locale.ROOT).contains(query)) continue;
                 shown++;
-                LinearLayout row = Ui.column(this);
-                row.setPadding(Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16));
-                row.setBackground(Ui.rounded(this, R.color.surface, 20));
-                row.setFocusable(true);
-                row.addView(Ui.appHeading(this, entry, entry.app.label + " · " + entry.profiles.size()
-                        + (entry.profiles.size() == 1 ? " clone" : " clones")));
-                android.widget.TextView locationText = Ui.text(this, locations, 14, R.color.muted, false);
-                locationText.setMaxLines(3);
-                locationText.setEllipsize(android.text.TextUtils.TruncateAt.END);
-                row.addView(locationText, Ui.margins(this, 0, 8, 0, 0));
-                row.setOnClickListener(v -> startActivity(new Intent(this, AppDetailActivity.class)
-                        .putExtra(AppDetailActivity.EXTRA_PKG, entry.app.pkg)));
-                body.addView(row, Ui.margins(this, 0, 4, 0, 4));
+                rows.add(InventoryList.Item.heading(entry));
+                for (Inventory.Profile profile : entry.profiles) rows.add(InventoryList.Item.instance(entry, profile, false));
             }
             status.setText(shown + " cloned apps · " + (Settings.systemApps(this) ? "Including system apps" : "System apps hidden"));
         }
         if (shown == 0) {
-            body.addView(Ui.text(this, query.isEmpty() ? (profiles ? "No profiles yet" : "No cloned apps yet") : "No matches",
-                    22, R.color.ink, true), Ui.margins(this, 16, 32, 16, 8));
-            body.addView(Ui.text(this, profiles ? "Create a profile, or use Apps → Add clone app."
-                    : "Only apps installed in a clone appear here. Add one below; system apps are available from the menu.",
-                    14, R.color.muted, false), Ui.margins(this, 16, 0, 16, 8));
+            rows.add(InventoryList.Item.empty(query.isEmpty() ? (profiles ? "No profiles yet" : "No cloned apps yet") : "No matches",
+                    !query.isEmpty() ? "Try another name or user ID, or clear the search."
+                            : profiles ? "Create a profile to keep another set of app data."
+                            : "Add a clone app to get started. System apps are available from the menu."));
         }
+        body.show(rows);
     }
 
     private void deleteAll() {
@@ -219,6 +214,9 @@ public final class MainActivity extends InventoryActivity {
     @Override protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         state.putBoolean("profiles", profiles);
-        state.putString("query", search.getText().toString());
+        for (int i = 0; i < pages.length; i++) {
+            state.putString("query" + i, searches[i].getText().toString());
+            state.putParcelable("position" + i, pages[i].position());
+        }
     }
 }

@@ -2,7 +2,9 @@ package com.lixingchi.appclone;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.ScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import com.google.android.material.tabs.TabLayout;
+import android.widget.EditText;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 import static org.robolectric.Shadows.shadowOf;
+import static com.lixingchi.appclone.ScreenTestSupport.*;
 
 /** Real activity lifecycles with a queued fixture loader; never invokes su. */
 @RunWith(RobolectricTestRunner.class)
@@ -53,7 +56,7 @@ public final class InventoryRefreshTest {
     }
 
     private ActivityController<MainActivity> main() {
-        return Robolectric.buildActivity(MainActivity.class).create().start().resume();
+        return Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
     }
 
     private void finishRead() {
@@ -64,7 +67,9 @@ public final class InventoryRefreshTest {
     @Test public void navigationResumeAndRotationReuseInventory() {
         ActivityController<MainActivity> main = main();
         finishRead();
+        layout(main.get().body, 400, 600);
         View row = main.get().body.getChildAt(0);
+        assertNotNull(row);
         main.pause();
         ActivityController<AppDetailActivity> detail = Robolectric.buildActivity(AppDetailActivity.class,
                 new Intent().putExtra(AppDetailActivity.EXTRA_PKG, "com.chat")).create().start().resume();
@@ -84,21 +89,23 @@ public final class InventoryRefreshTest {
         ActivityController<MainActivity> main = main();
         finishRead();
         MainActivity activity = main.get();
-        View decor = activity.getWindow().getDecorView();
-        int width = View.MeasureSpec.makeMeasureSpec(900, View.MeasureSpec.EXACTLY);
-        int height = View.MeasureSpec.makeMeasureSpec(1200, View.MeasureSpec.EXACTLY);
-        decor.measure(width, height); decor.layout(0, 0, 900, 1200);
-        ScrollView scroll = (ScrollView) activity.body.getParent();
-        scroll.scrollTo(0, 300);
-        View row = activity.body.getChildAt(0);
+        InventoryList list = activity.body;
+        layout(list, 400, 600);
+        LinearLayoutManager manager = (LinearLayoutManager) list.getLayoutManager();
+        manager.scrollToPositionWithOffset(12, -20);
+        layout(list, 400, 600);
+        View row = manager.findViewByPosition(12);
+        assertNotNull(row);
+        assertEquals(-20, row.getTop());
         activity.refresh(); activity.refresh();
-        assertSame(row, activity.body.getChildAt(0));
-        assertEquals(300, scroll.getScrollY());
+        assertSame(row, manager.findViewByPosition(12));
+        assertEquals(-20, row.getTop());
         assertEquals(1, reads.size());
         assertTrue(activity.status.getText().toString().contains("previous list"));
         finishRead();
-        decor.measure(width, height); decor.layout(0, 0, 900, 1200);
-        assertEquals(300, scroll.getScrollY());
+        layout(list, 400, 600);
+        assertEquals(12, manager.findFirstVisibleItemPosition());
+        assertEquals(-20, manager.findViewByPosition(12).getTop());
         assertEquals(2, scans);
         main.pause().stop().destroy();
     }
@@ -106,7 +113,9 @@ public final class InventoryRefreshTest {
     @Test public void refreshFailureRetainsRowsAndErrorUntilExplicitRetry() {
         ActivityController<MainActivity> main = main();
         finishRead();
+        layout(main.get().body, 400, 600);
         View row = main.get().body.getChildAt(0);
+        assertNotNull(row);
         fail = true;
         main.get().refresh(); finishRead();
         assertSame(row, main.get().body.getChildAt(0));
@@ -116,12 +125,57 @@ public final class InventoryRefreshTest {
         Settings.systemApps(main.get(), true);
         main.pause().resume();
         assertTrue(main.get().status.getText().toString().contains("Refresh failed"));
-        assertEquals(31, main.get().body.getChildCount());
+        assertEquals(61, main.get().body.getAdapter().getItemCount());
+        assertEquals(View.VISIBLE, main.get().body.retry.getVisibility());
+        main.get().status.performClick();
+        android.app.Dialog details = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertTrue(text(details.getWindow().getDecorView()).contains("fixture read failed"));
+        details.dismiss();
         fail = false;
-        main.get().body.getChildAt(30).performClick(); finishRead();
+        main.get().body.retry.performClick(); finishRead();
         assertFalse(main.get().status.getText().toString().contains("Refresh failed"));
-        assertEquals(30, main.get().body.getChildCount());
+        assertEquals(View.GONE, main.get().body.retry.getVisibility());
+        assertEquals(61, main.get().body.getAdapter().getItemCount());
         assertEquals(3, scans);
+        main.pause().stop().destroy();
+    }
+
+    @Test public void tabsKeepIndependentScrollAndQueriesThroughRecreation() {
+        ActivityController<MainActivity> main = main();
+        finishRead();
+        MainActivity activity = main.get();
+        InventoryList apps = activity.body;
+        EditText appSearch = find(apps.header, EditText.class);
+        appSearch.setText("Chat");
+        layout(apps, 400, 600);
+        ((LinearLayoutManager) apps.getLayoutManager()).scrollToPositionWithOffset(16, -12);
+        layout(apps, 400, 600);
+        TabLayout tabs = find(activity.getWindow().getDecorView(), TabLayout.class);
+        tabs.getTabAt(1).select();
+        InventoryList profiles = activity.body;
+        assertNotSame(apps, profiles);
+        assertEquals("", find(profiles.header, EditText.class).getText().toString());
+        find(profiles.header, EditText.class).setText("Personal");
+        layout(profiles, 400, 600);
+        assertEquals(0, ((LinearLayoutManager) profiles.getLayoutManager()).findFirstVisibleItemPosition());
+        tabs.getTabAt(0).select();
+        assertSame(apps, activity.body);
+        layout(apps, 400, 600);
+        assertEquals(16, ((LinearLayoutManager) apps.getLayoutManager()).findFirstVisibleItemPosition());
+        assertEquals(-12, apps.getLayoutManager().findViewByPosition(16).getTop());
+        assertEquals("Chat", appSearch.getText().toString());
+        tabs.getTabAt(1).select();
+        main.recreate();
+        activity = main.get();
+        assertEquals("Personal", find(activity.body.header, EditText.class).getText().toString());
+        tabs = find(activity.getWindow().getDecorView(), TabLayout.class);
+        assertEquals(1, tabs.getSelectedTabPosition());
+        tabs.getTabAt(0).select();
+        layout(activity.body, 400, 600);
+        assertEquals("Chat", find(activity.body.header, EditText.class).getText().toString());
+        assertEquals(16, ((LinearLayoutManager) activity.body.getLayoutManager()).findFirstVisibleItemPosition());
+        assertEquals(-12, activity.body.getLayoutManager().findViewByPosition(16).getTop());
+        assertEquals(1, scans);
         main.pause().stop().destroy();
     }
 

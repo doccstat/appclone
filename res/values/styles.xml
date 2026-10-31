@@ -5,6 +5,9 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+    <style name="ThemeOverlay.AppClone.TextButton" parent="">
+        <item name="materialButtonStyle">@style/Widget.Material3.Button.TextButton</item>
+    </style>
     <style name="Theme.AppClone.Launch" parent="Theme.AppClone">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>

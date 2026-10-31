@@ -82,6 +82,12 @@ jobs:
           cat >dist/release-notes.md <<EOF
           ## App Clone $version_name
 
+          - Redesigned Material 3 lists show every profile directly beneath its app,
+            with Open and a per-instance **⋮** menu instead of Manage.
+          - Swipeable Apps / Profiles tabs keep independent search and scroll positions,
+            including after rotation. Long lists recycle rows; search/status scroll with content.
+          - **Rename profile** saves the exact name without changing IDs, app data or running
+            state. It affects all apps sharing that profile; existing shortcut labels stay unchanged.
           - Root-shell startup retries the canonical Android su path only when PATH lookup
             cannot find the executable; started/denied/timed-out operations are never replayed.
             Diagnostics now include app UID/PATH and a root identity check.
@@ -115,7 +121,7 @@ jobs:
           legacy Xposed API 82 (LSPosed or Vector). Scope the module to
           \`system\` (\`android\`). Device-tested on Pixel 11 Pro Fold, Android 17;
           Android 13–16 use the same AOSP clone type but are not yet tested.
-          The UI/app controls pass host checks; 2.1 launch and background-policy device acceptance,
+          The UI/app controls pass host checks; 2.2 UI/rename and 2.1 launch/background-policy device acceptance,
           battery effects and notification delivery are unmeasured. No automatic cleaning or
           Google-service changes. Restore background settings before clearing App Clone's data.
 

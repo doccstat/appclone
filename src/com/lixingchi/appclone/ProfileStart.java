@@ -85,8 +85,8 @@ public final class ProfileStart {
     }
 
     static class AndroidDevice implements Device {
-        private final Class<?> users = Class.forName("android.os.IUserManager");
-        private final Object manager = service("user", users.getName());
+        final Class<?> users = Class.forName("android.os.IUserManager");
+        final Object manager = service("user", users.getName());
 
         AndroidDevice() throws Exception { }
 

@@ -10,9 +10,12 @@ Source and support: <https://github.com/doccstat/appclone>.
 ## Features
 
 - **Apps** opens by default and shows only apps installed in clone profiles.
-  See each app's clone count, profile names and user IDs, then open a specific
-  instance. An empty setup stays empty until apps are cloned.
-- **Profiles** shows running/stopped profiles and their installed apps.
+  Every instance appears directly beneath its app, with profile name, user ID,
+  state, **Open** and a **⋮** action menu. No drill-down or expansion is needed.
+- Swipe or tap between **Apps / Profiles**. Each tab keeps its own search and
+  scroll position. Long lists recycle rows rather than creating every view at once.
+- **Profiles** shows running/stopped profiles and their installed apps, with
+  **Rename profile** and other profile-wide actions in **⋮**.
 - **Add clone app** lets you choose an existing profile or explicitly create
   new ones. Different apps can share a profile; another instance of the same
   app needs another profile. No profile is selected or created automatically.
@@ -27,8 +30,8 @@ Source and support: <https://github.com/doccstat/appclone>.
 
 - Android 13+ (API 33+), root, and LSPosed or another framework supporting legacy
   Xposed API 82 in `system_server`.
-- The clone engine was tested on Pixel / Android 17. The 2.0 UI and new app
-  controls have host tests; real-device acceptance remains pending.
+- The clone engine was tested on Pixel / Android 17. The redesigned UI and
+  profile rename have host tests; real-device acceptance remains pending.
 - Firmware must retain AOSP clone-profile support. Root and hooks do not provide
   unlimited memory or universal app compatibility.
 
@@ -48,7 +51,9 @@ PATH and a root `id` check for troubleshooting. No data clearing is needed.
 ## Apps and profiles
 
 The **Apps** tab groups by package, not launcher activity. Counts exclude the
-main user's copy. Tap an app to see every clone and its state. **Open** starts a
+main user's copy. All of an app's profiles are listed inline, including disabled
+apps and stopped profiles. The app heading's **⋮** offers **Add another clone**
+and optional app details. Each instance has its own **⋮** menu. **Open** starts a
 stopped profile, waits for unlocked storage and opens that instance; it never
 silently opens the main user's copy or enables a disabled app. For secured
 profiles, it asks Android to reuse the cached shared credential. If none is
@@ -68,7 +73,9 @@ Navigation and returning to the app reuse the last inventory. App Clone actions
 invalidate it; use **Refresh** in any list screen for changes made elsewhere.
 Refresh keeps the previous rows and scroll position, combines repeated requests,
 and shows failures with **Retry** rather than clearing the list. Cached rows never
-replace fresh safety checks before profile/app actions.
+replace fresh safety checks before profile/app actions. Tap an error summary for
+full details. Search and status scroll with the list; tabs remain accessible.
+The add button yields space while the keyboard is open and returns when it closes.
 
 **Add clone app** offers installed main-user apps and an explicit destination.
 Creating profiles supports a count of 1–500 and optional `-1, -2, …` numbering.
@@ -77,6 +84,14 @@ the profiles. A partially successful batch keeps the profiles already created
 and reports the failure rather than deleting data to roll back.
 
 The **Profiles** tab retains Start/Stop, app management, creation and deletion.
+Tap a profile to view its apps, or use **⋮** for profile-wide actions.
+**Rename profile** is also available in an instance's **⋮** menu and in profile
+details. It changes the name for **all apps sharing that profile**, not the app's
+own name. Names are saved exactly as entered; empty, multiline, NUL-containing
+or over-100-character names are rejected rather than trimmed or shortened
+(emoji may count as two characters). IDs, app data and running state are unchanged.
+Existing shortcut labels are left alone; re-pin them if you want updated labels.
+
 Stopping a non-ephemeral clone keeps data but pauses **all** its apps and
 notifications. Its other apps resume too when an app starts that profile.
 
@@ -104,7 +119,7 @@ prevent background execution.
 
 ### Background activity
 
-In either app or profile details, open the instance's menu → **Background activity**.
+From Apps or either detail view, open the instance's **⋮** → **Background activity**.
 Opening or cancelling the dialog changes nothing. **Restrict** sets only that
 clone package's `RUN_ANY_IN_BACKGROUND` AppOp to `ignore`. It is not Android's
 complete Battery settings preset, a force-stop or a cached-process freezer.

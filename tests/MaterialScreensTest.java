@@ -2,8 +2,6 @@ package com.lixingchi.appclone;
 
 import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.tabs.TabLayout;
 import org.junit.Test;
@@ -16,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import static org.junit.Assert.*;
+import static com.lixingchi.appclone.ScreenTestSupport.*;
 
 /** Create/render only: never resumes the inventory loader and never invokes su. */
 @RunWith(RobolectricTestRunner.class)
@@ -42,8 +41,10 @@ public final class MaterialScreensTest {
         activity.render();
         assertTrue(text(activity.body).contains("No cloned apps yet"));
         activity.inventory = fixture(); activity.render();
-        assertTrue(text(activity.body).contains("Chat · 1 clone"));
-        assertTrue(text(activity.body).contains("Personal · User 11"));
+        assertTrue(text(activity.body).contains("Chat\ncom.chat\n1 clone"));
+        assertTrue(text(activity.body).contains("Personal\nUser 11"));
+        assertTrue(text(activity.body).contains("Disabled · Profile stopped"));
+        assertFalse(text(activity.body).contains("Manage"));
         assertFalse(text(activity.body).contains("System fixture"));
         Settings.systemApps(activity, true); activity.render();
         assertTrue(text(activity.body).contains("System fixture"));
@@ -51,7 +52,7 @@ public final class MaterialScreensTest {
                 .getMenu().findItem(2).isChecked());
         TabLayout tabs = find(activity.getWindow().getDecorView(), TabLayout.class);
         tabs.getTabAt(1).select();
-        assertTrue(text(activity.body).contains("View apps"));
+        assertTrue(text(activity.body).contains("Personal"));
         assertTrue(text(activity.body).contains("Stopped"));
         controller.destroy();
     }
@@ -61,8 +62,8 @@ public final class MaterialScreensTest {
         ActivityController<AppDetailActivity> app = Robolectric.buildActivity(AppDetailActivity.class, appIntent).create();
         app.get().inventory = fixture(); app.get().render();
         assertTrue(text(app.get().body).contains("Disabled · Profile stopped"));
-        assertTrue(text(app.get().body).contains("Personal · User 11"));
-        assertFalse(findText(app.get().body, "Open").isEnabled());
+        assertTrue(text(app.get().body).contains("Personal\nUser 11"));
+        assertFalse(findText(row(app.get().body, 1), "Open").isEnabled());
         app.destroy();
         Intent profileIntent = new Intent().putExtra(CloneDetailActivity.EXTRA_ID, 11)
                 .putExtra(CloneDetailActivity.EXTRA_SERIAL, 42L);
@@ -79,7 +80,20 @@ public final class MaterialScreensTest {
             org.robolectric.RuntimeEnvironment.setQualifiers(qualifier);
             ActivityController<SettingsActivity> activity = Robolectric.buildActivity(SettingsActivity.class).create();
             assertTrue(text(activity.get().getWindow().getDecorView()).contains("Material You"));
-            assertNotNull(find(activity.get().getWindow().getDecorView(), com.google.android.material.materialswitch.MaterialSwitch.class));
+            com.google.android.material.materialswitch.MaterialSwitch prefix = find(activity.get().getWindow().getDecorView(),
+                    com.google.android.material.materialswitch.MaterialSwitch.class);
+            prefix.setChecked(true);
+            android.widget.EditText format = find(activity.get().getWindow().getDecorView(), android.widget.EditText.class);
+            format.setText("  X{name}  "); format.setSelection(3);
+            com.google.android.material.chip.ChipGroup tokens = find(activity.get().getWindow().getDecorView(),
+                    com.google.android.material.chip.ChipGroup.class);
+            assertEquals(3, tokens.getChildCount());
+            assertFalse(((com.google.android.material.chip.Chip) tokens.getChildAt(0)).isCheckable());
+            tokens.getChildAt(0).performClick();
+            assertEquals("  X{id}{name}  ", format.getText().toString());
+            prefix.setChecked(false);
+            assertFalse(format.isEnabled());
+            for (int i = 0; i < tokens.getChildCount(); i++) assertFalse(tokens.getChildAt(i).isEnabled());
             activity.destroy();
         }
     }
@@ -159,24 +173,4 @@ public final class MaterialScreensTest {
         controller.destroy();
     }
 
-    private static String text(View view) {
-        StringBuilder result = new StringBuilder();
-        if (view instanceof TextView) result.append(((TextView) view).getText()).append('\n');
-        if (view instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) result.append(text(((ViewGroup) view).getChildAt(i)));
-        return result.toString();
-    }
-    private static TextView findText(View view, String value) {
-        if (view instanceof TextView && value.contentEquals(((TextView) view).getText())) return (TextView) view;
-        if (view instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-            TextView found = findText(((ViewGroup) view).getChildAt(i), value); if (found != null) return found;
-        }
-        return null;
-    }
-    private static <T> T find(View view, Class<T> type) {
-        if (type.isInstance(view)) return type.cast(view);
-        if (view instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-            T found = find(((ViewGroup) view).getChildAt(i), type); if (found != null) return found;
-        }
-        return null;
-    }
 }
