@@ -43,14 +43,14 @@ final class BackgroundPolicy {
         @Override public int hashCode() { return Objects.hash(uid, installed, mode, uidMode); }
     }
 
-    static String name(int mode) {
+    static String name(Context context, int mode) {
         switch (mode) {
-            case -1: return "None";
-            case 0: return "Allowed (Android-managed)";
-            case 1: return "Restricted";
-            case 2: return "Denied";
-            case 3: return "System default";
-            case 4: return "Foreground only";
+            case -1: return context.getString(R.string.background_none);
+            case 0: return context.getString(R.string.background_allowed);
+            case 1: return context.getString(R.string.background_mode_restricted);
+            case 2: return context.getString(R.string.background_denied);
+            case 3: return context.getString(R.string.boot_system);
+            case 4: return context.getString(R.string.background_foreground);
             default: throw new IllegalArgumentException("Unknown background mode.");
         }
     }

@@ -37,19 +37,20 @@ final class InventoryList extends RecyclerView {
             this.kind = kind; this.key = key; this.title = title; this.detail = detail;
             this.entry = entry; this.profile = profile;
         }
-        static Item heading(Inventory.Entry entry) {
+        static Item heading(android.content.Context context, Inventory.Entry entry) {
             return new Item(HEADING, "app:" + entry.app.pkg, entry.app.label,
-                    entry.profiles.size() + (entry.profiles.size() == 1 ? " clone" : " clones"), entry, null);
+                    context.getResources().getQuantityString(R.plurals.clone_count, entry.profiles.size(), entry.profiles.size()), entry, null);
         }
-        static Item instance(Inventory.Entry entry, Inventory.Profile profile, boolean appHeading) {
+        static Item instance(android.content.Context context, Inventory.Entry entry, Inventory.Profile profile, boolean appHeading) {
             return new Item(appHeading ? APP_INSTANCE : INSTANCE,
                     "instance:" + profile.clone.id + ":" + profile.serial + ":" + entry.app.pkg,
-                    appHeading ? entry.app.label : profile.clone.name, Inventory.state(profile, entry.app.pkg), entry, profile);
+                    appHeading ? entry.app.label : profile.clone.name, Inventory.state(context, profile, entry.app.pkg), entry, profile);
         }
-        static Item profile(Inventory.Profile profile, int count) {
+        static Item profile(android.content.Context context, Inventory.Profile profile, int count) {
             return new Item(PROFILE, "profile:" + profile.clone.id + ":" + profile.serial, profile.clone.name,
-                    "User " + profile.clone.id + " · " + (profile.clone.running ? "Running" : "Stopped")
-                            + " · " + count + " apps", null, profile);
+                    context.getString(R.string.profile_status, Integer.toString(profile.clone.id),
+                            context.getString(profile.clone.running ? R.string.running : R.string.stopped),
+                            context.getResources().getQuantityString(R.plurals.app_count, count, count)), null, profile);
         }
         static Item empty(String title, String detail) {
             return new Item(EMPTY, "empty", title, detail, null, null);
@@ -72,7 +73,7 @@ final class InventoryList extends RecyclerView {
         status.setGravity(android.view.Gravity.CENTER_VERTICAL);
         status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         notice.addView(status, Ui.weight(1));
-        retry = Ui.quiet(activity, "Retry");
+        retry = Ui.quiet(activity, activity.getString(R.string.retry));
         retry.setVisibility(View.GONE);
         retry.setOnClickListener(v -> activity.refresh());
         notice.addView(retry);
@@ -144,7 +145,7 @@ final class InventoryList extends RecyclerView {
             LinearLayout root = (LinearLayout) itemView;
             root.setLayoutParams(new RecyclerView.LayoutParams(-1, -2));
             LinearLayout line = Ui.row(activity);
-            line.setPadding(Ui.dp(activity, kind == INSTANCE ? 32 : 16), Ui.dp(activity, 12), Ui.dp(activity, 8), Ui.dp(activity, 12));
+            line.setPaddingRelative(Ui.dp(activity, kind == INSTANCE ? 32 : 16), Ui.dp(activity, 12), Ui.dp(activity, 8), Ui.dp(activity, 12));
             if (kind == HEADING) {
                 root.setPadding(0, Ui.dp(activity, 16), 0, 0);
                 line.setBackgroundColor(Ui.color(activity, R.color.surface));
@@ -166,7 +167,7 @@ final class InventoryList extends RecyclerView {
             detail = Ui.type(activity, "", com.google.android.material.R.style.TextAppearance_Material3_BodySmall, R.color.muted);
             labels.addView(title); labels.addView(subtitle); labels.addView(detail);
             line.addView(labels, Ui.weightWithStart(activity, 1, kind == INSTANCE || kind == EMPTY ? 0 : 16));
-            open = Ui.quiet(activity, "Open");
+            open = Ui.quiet(activity, activity.getString(R.string.open));
             open.setMinWidth(0);
             open.setMinimumWidth(0);
             open.setPadding(Ui.dp(activity, 12), 0, Ui.dp(activity, 12), 0);
@@ -186,21 +187,21 @@ final class InventoryList extends RecyclerView {
             icon.setImageDrawable(item.entry == null ? null : item.entry.icon);
             if (item.kind == HEADING) {
                 subtitle.setText(item.entry.app.pkg);
-                more.setContentDescription("Actions for " + item.title);
-                more.setTooltipText("App actions");
+                more.setContentDescription(activity.getString(R.string.actions_for, Ui.bidi(activity, item.title)));
+                more.setTooltipText(activity.getString(R.string.app_actions));
                 more.setOnClickListener(v -> {
                     PopupMenu menu = new PopupMenu(activity, more);
-                    menu.getMenu().add("Add another clone").setOnMenuItemClickListener(action -> {
+                    menu.getMenu().add(R.string.add_another_clone).setOnMenuItemClickListener(action -> {
                         AddClone.chooseProfile(activity, item.entry.app); return true;
                     });
-                    menu.getMenu().add("App details").setOnMenuItemClickListener(action -> {
+                    menu.getMenu().add(R.string.app_details).setOnMenuItemClickListener(action -> {
                         activity.startActivity(new Intent(activity, AppDetailActivity.class)
                                 .putExtra(AppDetailActivity.EXTRA_PKG, item.entry.app.pkg)); return true;
                     });
                     menu.show();
                 });
             } else if (item.kind == INSTANCE || item.kind == APP_INSTANCE) {
-                subtitle.setText(item.kind == INSTANCE ? "User " + item.profile.clone.id : item.entry.app.pkg);
+                subtitle.setText(item.kind == INSTANCE ? activity.getString(R.string.user_id, Integer.toString(item.profile.clone.id)) : item.entry.app.pkg);
                 AppControls.bind(activity, item.entry, item.profile, open, more);
             } else if (item.kind == PROFILE) {
                 avatar.setText(Integer.toString(item.profile.clone.id));
@@ -208,10 +209,10 @@ final class InventoryList extends RecyclerView {
                 detail.setVisibility(View.GONE);
                 labels.setBackground(Ui.selectable(activity));
                 labels.setMinimumHeight(Ui.dp(activity, 48));
-                labels.setContentDescription("View apps in " + item.title + " · " + item.detail);
+                labels.setContentDescription(activity.getString(R.string.view_apps_in_profile, Ui.bidi(activity, item.title), item.detail));
                 labels.setOnClickListener(v -> ProfileControls.open(activity, item.profile));
-                more.setContentDescription("Actions for " + Inventory.location(item.profile));
-                more.setTooltipText("Profile actions");
+                more.setContentDescription(activity.getString(R.string.actions_for, Inventory.location(activity, item.profile)));
+                more.setTooltipText(activity.getString(R.string.profile_actions));
                 more.setOnClickListener(v -> ProfileControls.menu(activity, item.profile, more));
             } else {
                 subtitle.setText(item.detail);

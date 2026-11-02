@@ -18,7 +18,7 @@ final class AddClone {
     static void chooseApp(InventoryActivity activity, Inventory.Profile destination) {
         if (activity.inventory == null) return;
         final List<Apps.App> apps = new ArrayList<>();
-        activity.work("Reading available apps…", () -> {
+        activity.work(activity.getString(R.string.reading_available_apps), () -> {
             PackageManager pm = activity.getPackageManager();
             for (ApplicationInfo info : pm.getInstalledApplications(0)) {
                 if (info.packageName.equals(activity.getPackageName())) continue;
@@ -34,7 +34,7 @@ final class AddClone {
     private static void picker(InventoryActivity activity, List<Apps.App> apps, Inventory.Profile destination) {
         LinearLayout form = Ui.column(activity);
         form.setPadding(Ui.dp(activity, 24), 0, Ui.dp(activity, 24), 0);
-        EditText search = Ui.input(activity, form, "Search apps or packages");
+        EditText search = Ui.input(activity, form, activity.getString(R.string.search_apps_packages));
         ListView list = new ListView(activity);
         form.addView(list, new LinearLayout.LayoutParams(-1, Ui.dp(activity, 320)));
         List<Apps.App> shown = new ArrayList<>();
@@ -53,8 +53,8 @@ final class AddClone {
             public void afterTextChanged(Editable s) {}
         });
         filter.run();
-        AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle("Add clone app")
-                .setView(form).setNegativeButton("Cancel", null).create();
+        AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(R.string.add_clone_app)
+                .setView(form).setNegativeButton(R.string.cancel, null).create();
         list.setOnItemClickListener((parent, view, position, id) -> {
             Apps.App app = shown.get(position);
             dialog.dismiss();
@@ -62,7 +62,7 @@ final class AddClone {
             else install(activity, app, destination);
         });
         dialog.show();
-        if (apps.isEmpty()) search.setHint("No available apps (system filter is in the menu)");
+        if (apps.isEmpty()) search.setHint(R.string.no_available_apps);
     }
 
     static void chooseProfile(InventoryActivity activity, Apps.App app) {
@@ -71,19 +71,19 @@ final class AddClone {
         List<String> labels = new ArrayList<>();
         for (Inventory.Profile profile : activity.inventory.profiles) if (!profile.packages.contains(app.pkg)) {
             choices.add(profile);
-            labels.add(Inventory.location(profile) + (profile.clone.running ? " · Running" : " · Stopped"));
+            labels.add(activity.getString(R.string.profile_picker_item, Inventory.location(activity, profile),
+                    activity.getString(profile.clone.running ? R.string.running : R.string.stopped)));
         }
-        new MaterialAlertDialogBuilder(activity).setTitle("Add " + app.label + " to…")
+        new MaterialAlertDialogBuilder(activity).setTitle(activity.getString(R.string.add_app_to, Ui.bidi(activity, app.label)))
                 .setItems(labels.toArray(new String[0]), (dialog, which) -> install(activity, app, choices.get(which)))
-                .setNeutralButton("New profile", (dialog, which) -> create(activity, app))
-                .setNegativeButton("Cancel", null).show();
+                .setNeutralButton(R.string.new_profile, (dialog, which) -> create(activity, app))
+                .setNegativeButton(R.string.cancel, null).show();
     }
 
     private static void install(InventoryActivity activity, Apps.App app, Inventory.Profile profile) {
-        new MaterialAlertDialogBuilder(activity).setTitle("Add clone?")
-                .setMessage(app.label + "\n" + Inventory.location(profile)
-                        + "\n\nUses the existing profile. Other apps and the profile's running state are unchanged.")
-                .setNegativeButton("Cancel", null).setPositiveButton("Add", (dialog, which) -> activity.work("Adding clone…",
+        new MaterialAlertDialogBuilder(activity).setTitle(R.string.add_clone_question)
+                .setMessage(activity.getString(R.string.add_clone_message, Ui.bidi(activity, app.label), Inventory.location(activity, profile)))
+                .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.add, (dialog, which) -> activity.work(activity.getString(R.string.adding_clone),
                         () -> Apps.change(profile.clone.id, profile.serial, app.pkg, Apps.Action.INSTALL),
                         () -> autoPin(activity, app, profile.clone.id, profile.clone.name, profile.serial))).show();
     }
@@ -91,38 +91,39 @@ final class AddClone {
     static void create(InventoryActivity activity, Apps.App app) {
         LinearLayout form = Ui.column(activity);
         form.setPadding(Ui.dp(activity, 24), 0, Ui.dp(activity, 24), 0);
-        EditText name = Ui.input(activity, form, "Profile name");
-        name.setText("Clone Profile");
-        EditText count = Ui.input(activity, form, "How many profiles (1–500)");
+        EditText name = Ui.input(activity, form, activity.getString(R.string.profile_name));
+        name.setText(R.string.default_profile_name);
+        EditText count = Ui.input(activity, form, activity.getString(R.string.profile_quantity));
         count.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         count.setText("1");
         com.google.android.material.checkbox.MaterialCheckBox append = new com.google.android.material.checkbox.MaterialCheckBox(activity);
-        append.setText("Append -1, -2, … to names");
+        append.setText(R.string.append_numbering);
         append.setChecked(false);
         form.addView(append);
-        form.addView(Ui.text(activity, "Creates and starts the requested profiles. Names are kept exactly as entered unless numbering is selected."
-                + (app == null ? "" : "\nThen installs " + app.label + ". If installation fails, the new profile is kept."),
+        String help = activity.getString(R.string.create_profiles_help);
+        form.addView(Ui.text(activity, app == null ? help
+                : activity.getString(R.string.create_profiles_app_help, help, Ui.bidi(activity, app.label)),
                 14, R.color.muted, false));
         android.widget.ScrollView scroll = new android.widget.ScrollView(activity);
         scroll.addView(form);
-        AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle("New profile")
-                .setView(scroll).setNegativeButton("Cancel", null).setPositiveButton("Create", null).create();
+        AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(R.string.new_profile)
+                .setView(scroll).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.create, null).create();
         dialog.setOnShowListener(unused -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             String typed = name.getText().toString();
             List<String> names;
             try {
                 List<Clones.Clone> existing = new ArrayList<>();
-                if (activity.inventory == null) throw new IllegalArgumentException("Refresh the profile list first.");
+                if (activity.inventory == null) throw new IllegalArgumentException(activity.getString(R.string.refresh_profiles_first));
                 for (Inventory.Profile profile : activity.inventory.profiles) existing.add(profile.clone);
                 names = Clones.names(typed, Integer.parseInt(count.getText().toString()), append.isChecked(), existing);
-            } catch (IllegalArgumentException error) { count.setError(error.getMessage()); return; }
+            } catch (IllegalArgumentException error) { count.setError(activity.getString(R.string.invalid_profile_input, error.getMessage())); return; }
             dialog.dismiss();
-            activity.work("Creating profiles…", () -> {
+            activity.work(activity.getString(R.string.creating_profiles), () -> {
                 int made = 0;
                 for (String profileName : names) {
                     int id = Clones.create(profileName);
-                    if (id < 0) return new Shell.Result(-1, made + " profiles created.\n" + Clones.lastCreateError
-                            + "\nUse Export diagnostics from the main menu for details.");
+                    if (id < 0) return new Shell.Result(-1, activity.getResources().getQuantityString(
+                            R.plurals.create_profiles_failed, made, made, Clones.lastCreateError));
                     made++;
                     try {
                         long serial = Inventory.serial(activity, id);
@@ -140,7 +141,8 @@ final class AddClone {
                             });
                         }
                     } catch (RuntimeException error) {
-                        return new Shell.Result(-1, made + " profiles created. User " + id + " is kept, but setup failed.\n" + error);
+                        return new Shell.Result(-1, activity.getResources().getQuantityString(
+                                R.plurals.profile_setup_failed, made, made, Integer.toString(id), error.toString()));
                     }
                 }
                 return new Shell.Result(0, "");

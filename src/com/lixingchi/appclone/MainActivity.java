@@ -36,13 +36,13 @@ public final class MainActivity extends InventoryActivity {
         super.onCreate(state);
         profiles = state != null && state.getBoolean("profiles");
         LinearLayout root = Ui.column(this);
-        toolbar = Ui.toolbar(this, root, "App Clone", false);
+        toolbar = Ui.toolbar(this, root, getString(R.string.app_name), false);
         pendingReport = (String) getLastCustomNonConfigurationInstance();
-        toolbar.getMenu().add(0, 1, 0, "Settings");
-        toolbar.getMenu().add(0, 2, 1, "Show system apps").setCheckable(true).setChecked(Settings.systemApps(this));
-        toolbar.getMenu().add(0, 3, 2, "Refresh");
-        toolbar.getMenu().add(0, 4, 3, "Export diagnostics");
-        toolbar.getMenu().add(0, 5, 4, "Delete all profiles");
+        toolbar.getMenu().add(0, 1, 0, R.string.settings);
+        toolbar.getMenu().add(0, 2, 1, R.string.show_system_apps).setCheckable(true).setChecked(Settings.systemApps(this));
+        toolbar.getMenu().add(0, 3, 2, R.string.refresh);
+        toolbar.getMenu().add(0, 4, 3, R.string.export_diagnostics);
+        toolbar.getMenu().add(0, 5, 4, R.string.delete_all_profiles);
         toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case 1: startActivity(new Intent(this, SettingsActivity.class)); break;
@@ -63,7 +63,7 @@ public final class MainActivity extends InventoryActivity {
             pages[i] = new InventoryList(this);
             if (state != null) pages[i].restorePosition(state.getParcelable("position" + i));
             LinearLayout searchForm = Ui.column(this);
-            searches[i] = Ui.input(this, searchForm, i == 0 ? "Search apps or profiles" : "Search profiles or user IDs");
+            searches[i] = Ui.input(this, searchForm, getString(i == 0 ? R.string.search_apps_profiles : R.string.search_profiles_ids));
             com.google.android.material.textfield.TextInputLayout field =
                     (com.google.android.material.textfield.TextInputLayout) searchForm.getChildAt(0);
             field.setStartIconDrawable(R.drawable.ic_search);
@@ -83,7 +83,7 @@ public final class MainActivity extends InventoryActivity {
         ViewPager pager = new ViewPager(this);
         pager.setOffscreenPageLimit(1);
         root.addView(pager, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.addAction(this, root, profiles ? "New profile" : "Add clone app");
+        add = Ui.addAction(this, root, getString(profiles ? R.string.new_profile : R.string.add_clone_app));
         Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> {
             if (inventory == null) { refresh(); return; }
@@ -92,7 +92,7 @@ public final class MainActivity extends InventoryActivity {
         pager.setAdapter(new PagerAdapter() {
             public int getCount() { return pages.length; }
             public boolean isViewFromObject(View view, Object object) { return view == object; }
-            public CharSequence getPageTitle(int position) { return position == 0 ? "Apps" : "Profiles"; }
+            public CharSequence getPageTitle(int position) { return getString(position == 0 ? R.string.apps : R.string.profiles); }
             public Object instantiateItem(ViewGroup parent, int position) { parent.addView(pages[position]); return pages[position]; }
             public void destroyItem(ViewGroup parent, int position, Object object) { parent.removeView((View) object); }
         });
@@ -110,7 +110,7 @@ public final class MainActivity extends InventoryActivity {
 
     @Override void renderInventory() {
         toolbar.getMenu().findItem(2).setChecked(Settings.systemApps(this));
-        add.setText(profiles ? "New profile" : "Add clone app");
+        add.setText(profiles ? R.string.new_profile : R.string.add_clone_app);
         if (inventory == null) return;
         List<InventoryList.Item> rows = new ArrayList<>();
         String query = searches[profiles ? 1 : 0].getText().toString().toLowerCase(Locale.ROOT);
@@ -119,35 +119,39 @@ public final class MainActivity extends InventoryActivity {
             int running = 0;
             for (Inventory.Profile profile : inventory.profiles) {
                 if (profile.clone.running) running++;
-                if (!Inventory.location(profile).toLowerCase(Locale.ROOT).contains(query)) continue;
+                if (!Inventory.location(this, profile).toLowerCase(Locale.ROOT).contains(query)) continue;
                 shown++;
                 int count = 0;
                 for (Inventory.Entry entry : inventory.apps) if ((!entry.system || Settings.systemApps(this))
                         && profile.packages.contains(entry.app.pkg)) count++;
-                rows.add(InventoryList.Item.profile(profile, count));
+                rows.add(InventoryList.Item.profile(this, profile, count));
             }
-            status.setText(inventory.profiles.size() + " profiles · " + running + " running"
-                    + (Settings.systemApps(this) ? "" : " · System apps hidden"));
+            String summary = getString(R.string.profiles_summary,
+                    getResources().getQuantityString(R.plurals.profile_count, inventory.profiles.size(), inventory.profiles.size()),
+                    getResources().getQuantityString(R.plurals.running_count, running, running));
+            status.setText(Settings.systemApps(this) ? summary
+                    : getString(R.string.filtered_summary, summary, getString(R.string.system_apps_hidden)));
         } else {
             for (Inventory.Entry entry : inventory.apps) {
                 if (entry.system && !Settings.systemApps(this)) continue;
                 StringBuilder locations = new StringBuilder();
                 for (Inventory.Profile profile : entry.profiles) {
                     if (locations.length() > 0) locations.append("\n");
-                    locations.append(Inventory.location(profile));
+                    locations.append(Inventory.location(this, profile));
                 }
                 if (!(entry.app.label + " " + entry.app.pkg + " " + locations).toLowerCase(Locale.ROOT).contains(query)) continue;
                 shown++;
-                rows.add(InventoryList.Item.heading(entry));
-                for (Inventory.Profile profile : entry.profiles) rows.add(InventoryList.Item.instance(entry, profile, false));
+                rows.add(InventoryList.Item.heading(this, entry));
+                for (Inventory.Profile profile : entry.profiles) rows.add(InventoryList.Item.instance(this, entry, profile, false));
             }
-            status.setText(shown + " cloned apps · " + (Settings.systemApps(this) ? "Including system apps" : "System apps hidden"));
+            status.setText(getString(R.string.filtered_summary,
+                    getResources().getQuantityString(R.plurals.cloned_app_count, shown, shown),
+                    getString(Settings.systemApps(this) ? R.string.including_system_apps : R.string.system_apps_hidden)));
         }
         if (shown == 0) {
-            rows.add(InventoryList.Item.empty(query.isEmpty() ? (profiles ? "No profiles yet" : "No cloned apps yet") : "No matches",
-                    !query.isEmpty() ? "Try another name or user ID, or clear the search."
-                            : profiles ? "Create a profile to keep another set of app data."
-                            : "Add a clone app to get started. System apps are available from the menu."));
+            rows.add(InventoryList.Item.empty(getString(query.isEmpty() ? (profiles ? R.string.no_profiles : R.string.no_cloned_apps) : R.string.no_matches),
+                    getString(!query.isEmpty() ? R.string.search_help
+                            : profiles ? R.string.no_profiles_help : R.string.no_cloned_apps_help)));
         }
         body.show(rows);
     }
@@ -157,20 +161,21 @@ public final class MainActivity extends InventoryActivity {
         List<Inventory.Profile> targets = new ArrayList<>(inventory.profiles);
         LinearLayout form = Ui.column(this);
         form.setPadding(Ui.dp(this, 24), 0, Ui.dp(this, 24), 0);
-        form.addView(Ui.text(this, "Deletes all " + targets.size() + " clone profiles and ALL their app data, including hidden system apps. Main user and work/private profiles are untouched.",
+        form.addView(Ui.text(this, getResources().getQuantityString(R.plurals.delete_all_message, targets.size(), targets.size()),
                 16, R.color.muted, false));
-        EditText confirm = Ui.input(this, form, "Type DELETE to confirm");
+        String token = getString(R.string.delete_token);
+        EditText confirm = Ui.input(this, form, getString(R.string.delete_confirmation, token));
         ScrollView scroll = new ScrollView(this);
         scroll.addView(form);
-        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(this).setTitle("Delete all profiles?")
-                .setView(scroll).setNegativeButton("Cancel", null).setPositiveButton("Delete all", null).create();
+        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(this).setTitle(R.string.delete_all_question)
+                .setView(scroll).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.delete_all, null).create();
         dialog.setOnShowListener(unused -> dialog.getButton(-1).setOnClickListener(v -> {
-            if (!"DELETE".equals(confirm.getText().toString())) { confirm.setError("Type DELETE exactly"); return; }
+            if (!token.equals(confirm.getText().toString())) { confirm.setError(getString(R.string.delete_confirmation_error, token)); return; }
             dialog.dismiss();
-            work("Deleting profiles…", () -> {
+            work(getString(R.string.deleting_profiles), () -> {
                 for (Inventory.Profile profile : targets) {
                     Shell.Result result = Clones.remove(profile.clone.id, profile.serial);
-                    if (!result.ok()) return new Shell.Result(-1, "Stopped at " + Inventory.location(profile) + ". Earlier removals are not undone.\n" + result.out);
+                    if (!result.ok()) return new Shell.Result(-1, getString(R.string.delete_batch_failed, Inventory.location(this, profile), result.out));
                 }
                 return new Shell.Result(0, "");
             }, null);
@@ -179,7 +184,7 @@ public final class MainActivity extends InventoryActivity {
     }
 
     private void exportDiagnostics() {
-        work("Collecting diagnostics…", () -> { pendingReport = Diagnostics.collect(this); return new Shell.Result(0, ""); }, () -> {
+        work(getString(R.string.collecting_diagnostics), () -> { pendingReport = Diagnostics.collect(this); return new Shell.Result(0, ""); }, () -> {
             Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
                     .setType("text/plain").putExtra(Intent.EXTRA_TITLE, Diagnostics.fileName());
             startActivityForResult(intent, REQUEST_EXPORT);
@@ -191,18 +196,18 @@ public final class MainActivity extends InventoryActivity {
         if (requestCode != REQUEST_EXPORT) return;
         if (resultCode == RESULT_OK && data != null && data.getData() != null) {
             if (pendingReport == null) {
-                new MaterialAlertDialogBuilder(this).setTitle("Report no longer available")
-                        .setMessage("The app was restarted. Export diagnostics again to collect a fresh report.")
-                        .setPositiveButton("Close", null).show();
+                new MaterialAlertDialogBuilder(this).setTitle(R.string.report_unavailable)
+                        .setMessage(R.string.report_unavailable_help)
+                        .setPositiveButton(R.string.close, null).show();
                 return;
             }
             try (OutputStream out = getContentResolver().openOutputStream(data.getData())) {
                 if (out == null) throw new IllegalStateException("No output stream");
                 out.write(pendingReport.getBytes(StandardCharsets.UTF_8));
-                Toast.makeText(this, "Diagnostics saved", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.diagnostics_saved, Toast.LENGTH_LONG).show();
             } catch (Exception error) {
-                new MaterialAlertDialogBuilder(this).setTitle("Could not save diagnostics")
-                        .setMessage(error.toString()).setPositiveButton("Close", null).show();
+                new MaterialAlertDialogBuilder(this).setTitle(R.string.could_not_save_diagnostics)
+                        .setMessage(getString(R.string.error_details, error.toString())).setPositiveButton(R.string.close, null).show();
             }
         }
         pendingReport = null;

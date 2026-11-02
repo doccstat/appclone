@@ -52,7 +52,8 @@ def main():
                f'-PappcloneBuildDir={out / "gradle"}']
     if env.get('ANDROID_AAPT2'):
         command.append('-Pandroid.aapt2FromMavenOverride=' + env['ANDROID_AAPT2'])
-    command.append('testReleaseUnitTest' if self_check else 'lintRelease' if lint else 'assembleRelease')
+    command.extend(['testReleaseUnitTest', 'testDebugUnitTest'] if self_check
+                   else ['lintRelease' if lint else 'assembleRelease'])
     subprocess.run(command, check=True, cwd=ROOT, env=env)
     if self_check or lint:
         return

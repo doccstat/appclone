@@ -21,7 +21,7 @@ final class Shortcuts {
     static void pin(Context context, CloneApps.Target target) {
         ShortcutManager manager = (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
         if (manager == null || !manager.isRequestPinShortcutSupported()) {
-            Toast.makeText(context, "This launcher cannot pin shortcuts", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.cannot_pin_shortcuts, Toast.LENGTH_SHORT).show();
             return;
         }
         Bitmap icon = CloneApps.icon(context, target.app.pkg, target.userId);
@@ -34,7 +34,7 @@ final class Shortcuts {
                 drawable.setBounds(0, 0, 96, 96);
                 drawable.draw(new android.graphics.Canvas(icon));
             } catch (android.content.pm.PackageManager.NameNotFoundException error) {
-                Toast.makeText(context, "App icon unavailable; refresh and retry", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.app_icon_unavailable, Toast.LENGTH_SHORT).show();
                 return;
             }
         }

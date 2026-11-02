@@ -18,12 +18,12 @@ public final class AppDetailActivity extends InventoryActivity {
         super.onCreate(state);
         pkg = getIntent().getStringExtra(EXTRA_PKG);
         LinearLayout root = Ui.column(this);
-        toolbar = Ui.toolbar(this, root, "Clone app", true);
-        toolbar.getMenu().add("Refresh").setOnMenuItemClickListener(item -> { refresh(); return true; });
+        toolbar = Ui.toolbar(this, root, getString(R.string.clone_app), true);
+        toolbar.getMenu().add(R.string.refresh).setOnMenuItemClickListener(item -> { refresh(); return true; });
         useList(new InventoryList(this));
         if (state != null) body.restorePosition(state.getParcelable("listPosition"));
         root.addView(body, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.addAction(this, root, "Add another clone");
+        add = Ui.addAction(this, root, getString(R.string.add_another_clone));
         Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> {
             if (inventory == null) return;
@@ -38,12 +38,13 @@ public final class AppDetailActivity extends InventoryActivity {
         Inventory.Entry entry = inventory == null ? null : inventory.app(pkg);
         add.setEnabled(entry != null);
         if (entry == null) {
-            status.setText("No clones for this app");
-            rows.add(InventoryList.Item.empty("No clones to show", "Return to Apps to add a clone."));
+            status.setText(R.string.no_app_clones);
+            rows.add(InventoryList.Item.empty(getString(R.string.no_clones_to_show), getString(R.string.return_to_apps)));
         } else {
             toolbar.setTitle(entry.app.label);
-            status.setText(entry.profiles.size() + " clones · " + pkg);
-            for (Inventory.Profile profile : entry.profiles) rows.add(InventoryList.Item.instance(entry, profile, false));
+            status.setText(getString(R.string.app_summary,
+                    getResources().getQuantityString(R.plurals.clone_count, entry.profiles.size(), entry.profiles.size()), Ui.bidi(this, pkg)));
+            for (Inventory.Profile profile : entry.profiles) rows.add(InventoryList.Item.instance(this, entry, profile, false));
         }
         body.show(rows);
     }

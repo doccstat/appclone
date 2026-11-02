@@ -17,7 +17,7 @@ final class BootPolicy {
     static final String START = "start";
     static final String STOP = "stop";
     static final String[] VALUES = {SYSTEM, START, STOP};
-    static final String[] LABELS = {"System default", "Start all profiles", "Stop all profiles"};
+    static final int[] LABELS = {R.string.boot_system, R.string.boot_start, R.string.boot_stop};
     private final SharedPreferences prefs;
 
     BootPolicy(SharedPreferences prefs) {
@@ -37,16 +37,39 @@ final class BootPolicy {
         return prefs.getString("status", "No reboot action has run.");
     }
 
+    /** Render persisted state in the current locale; retain old reports verbatim. */
+    String status(Context context) {
+        synchronized (BootPolicy.class) {
+            switch (prefs.getString("status_kind", "legacy")) {
+                case "saved": return context.getString(R.string.boot_saved);
+                case "save_failed": return context.getString(R.string.boot_save_retry);
+                case "queued": return context.getString(R.string.boot_queued);
+                case "failed": return context.getString(R.string.boot_failed, prefs.getString("status_error", ""));
+                case "summary":
+                    int remaining = prefs.getStringSet("pending", java.util.Collections.emptySet()).size();
+                    int failed = prefs.getInt("failed", 0);
+                    String summary = context.getString(R.string.boot_summary,
+                            context.getString(START.equals(mode()) ? R.string.boot_start : R.string.boot_stop),
+                            prefs.getInt("total", 0) - remaining - failed, failed, remaining);
+                    String error = prefs.getString("error", "");
+                    return error.isEmpty() ? summary : context.getString(R.string.boot_last_failure, summary, error);
+                default:
+                    String legacy = prefs.getString("status", null);
+                    return legacy == null ? context.getString(R.string.boot_not_run) : context.getString(R.string.boot_report, legacy);
+            }
+        }
+    }
+
     void save(String mode) {
         if (!Arrays.asList(VALUES).contains(mode)) throw new IllegalArgumentException("Unknown reboot policy");
         synchronized (BootPolicy.class) {
             String previous = mode();
             long run = prefs.getLong("run", 0);
             if (!prefs.edit().putString("mode", mode).putLong("run", run + 1)
-                    .putString("status", "Saved. Applies after the next reboot and unlock.").commit()) {
+                    .putString("status_kind", "saved").putString("status", "Saved. Applies after the next reboot and unlock.").commit()) {
                 // Failed commits still update the in-memory preferences; restore the prior choice.
                 prefs.edit().putString("mode", previous).putLong("run", run)
-                        .putString("status", "Could not save reboot setting. Select it again to retry.").commit();
+                        .putString("status_kind", "save_failed").putString("status", "Could not save reboot setting. Select it again to retry.").commit();
                 throw new IllegalStateException("Could not save reboot setting.");
             }
         }
@@ -58,7 +81,7 @@ final class BootPolicy {
             long run = prefs.getLong("run", 0) + 1;
             store(prefs.edit().putLong("run", run).remove("pending").putBoolean("finished", false)
                     .putInt("total", 0).putInt("failed", 0).putString("error", "")
-                    .putString("status", "Reboot action queued; waiting for Android to run it."));
+                    .putString("status_kind", "queued").putString("status", "Reboot action queued; waiting for Android to run it."));
             return run;
         }
     }
@@ -73,6 +96,7 @@ final class BootPolicy {
     void fail(long run, String mode, String message) {
         synchronized (BootPolicy.class) {
             if (current(run, mode)) store(prefs.edit().putBoolean("finished", true)
+                    .putString("status_kind", "failed").putString("status_error", message)
                     .putString("status", "Reboot action failed: " + message));
         }
     }
@@ -112,12 +136,13 @@ final class BootPolicy {
                 String error = result.ok() ? prefs.getString("error", "")
                         : "User " + id + ": " + (result.trim().isEmpty() ? "Root command failed." : result.trim());
                 store(prefs.edit().putStringSet("pending", pending).putInt("failed", failed)
-                        .putString("error", error).putString("status", summary(mode, pending.size(), failed, error)));
+                        .putString("error", error).putString("status_kind", "summary")
+                        .putString("status", summary(mode, pending.size(), failed, error)));
             }
         }
         synchronized (BootPolicy.class) {
             if (current(run, mode)) {
-                store(prefs.edit().putBoolean("finished", true).putString("status", summary(mode, 0,
+                store(prefs.edit().putBoolean("finished", true).putString("status_kind", "summary").putString("status", summary(mode, 0,
                         prefs.getInt("failed", 0), prefs.getString("error", ""))));
             }
         }

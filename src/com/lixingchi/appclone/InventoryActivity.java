@@ -29,9 +29,9 @@ abstract class InventoryActivity extends AppCompatActivity {
         body = list;
         status = list.status;
         status.setOnClickListener(v -> {
-            if (readError != null) new MaterialAlertDialogBuilder(this).setTitle("Could not refresh")
-                    .setMessage(readError).setNegativeButton("Close", null)
-                    .setPositiveButton("Retry", (dialog, which) -> refresh()).show();
+            if (readError != null) new MaterialAlertDialogBuilder(this).setTitle(R.string.could_not_refresh)
+                    .setMessage(getString(R.string.error_details, readError)).setNegativeButton(R.string.close, null)
+                    .setPositiveButton(R.string.retry, (dialog, which) -> refresh()).show();
         });
     }
 
@@ -55,8 +55,8 @@ abstract class InventoryActivity extends AppCompatActivity {
                 readError = (failure.getCause() == null ? failure : failure.getCause()).toString();
                 showReadState();
                 if (inventory != null) com.google.android.material.snackbar.Snackbar.make(body,
-                        "Refresh failed. Previous list kept.", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
-                        .setAction("Retry", v -> refresh()).show();
+                        R.string.refresh_failed_kept, com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry, v -> refresh()).show();
             }
         }));
     }
@@ -84,9 +84,9 @@ abstract class InventoryActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) return;
                 progress.dismiss();
-                if (!result.ok()) new MaterialAlertDialogBuilder(this).setTitle("Action failed")
-                        .setMessage(result.trim().isEmpty() ? "Root command failed." : result.trim())
-                        .setPositiveButton("Close", null).show();
+                if (!result.ok()) new MaterialAlertDialogBuilder(this).setTitle(R.string.action_failed)
+                        .setMessage(result.trim().isEmpty() ? getString(R.string.root_command_failed) : getString(R.string.error_details, result.trim()))
+                        .setPositiveButton(R.string.close, null).show();
                 else if (success != null) success.run();
                 if (refreshAfter && !isFinishing()) read(false);
             });
@@ -104,11 +104,10 @@ abstract class InventoryActivity extends AppCompatActivity {
         status.setFocusable(readError != null);
         status.setContentDescription(null);
         if (readError != null) {
-            status.setText(inventory == null ? "Could not read clone apps. Tap for details."
-                    : "Refresh failed; showing previous list. Tap for details.");
+            status.setText(inventory == null ? R.string.read_failed_details : R.string.refresh_failed_details);
             status.setContentDescription(status.getText() + " " + readError);
         } else if (request != null && !request.isDone()) {
-            status.setText(inventory == null ? "Reading clone apps…" : "Refreshing… Showing previous list.");
+            status.setText(inventory == null ? R.string.reading_clone_apps : R.string.refreshing_kept);
         }
     }
 
