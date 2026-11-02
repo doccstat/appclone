@@ -35,12 +35,24 @@ public final class SettingsActivity extends AppCompatActivity {
 
         LinearLayout screen = Ui.column(this);
         Ui.applyInsets(screen, 0, 0, 0, 0);
-        Ui.toolbar(this, screen, "Settings", true);
+        Ui.toolbar(this, screen, getString(R.string.settings), true);
         LinearLayout root = Ui.column(this);
         root.setPadding(Ui.dp(this, 20), Ui.dp(this, 8), Ui.dp(this, 20), Ui.dp(this, 24));
-        root.addView(Ui.text(this, "Material You · Wallpaper colours and system light/dark mode", 14, R.color.muted, false));
+        root.addView(Ui.text(this, getString(R.string.appearance_help), 14, R.color.muted, false));
+        android.widget.Button language = Ui.quiet(this, getString(R.string.app_language));
+        language.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS,
+                        Uri.parse("package:" + getPackageName())));
+            } catch (android.content.ActivityNotFoundException error) {
+                new MaterialAlertDialogBuilder(this).setMessage(R.string.language_settings_unavailable)
+                        .setPositiveButton(R.string.close, null).show();
+            }
+        });
+        root.addView(language);
+        root.addView(Ui.text(this, getString(R.string.app_language_help), 13, R.color.muted, false));
 
-        root.addView(Ui.label(this, "After reboot"), Ui.margins(this, 0, 26, 0, 8));
+        root.addView(Ui.label(this, getString(R.string.after_reboot)), Ui.margins(this, 0, 26, 0, 8));
         BootPolicy boot = BootPolicy.get(this);
         RadioGroup bootChoices = new RadioGroup(this);
         for (int i = 0; i < BootPolicy.VALUES.length; i++) {
@@ -51,12 +63,8 @@ public final class SettingsActivity extends AppCompatActivity {
             if (BootPolicy.VALUES[i].equals(boot.mode())) bootChoices.check(choice.getId());
         }
         root.addView(bootChoices);
-        root.addView(Ui.text(this,
-                "Applies once, at least 10 seconds after the main user unlocks after reboot; Android may delay it. "
-                        + "System default leaves profiles alone. Stop all preserves data but pauses notifications. "
-                        + "Root must already be granted and available at boot. Start and shortcuts still work afterward.",
-                13, R.color.muted, false));
-        bootStatus = Ui.text(this, boot.status(), 12, R.color.muted, false);
+        root.addView(Ui.text(this, getString(R.string.boot_help), 13, R.color.muted, false));
+        bootStatus = Ui.text(this, boot.status(this), 12, R.color.muted, false);
         root.addView(bootStatus, Ui.margins(this, 0, 8, 0, 0));
         bootChoices.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId < 1 || checkedId > BootPolicy.VALUES.length) return;
@@ -66,40 +74,35 @@ public final class SettingsActivity extends AppCompatActivity {
                 JobScheduler jobs = getSystemService(JobScheduler.class);
                 if (jobs != null) jobs.cancel(BootReceiver.JOB_ID);
             } catch (RuntimeException error) {
-                new MaterialAlertDialogBuilder(this).setTitle("Could not save reboot setting")
-                        .setMessage(error.toString()).setPositiveButton("Close", null).show();
-                bootStatus.setText("Reboot setting could not be saved. Select it again to retry.");
+                new MaterialAlertDialogBuilder(this).setTitle(R.string.boot_save_failed)
+                        .setMessage(getString(R.string.error_details, error.toString())).setPositiveButton(R.string.close, null).show();
+                bootStatus.setText(R.string.boot_save_retry);
                 group.clearCheck();
                 return;
             }
-            bootStatus.setText(boot.status());
+            bootStatus.setText(boot.status(this));
         });
 
-        root.addView(Ui.label(this, "Shortcut labels"), Ui.margins(this, 0, 26, 0, 8));
+        root.addView(Ui.label(this, getString(R.string.shortcut_labels)), Ui.margins(this, 0, 26, 0, 8));
 
         prefix = new MaterialSwitch(this);
-        prefix.setContentDescription("Prefix clone app names");
+        prefix.setContentDescription(getString(R.string.prefix_app_names));
         prefix.setChecked(Settings.prefix(this));
         LinearLayout prefixRow = Ui.row(this);
         prefixRow.setPadding(0, Ui.dp(this, 8), 0, Ui.dp(this, 8));
         LinearLayout prefixText = Ui.column(this);
-        prefixText.addView(Ui.text(this, "Prefix clone app names", 16, R.color.ink, false));
-        prefixText.addView(Ui.text(this,
-                "Put the clone id before the app name, so cloned shortcuts are distinguishable.",
-                13, R.color.muted, false));
+        prefixText.addView(Ui.text(this, getString(R.string.prefix_app_names), 16, R.color.ink, false));
+        prefixText.addView(Ui.text(this, getString(R.string.prefix_help), 13, R.color.muted, false));
         prefixRow.addView(prefixText, Ui.weight(1));
         prefixRow.addView(prefix);
         root.addView(prefixRow);
 
         root.addView(Ui.divider(this));
 
-        root.addView(Ui.label(this, "Format"), Ui.margins(this, 0, 18, 0, 6));
-        format = Ui.input(this, root, "Shortcut label format");
+        root.addView(Ui.label(this, getString(R.string.format)), Ui.margins(this, 0, 18, 0, 6));
+        format = Ui.input(this, root, getString(R.string.shortcut_format));
         format.setText(Settings.format(this));
-        root.addView(Ui.text(this,
-                "Tokens: {id} clone user id \u00b7 {name} app name \u00b7 {clone} clone name. "
-                        + "Colons and other characters are allowed.",
-                12, R.color.muted, false), Ui.margins(this, 0, 6, 0, 0));
+        root.addView(Ui.text(this, getString(R.string.format_tokens), 12, R.color.muted, false), Ui.margins(this, 0, 6, 0, 0));
         tokenRow = new com.google.android.material.chip.ChipGroup(this);
         tokenRow.setChipSpacingHorizontal(Ui.dp(this, 8));
         tokenRow.addView(tokenButton("{id}"));
@@ -111,32 +114,26 @@ public final class SettingsActivity extends AppCompatActivity {
 
         root.addView(Ui.divider(this, 0, 20));
 
-        root.addView(Ui.label(this, "Automation"), Ui.margins(this, 0, 18, 0, 8));
+        root.addView(Ui.label(this, getString(R.string.automation)), Ui.margins(this, 0, 18, 0, 8));
 
         autoPin = new MaterialSwitch(this);
-        autoPin.setContentDescription("Auto-pin new clone apps");
+        autoPin.setContentDescription(getString(R.string.auto_pin));
         autoPin.setChecked(Settings.autoPin(this));
         LinearLayout autoRow = Ui.row(this);
         autoRow.setPadding(0, Ui.dp(this, 8), 0, Ui.dp(this, 8));
         LinearLayout autoText = Ui.column(this);
-        autoText.addView(Ui.text(this, "Auto-pin new clone apps", 16, R.color.ink, false));
-        autoText.addView(Ui.text(this,
-                "Request a home-screen shortcut as each app is added to a clone. "
-                        + "The launcher still asks you to confirm.",
-                13, R.color.muted, false));
+        autoText.addView(Ui.text(this, getString(R.string.auto_pin), 16, R.color.ink, false));
+        autoText.addView(Ui.text(this, getString(R.string.auto_pin_help), 13, R.color.muted, false));
         autoRow.addView(autoText, Ui.weight(1));
         autoRow.addView(autoPin);
         root.addView(autoRow);
 
-        root.addView(Ui.text(this,
-                "Labels apply to shortcuts created from now on. Re-pin an existing shortcut "
-                        + "to update its name.",
-                12, R.color.muted, false), Ui.margins(this, 0, 20, 0, 0));
+        root.addView(Ui.text(this, getString(R.string.shortcut_labels_help), 12, R.color.muted, false), Ui.margins(this, 0, 20, 0, 0));
 
         root.addView(Ui.divider(this, 0, 24));
-        root.addView(Ui.label(this, "About"), Ui.margins(this, 0, 18, 0, 6));
-        root.addView(Ui.text(this, "App Clone " + versionName(), 15, R.color.ink, false));
-        TextView source = Ui.text(this, "Source code \u00b7 github.com/doccstat/appclone",
+        root.addView(Ui.label(this, getString(R.string.about)), Ui.margins(this, 0, 18, 0, 6));
+        root.addView(Ui.text(this, getString(R.string.app_version, versionName()), 15, R.color.ink, false));
+        TextView source = Ui.text(this, getString(R.string.source_code),
                 13, R.color.accent, false);
         source.setPadding(0, Ui.dp(this, 12), 0, Ui.dp(this, 12));
         source.setMinHeight(Ui.dp(this, 48));
@@ -180,7 +177,7 @@ public final class SettingsActivity extends AppCompatActivity {
 
     @Override protected void onResume() {
         super.onResume();
-        bootStatus.setText(BootPolicy.get(this).status());
+        bootStatus.setText(BootPolicy.get(this).status(this));
     }
 
     private com.google.android.material.chip.Chip tokenButton(final String token) {
@@ -188,7 +185,7 @@ public final class SettingsActivity extends AppCompatActivity {
         button.setText(token);
         button.setCheckable(false);
         button.setEnsureMinTouchTargetSize(true);
-        button.setContentDescription("Insert " + token + " into shortcut format");
+        button.setContentDescription(getString(R.string.insert_format_token, Ui.bidi(this, token)));
         button.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
                 int start = Math.max(0, format.getSelectionStart());
@@ -220,7 +217,8 @@ public final class SettingsActivity extends AppCompatActivity {
     }
 
     private void updatePreview() {
-        preview.setText("Preview: "
-                + Labels.format(format.getText().toString(), 12, "Chrome", "Clone 12"));
+        preview.setText(getString(R.string.label_preview,
+                Ui.bidi(this, Labels.format(format.getText().toString(), 12,
+                        getString(R.string.preview_app_name), getString(R.string.preview_profile_name)))));
     }
 }

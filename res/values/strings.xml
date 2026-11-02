@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Product name, literal confirmation token and saved-name examples are not translated. -->
+    <string name="app_name" translatable="false">App Clone</string>
+    <string name="delete_token" translatable="false">DELETE</string>
+    <string name="default_profile_name" translatable="false">Clone Profile</string>
+    <string name="preview_app_name" translatable="false">Chrome</string>
+    <string name="preview_profile_name" translatable="false">Clone 12</string>
+    <string name="module_description">Raise AOSP clone-profile creation and running-user limits on AOSP-derived firmware. Scope: system.</string>
+
+    <string name="apps">Apps</string>
+    <string name="profiles">Profiles</string>
+    <string name="profile">Profile</string>
+    <string name="clone_app">Clone app</string>
+    <string name="settings">Settings</string>
+    <string name="back">Back</string>
+    <string name="open">Open</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="retry">Retry</string>
+    <string name="refresh">Refresh</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="create">Create</string>
+    <string name="delete">Delete</string>
+    <string name="stop">Stop</string>
+    <string name="show_system_apps">Show system apps</string>
+    <string name="system_apps_hidden">System apps hidden</string>
+    <string name="including_system_apps">Including system apps</string>
+    <string name="export_diagnostics">Export diagnostics</string>
+    <string name="new_profile">New profile</string>
+    <string name="add_clone_app">Add clone app</string>
+    <string name="add_another_clone">Add another clone</string>
+    <string name="add_app">Add app</string>
+    <string name="add_app_to_profile">Add app to profile</string>
+    <string name="app_details">App details</string>
+    <string name="app_actions">App actions</string>
+    <string name="profile_actions">Profile actions</string>
+    <string name="view_profile">View profile</string>
+    <string name="view_apps">View apps</string>
+    <string name="rename_profile">Rename profile</string>
+    <string name="delete_profile">Delete profile</string>
+    <string name="delete_all_profiles">Delete all profiles</string>
+    <string name="start_profile">Start profile</string>
+    <string name="stop_profile">Stop profile</string>
+    <string name="start_stop_profile">Start / stop profile</string>
+    <string name="running">Running</string>
+    <string name="stopped">Stopped</string>
+    <string name="profile_running">Profile running</string>
+    <string name="profile_stopped">Profile stopped</string>
+    <string name="disabled_profile_running">Disabled · Profile running</string>
+    <string name="disabled_profile_stopped">Disabled · Profile stopped</string>
+    <!-- IDs/serials are identifiers, not quantities: preserve their supplied digits. -->
+    <string name="user_id">User <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
+    <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · User <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
+    <string name="profile_status">User %1$s · %2$s · %3$s</string>
+    <string name="profile_picker_item">%1$s · %2$s</string>
+    <string name="actions_for">Actions for %1$s</string>
+    <string name="app_actions_in_profile">Actions for %1$s in %2$s</string>
+    <string name="open_in_profile">Open %1$s in %2$s</string>
+    <string name="view_apps_in_profile">View apps in %1$s · %2$s</string>
+    <!-- Whole summary templates let translations reorder independently pluralized counts. -->
+    <string name="profiles_summary">%1$s · %2$s</string>
+    <string name="filtered_summary">%1$s · %2$s</string>
+    <string name="app_summary">%1$s · %2$s</string>
+    <plurals name="clone_count">
+        <item quantity="one">%1$d clone</item>
+        <item quantity="other">%1$d clones</item>
+    </plurals>
+    <plurals name="profile_count">
+        <item quantity="one">%1$d profile</item>
+        <item quantity="other">%1$d profiles</item>
+    </plurals>
+    <plurals name="running_count">
+        <item quantity="one">%1$d running</item>
+        <item quantity="other">%1$d running</item>
+    </plurals>
+    <plurals name="app_count">
+        <item quantity="one">%1$d app</item>
+        <item quantity="other">%1$d apps</item>
+    </plurals>
+    <plurals name="cloned_app_count">
+        <item quantity="one">%1$d cloned app</item>
+        <item quantity="other">%1$d cloned apps</item>
+    </plurals>
+    <string name="search_apps_profiles">Search apps or profiles</string>
+    <string name="search_profiles_ids">Search profiles or user IDs</string>
+    <string name="search_apps_packages">Search apps or packages</string>
+    <string name="no_available_apps">No available apps (system filter is in the menu)</string>
+    <string name="no_profiles">No profiles yet</string>
+    <string name="no_cloned_apps">No cloned apps yet</string>
+    <string name="no_matches">No matches</string>
+    <string name="search_help">Try another name or user ID, or clear the search.</string>
+    <string name="no_profiles_help">Create a profile to keep another set of app data.</string>
+    <string name="no_cloned_apps_help">Add a clone app to get started. System apps are available from the menu.</string>
+    <string name="no_app_clones">No clones for this app</string>
+    <string name="no_clones_to_show">No clones to show</string>
+    <string name="return_to_apps">Return to Apps to add a clone.</string>
+    <string name="profile_replaced">Profile removed or replaced. Return to Profiles and refresh.</string>
+    <string name="profile_unavailable">Profile unavailable</string>
+    <string name="return_to_profiles">Return to Profiles and refresh before taking any action.</string>
+    <string name="no_apps_to_show">No apps to show</string>
+    <string name="no_apps_help">Add an app or show system apps from the menu.</string>
+
+    <string name="reading_available_apps">Reading available apps…</string>
+    <string name="add_app_to">Add %1$s to…</string>
+    <string name="add_clone_question">Add clone?</string>
+    <string name="add_clone_message">%1$s\n%2$s\n\nUses the existing profile. Other apps and the profile\'s running state are unchanged.</string>
+    <string name="adding_clone">Adding clone…</string>
+    <string name="profile_name">Profile name</string>
+    <string name="profile_quantity">How many profiles (1–500)</string>
+    <string name="append_numbering">Append -1, -2, … to names</string>
+    <string name="create_profiles_help">Creates and starts the requested profiles. Names are kept exactly as entered unless numbering is selected.</string>
+    <string name="create_profiles_app_help">%1$s\nThen installs %2$s. If installation fails, the new profile is kept.</string>
+    <string name="refresh_profiles_first">Refresh the profile list first.</string>
+    <string name="invalid_profile_input">Use a nonempty, single-line name without NUL characters and a count from 1 to 500. Numbering must fit within the supported range.\n\nDetails: %1$s</string>
+    <string name="invalid_profile_name">Use a nonempty, single-line name without NUL characters, at most 100 UTF-16 code units (emoji may count as two).</string>
+    <string name="creating_profiles">Creating profiles…</string>
+    <plurals name="create_profiles_failed">
+        <item quantity="one">%1$d profile created.\n%2$s\nUse Export diagnostics from the main menu for details.</item>
+        <item quantity="other">%1$d profiles created.\n%2$s\nUse Export diagnostics from the main menu for details.</item>
+    </plurals>
+    <plurals name="profile_setup_failed">
+        <item quantity="one">%1$d profile created. User %2$s is kept, but setup failed.\n%3$s</item>
+        <item quantity="other">%1$d profiles created. User %2$s is kept, but setup failed.\n%3$s</item>
+    </plurals>
+    <string name="rename_profile_help">User %1$s · Serial %2$s\nChanges the profile name for all its apps. Data and running state stay unchanged. Existing shortcut labels stay unchanged; re-pin them if you want new labels.</string>
+    <string name="renaming_profile">Renaming profile…</string>
+    <string name="delete_profile_question">Delete profile?</string>
+    <string name="delete_profile_message">%1$s\n\nDeletes ALL app data in this profile, including system apps hidden by the filter. Other profiles and the main user are untouched.</string>
+    <string name="deleting_profile">Deleting profile…</string>
+    <string name="delete_all_question">Delete all profiles?</string>
+    <plurals name="delete_all_message">
+        <item quantity="one">Deletes %1$d clone profile and ALL its app data, including hidden system apps. Main user and work/private profiles are untouched.</item>
+        <item quantity="other">Deletes all %1$d clone profiles and ALL their app data, including hidden system apps. Main user and work/private profiles are untouched.</item>
+    </plurals>
+    <!-- The token is supplied from delete_token. Never translate or change it. -->
+    <string name="delete_confirmation">Type <xliff:g id="token" example="DELETE">%1$s</xliff:g> to confirm</string>
+    <string name="delete_confirmation_error">Type <xliff:g id="token" example="DELETE">%1$s</xliff:g> exactly</string>
+    <string name="delete_all">Delete all</string>
+    <string name="deleting_profiles">Deleting profiles…</string>
+    <string name="delete_batch_failed">Stopped at %1$s. Earlier removals are not undone.\n%2$s</string>
+
+    <string name="enable_app">Enable app</string>
+    <string name="disable_app_freeze">Disable app (freeze)</string>
+    <string name="disable_app">Disable app</string>
+    <string name="manifest_default_state">Use manifest default state</string>
+    <string name="manifest_default">Use manifest default</string>
+    <string name="force_stop_app">Force stop app</string>
+    <string name="pin_shortcut">Pin shortcut</string>
+    <string name="remove_from_profile">Remove from this profile</string>
+    <string name="remove_clone_app">Remove clone app</string>
+    <string name="disable_app_help">Stops this app and its notifications until you explicitly enable it. Data is kept. Other apps in this profile keep running.</string>
+    <string name="enable_app_help">Explicitly enables this app. This does not automatically start a stopped profile.</string>
+    <string name="manifest_default_help">Removes the enabled/disabled override and uses the app manifest\'s default. It does not reconstruct a previous override.</string>
+    <string name="force_stop_help">Stops this app now without disabling it or deleting data. Notifications may stop until it is opened again. This is not a permanent freeze.</string>
+    <string name="remove_clone_app_help">Deletes this app\'s data in this profile. The profile, its other apps and the main user\'s copy are kept.</string>
+    <string name="system_app_warning">%1$s\n\nSystem app: changing it can break other apps in this profile.</string>
+    <string name="app_action_message">%1$s\n%2$s\n\n%3$s</string>
+    <string name="confirm_action">%1$s?</string>
+    <string name="action_progress">%1$s…</string>
+    <string name="stopping_profile">Stopping profile…</string>
+    <string name="starting_profile">Starting profile…</string>
+    <string name="stop_profile_question">Stop profile?</string>
+    <string name="stop_profile_message">%1$s\n\nStops ALL apps and notifications in this profile, keeping data. Opening an app starts it again. Reboot behavior is controlled in Settings.</string>
+
+    <string name="background_activity">Background activity</string>
+    <string name="reading_background">Reading background setting…</string>
+    <string name="background_none">None</string>
+    <string name="background_allowed">Allowed (Android-managed)</string>
+    <string name="background_mode_restricted">Restricted</string>
+    <string name="background_denied">Denied</string>
+    <string name="background_foreground">Foreground only</string>
+    <!-- RUN_ANY_IN_BACKGROUND in the help text is an Android API identifier. -->
+    <string name="background_current">Current: %1$s</string>
+    <string name="background_uid_override">UID-wide override: %1$s (managed elsewhere)</string>
+    <string name="background_no_previous">No previous setting saved.</string>
+    <string name="background_previous">Previous: %1$s</string>
+    <string name="background_help">Restrict limits Android background activity (RUN_ANY_IN_BACKGROUND). Notifications and jobs may be delayed. It does not stop this profile, disable the app or freeze its processes. No setting changes until you choose an action.</string>
+    <string name="keep_current">Keep current</string>
+    <string name="restore_previous">Restore previous</string>
+    <string name="restoring_background">Restoring background setting…</string>
+    <string name="background_restored">Previous background setting restored</string>
+    <string name="forget_saved_setting">Forget saved setting</string>
+    <string name="forget_previous_question">Forget previous setting?</string>
+    <string name="forget_previous_message">%1$s\n\nAndroid\'s current setting stays unchanged. This removes only App Clone\'s restore record; Restore will no longer be available.</string>
+    <string name="forget">Forget</string>
+    <string name="forgetting_setting">Forgetting saved setting…</string>
+    <string name="restrict">Restrict</string>
+    <string name="restricting_background">Restricting background activity…</string>
+    <string name="background_restricted">Background restricted; previous setting saved</string>
+
+    <string name="could_not_refresh">Could not refresh</string>
+    <string name="refresh_failed_kept">Refresh failed. Previous list kept.</string>
+    <string name="action_failed">Action failed</string>
+    <string name="root_command_failed">Root command failed.</string>
+    <!-- Technical output stays verbatim; do not translate package names or shell output. -->
+    <string name="error_details">Details:\n%1$s</string>
+    <string name="read_failed_details">Could not read clone apps. Tap for details.</string>
+    <string name="refresh_failed_details">Refresh failed; showing previous list. Tap for details.</string>
+    <string name="reading_clone_apps">Reading clone apps…</string>
+    <string name="refreshing_kept">Refreshing… Showing previous list.</string>
+    <string name="opening_clone_app">Opening clone app…</string>
+    <string name="could_not_open_clone_app">Could not open clone app</string>
+    <string name="cannot_pin_shortcuts">This launcher cannot pin shortcuts</string>
+    <string name="app_icon_unavailable">App icon unavailable; refresh and retry</string>
+    <string name="collecting_diagnostics">Collecting diagnostics…</string>
+    <string name="report_unavailable">Report no longer available</string>
+    <string name="report_unavailable_help">The app was restarted. Export diagnostics again to collect a fresh report.</string>
+    <string name="diagnostics_saved">Diagnostics saved</string>
+    <string name="could_not_save_diagnostics">Could not save diagnostics</string>
+
+    <string name="appearance_help">Material You · Wallpaper colours and system light/dark mode</string>
+    <string name="app_language">App language</string>
+    <string name="app_language_help">Uses your system language unless you choose another in Android\'s app language settings. Untranslated text falls back to English.</string>
+    <string name="language_settings_unavailable">Android\'s app language settings are unavailable on this device.</string>
+    <string name="after_reboot">After reboot</string>
+    <string name="boot_system">System default</string>
+    <string name="boot_start">Start all profiles</string>
+    <string name="boot_stop">Stop all profiles</string>
+    <string name="boot_help">Applies once, at least 10 seconds after the main user unlocks after reboot; Android may delay it. System default leaves profiles alone. Stop all preserves data but pauses notifications. Root must already be granted and available at boot. Start and shortcuts still work afterward.</string>
+    <string name="boot_save_failed">Could not save reboot setting</string>
+    <string name="boot_save_retry">Reboot setting could not be saved. Select it again to retry.</string>
+    <string name="boot_saved">Saved. Applies after the next reboot and unlock.</string>
+    <string name="boot_queued">Reboot action queued; waiting for Android to run it.</string>
+    <string name="boot_failed">Reboot action failed:\n%1$s</string>
+    <string name="boot_not_run">No reboot action has run.</string>
+    <string name="boot_summary">%1$s\nSucceeded: %2$d · Failed: %3$d · Pending: %4$d</string>
+    <string name="boot_last_failure">%1$s\nLast failure: %2$s</string>
+    <string name="boot_report">Last reboot report (technical details):\n%1$s</string>
+    <string name="shortcut_labels">Shortcut labels</string>
+    <string name="prefix_app_names">Prefix clone app names</string>
+    <string name="prefix_help">Put the clone id before the app name, so cloned shortcuts are distinguishable.</string>
+    <string name="format">Format</string>
+    <string name="shortcut_format">Shortcut label format</string>
+    <string name="format_tokens">Tokens: <xliff:g id="id_token">{id}</xliff:g> clone user id · <xliff:g id="name_token">{name}</xliff:g> app name · <xliff:g id="clone_token">{clone}</xliff:g> clone name. Colons and other characters are allowed.</string>
+    <string name="insert_format_token">Insert <xliff:g id="token" example="{id}">%1$s</xliff:g> into shortcut format</string>
+    <string name="label_preview">Preview: %1$s</string>
+    <string name="automation">Automation</string>
+    <string name="auto_pin">Auto-pin new clone apps</string>
+    <string name="auto_pin_help">Request a home-screen shortcut as each app is added to a clone. The launcher still asks you to confirm.</string>
+    <string name="shortcut_labels_help">Labels apply to shortcuts created from now on. Re-pin an existing shortcut to update its name.</string>
+    <string name="about">About</string>
+    <string name="app_version">App Clone %1$s</string>
+    <string name="source_code">Source code · <xliff:g id="url">github.com/doccstat/appclone</xliff:g></string>
+</resources>

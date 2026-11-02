@@ -10,7 +10,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 final class AppControls {
     static void bind(InventoryActivity activity, Inventory.Entry entry, Inventory.Profile profile,
                      Button open, View more) {
-        open.setContentDescription("Open " + entry.app.label + " in " + Inventory.location(profile));
+        open.setContentDescription(activity.getString(R.string.open_in_profile, Ui.bidi(activity, entry.app.label), Inventory.location(activity, profile)));
         open.setEnabled(!profile.disabled.contains(entry.app.pkg));
         open.setOnClickListener(v -> activity.startActivity(new Intent(activity, LaunchActivity.class)
                 .putExtra(LaunchActivity.EXTRA_USER, profile.clone.id)
@@ -18,22 +18,22 @@ final class AppControls {
                 .putExtra(LaunchActivity.EXTRA_PKG, entry.app.pkg)
                 .putExtra(LaunchActivity.EXTRA_ACTIVITY, entry.app.activity)
                 .putExtra(LaunchActivity.EXTRA_LABEL, entry.app.label)));
-        more.setContentDescription("Actions for " + entry.app.label + " in " + Inventory.location(profile));
-        more.setTooltipText("App actions");
+        more.setContentDescription(activity.getString(R.string.app_actions_in_profile, Ui.bidi(activity, entry.app.label), Inventory.location(activity, profile)));
+        more.setTooltipText(activity.getString(R.string.app_actions));
         more.setOnClickListener(v -> menu(activity, entry, profile, more).show());
     }
 
     static PopupMenu menu(InventoryActivity activity, Inventory.Entry entry, Inventory.Profile profile, View anchor) {
         PopupMenu menu = new PopupMenu(activity, anchor);
         boolean disabled = profile.disabled.contains(entry.app.pkg);
-        menu.getMenu().add(0, 1, 0, disabled ? "Enable app" : "Disable app (freeze)");
-        menu.getMenu().add(0, 2, 1, "Use manifest default state");
-        menu.getMenu().add(0, 3, 2, "Force stop app");
-        menu.getMenu().add(0, 4, 3, "Pin shortcut");
-        menu.getMenu().add(0, 6, 4, "Background activity");
-        menu.getMenu().add(0, 7, 5, "Rename profile");
-        menu.getMenu().add(0, 8, 6, "View profile");
-        menu.getMenu().add(0, 5, 7, "Remove from this profile");
+        menu.getMenu().add(0, 1, 0, disabled ? R.string.enable_app : R.string.disable_app_freeze);
+        menu.getMenu().add(0, 2, 1, R.string.manifest_default_state);
+        menu.getMenu().add(0, 3, 2, R.string.force_stop_app);
+        menu.getMenu().add(0, 4, 3, R.string.pin_shortcut);
+        menu.getMenu().add(0, 6, 4, R.string.background_activity);
+        menu.getMenu().add(0, 7, 5, R.string.rename_profile);
+        menu.getMenu().add(0, 8, 6, R.string.view_profile);
+        menu.getMenu().add(0, 5, 7, R.string.remove_from_profile);
         menu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == 7) { ProfileControls.rename(activity, profile); return true; }
             if (item.getItemId() == 8) { ProfileControls.open(activity, profile); return true; }
@@ -57,49 +57,50 @@ final class AppControls {
     }
 
     static void confirm(InventoryActivity activity, Inventory.Entry entry, Inventory.Profile profile, Apps.Action action) {
-        String title;
-        String detail;
+        int titleRes;
+        int detailRes;
         switch (action) {
             case DISABLE:
-                title = "Disable app";
-                detail = "Stops this app and its notifications until you explicitly enable it. Data is kept. Other apps in this profile keep running.";
+                titleRes = R.string.disable_app;
+                detailRes = R.string.disable_app_help;
                 break;
             case ENABLE:
-                title = "Enable app";
-                detail = "Explicitly enables this app. This does not automatically start a stopped profile.";
+                titleRes = R.string.enable_app;
+                detailRes = R.string.enable_app_help;
                 break;
             case DEFAULT:
-                title = "Use manifest default";
-                detail = "Removes the enabled/disabled override and uses the app manifest's default. It does not reconstruct a previous override.";
+                titleRes = R.string.manifest_default;
+                detailRes = R.string.manifest_default_help;
                 break;
             case FORCE_STOP:
-                title = "Force stop app";
-                detail = "Stops this app now without disabling it or deleting data. Notifications may stop until it is opened again. This is not a permanent freeze.";
+                titleRes = R.string.force_stop_app;
+                detailRes = R.string.force_stop_help;
                 break;
             default:
-                title = "Remove clone app";
-                detail = "Deletes this app's data in this profile. The profile, its other apps and the main user's copy are kept.";
+                titleRes = R.string.remove_clone_app;
+                detailRes = R.string.remove_clone_app_help;
         }
-        new MaterialAlertDialogBuilder(activity).setTitle(title + "?")
-                .setMessage(entry.app.label + "\n" + Inventory.location(profile) + "\n\n" + detail
-                        + (entry.system ? "\n\nSystem app: changing it can break other apps in this profile." : ""))
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton(title, (dialog, which) -> activity.work(title + "…",
+        String title = activity.getString(titleRes);
+        String detail = activity.getString(detailRes);
+        new MaterialAlertDialogBuilder(activity).setTitle(activity.getString(R.string.confirm_action, title))
+                .setMessage(activity.getString(R.string.app_action_message, Ui.bidi(activity, entry.app.label), Inventory.location(activity, profile),
+                        entry.system ? activity.getString(R.string.system_app_warning, detail) : detail))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(title, (dialog, which) -> activity.work(activity.getString(R.string.action_progress, title),
                         () -> Apps.change(profile.clone.id, profile.serial, entry.app.pkg, action), null)).show();
     }
 
     static void power(InventoryActivity activity, Inventory.Profile profile) {
         boolean running = profile.clone.running;
-        Runnable change = () -> activity.work(running ? "Stopping profile…" : "Starting profile…", () -> {
+        Runnable change = () -> activity.work(activity.getString(running ? R.string.stopping_profile : R.string.starting_profile), () -> {
             synchronized (Clones.class) {
                 Shell.Result checked = Clones.verify(profile.clone.id, profile.serial, Shell::root);
                 return checked.ok() ? Clones.setRunning(profile.clone.id, !running) : checked;
             }
         }, null);
         if (!running) { change.run(); return; }
-        new MaterialAlertDialogBuilder(activity).setTitle("Stop profile?")
-                .setMessage(Inventory.location(profile) + "\n\nStops ALL apps and notifications in this profile, keeping data. "
-                        + "Opening an app starts it again. Reboot behavior is controlled in Settings.")
-                .setNegativeButton("Cancel", null).setPositiveButton("Stop", (dialog, which) -> change.run()).show();
+        new MaterialAlertDialogBuilder(activity).setTitle(R.string.stop_profile_question)
+                .setMessage(activity.getString(R.string.stop_profile_message, Inventory.location(activity, profile)))
+                .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.stop, (dialog, which) -> change.run()).show();
     }
 }

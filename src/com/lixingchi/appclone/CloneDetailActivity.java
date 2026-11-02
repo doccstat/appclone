@@ -21,12 +21,12 @@ public final class CloneDetailActivity extends InventoryActivity {
         id = getIntent().getIntExtra(EXTRA_ID, -1);
         serial = getIntent().getLongExtra(EXTRA_SERIAL, -1);
         LinearLayout root = Ui.column(this);
-        toolbar = Ui.toolbar(this, root, "Profile", true);
-        toolbar.getMenu().add(0, 1, 0, "Start / stop profile");
-        toolbar.getMenu().add(0, 2, 1, "Show system apps").setCheckable(true).setChecked(Settings.systemApps(this));
-        toolbar.getMenu().add(0, 3, 2, "Delete profile");
-        toolbar.getMenu().add(0, 4, 3, "Refresh");
-        toolbar.getMenu().add(0, 5, 0, "Rename profile");
+        toolbar = Ui.toolbar(this, root, getString(R.string.profile), true);
+        toolbar.getMenu().add(0, 1, 0, R.string.start_stop_profile);
+        toolbar.getMenu().add(0, 2, 1, R.string.show_system_apps).setCheckable(true).setChecked(Settings.systemApps(this));
+        toolbar.getMenu().add(0, 3, 2, R.string.delete_profile);
+        toolbar.getMenu().add(0, 4, 3, R.string.refresh);
+        toolbar.getMenu().add(0, 5, 0, R.string.rename_profile);
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == 4) { refresh(); return true; }
             Inventory.Profile profile = current();
@@ -41,7 +41,7 @@ public final class CloneDetailActivity extends InventoryActivity {
         useList(new InventoryList(this));
         if (state != null) body.restorePosition(state.getParcelable("listPosition"));
         root.addView(body, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.addAction(this, root, "Add app to profile");
+        add = Ui.addAction(this, root, getString(R.string.add_app_to_profile));
         Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> { Inventory.Profile profile = current(); if (profile != null) AddClone.chooseApp(this, profile); });
         setContentView(root);
@@ -58,22 +58,25 @@ public final class CloneDetailActivity extends InventoryActivity {
         Inventory.Profile profile = current();
         add.setEnabled(profile != null);
         if (profile == null) {
-            status.setText("Profile removed or replaced. Return to Profiles and refresh.");
-            rows.add(InventoryList.Item.empty("Profile unavailable", "Return to Profiles and refresh before taking any action."));
+            status.setText(R.string.profile_replaced);
+            rows.add(InventoryList.Item.empty(getString(R.string.profile_unavailable), getString(R.string.return_to_profiles)));
             body.show(rows);
             return;
         }
         toolbar.setTitle(profile.clone.name);
-        toolbar.getMenu().findItem(1).setTitle(profile.clone.running ? "Stop profile" : "Start profile");
+        toolbar.getMenu().findItem(1).setTitle(profile.clone.running ? R.string.stop_profile : R.string.start_profile);
         int count = 0;
         for (Inventory.Entry entry : inventory.apps) {
             if (!profile.packages.contains(entry.app.pkg) || (entry.system && !Settings.systemApps(this))) continue;
             count++;
-            rows.add(InventoryList.Item.instance(entry, profile, true));
+            rows.add(InventoryList.Item.instance(this, entry, profile, true));
         }
-        status.setText("User " + id + " · " + (profile.clone.running ? "Running" : "Stopped")
-                + " · " + count + " apps" + (Settings.systemApps(this) ? "" : " · System apps hidden"));
-        if (count == 0) rows.add(InventoryList.Item.empty("No apps to show", "Add an app or show system apps from the menu."));
+        String summary = getString(R.string.profile_status, Integer.toString(id),
+                getString(profile.clone.running ? R.string.running : R.string.stopped),
+                getResources().getQuantityString(R.plurals.app_count, count, count));
+        status.setText(Settings.systemApps(this) ? summary
+                : getString(R.string.filtered_summary, summary, getString(R.string.system_apps_hidden)));
+        if (count == 0) rows.add(InventoryList.Item.empty(getString(R.string.no_apps_to_show), getString(R.string.no_apps_help)));
         body.show(rows);
     }
 }

@@ -223,12 +223,18 @@ final class Ui {
         toolbar.setTitle(title);
         if (back) {
             toolbar.setNavigationIcon(R.drawable.ic_back);
-            toolbar.setNavigationContentDescription("Back");
+            toolbar.setNavigationContentDescription(R.string.back);
             toolbar.setNavigationOnClickListener(v -> activity.finish());
         }
         toolbar.setTitleTextAppearance(activity, com.google.android.material.R.style.TextAppearance_Material3_TitleLarge);
         root.addView(toolbar);
         return toolbar;
+    }
+
+    /** Isolate display-only names in mixed-direction sentences; never alter stored input. */
+    static String bidi(Context context, String value) {
+        return android.text.BidiFormatter.getInstance(context.getResources().getConfiguration().getLocales().get(0))
+                .unicodeWrap(value);
     }
 
     private Ui() {}

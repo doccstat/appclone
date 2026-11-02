@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Static package checks for App Clone. No Android SDK, JDK, or device required."""
 from pathlib import Path
+import re
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -12,7 +13,7 @@ def test_manifest_identity():
     assert 'android:versionCode="12"' in manifest
     assert 'android:versionName="2.2.0"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
-    assert 'android:label="App Clone"' in manifest
+    assert 'android:label="@string/app_name"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
 
 
@@ -56,7 +57,7 @@ def test_lifecycle_entrypoints():
     launcher = (source / "LaunchActivity.java").read_text()
     assert launcher.index("new Thread(") < launcher.index("Apps.launch(user, serial, app)")
     assert "CloneApplication.inventory(this).afterLaunch(user, result.ok())" in launcher
-    assert "runOnUiThread" in launcher and "Could not open clone app" in launcher
+    assert "runOnUiThread" in launcher and "R.string.could_not_open_clone_app" in launcher
     assert "LaunchActivity.class" in (source / "AppControls.java").read_text()
     assert "LaunchActivity.class" in (source / "Shortcuts.java").read_text()
     assert 'AppControls.power(activity, profile)' in (source / "ProfileControls.java").read_text()
@@ -95,7 +96,7 @@ def test_root_bootstrap_wiring():
 def test_inline_ui_and_rename_wiring():
     source = ROOT / "src/com/lixingchi/appclone"
     main = (source / "MainActivity.java").read_text()
-    assert "InventoryList.Item.instance(entry, profile, false)" in main
+    assert "InventoryList.Item.instance(this, entry, profile, false)" in main
     assert "setupWithViewPager(pager)" in main
     assert "setMaxLines(3)" not in main
     assert 'Ui.quiet(activity, "Manage")' not in (source / "AppControls.java").read_text()
@@ -134,6 +135,37 @@ def test_boot_wiring():
     settings = (source / "SettingsActivity.java").read_text()
     assert "BootPolicy.LABELS" in settings and "boot.save(mode)" in settings
     assert "jobs.cancel(BootReceiver.JOB_ID)" in settings
+
+
+def test_localization_contract():
+    manifest = ET.parse(ROOT / "AndroidManifest.xml").getroot()
+    assert manifest.find("application").get("{http://schemas.android.com/apk/res/android}supportsRtl") == "true"
+    base = ET.parse(ROOT / "res/values/strings.xml").getroot()
+    names = [node.get("name") for node in base]
+    assert len(names) == len(set(names)), "duplicate resource key"
+    fixed = {node.get("name") for node in base if node.get("translatable") == "false"}
+    assert {"app_name", "delete_token", "default_profile_name"} <= fixed
+    for path in (ROOT / "res").glob("values-*/strings.xml"):
+        for node in ET.parse(path).getroot():
+            assert node.get("name") not in fixed, (path, "non-translatable resource", node.get("name"))
+            if node.get("name") == "format_tokens":
+                assert set(re.findall(r"\{\w+\}", "".join(node.itertext()))) == {"{id}", "{name}", "{clone}"}, path
+    gradle = (ROOT / "build.gradle").read_text()
+    assert "generateLocaleConfig = true" in gradle
+    assert "include 'values-*/strings.xml'" in gradle
+    assert "pseudoLocalesEnabled true" in gradle
+    assert "testDebugUnitTest" in (ROOT / "build.py").read_text()
+
+
+def test_visible_text_is_not_inlined():
+    # Guard the common Java UI sinks; Android lint checks XML/format/plural correctness.
+    literal = r'\(\s*"[A-Za-z][^"\n]*"'
+    sinks = r'(?:set(?:Text|Hint|Title|Message|ContentDescription|TooltipText|NavigationContentDescription)|set(?:Positive|Negative|Neutral)Button)'
+    for path in (ROOT / "src").rglob("*.java"):
+        text = path.read_text()
+        assert not re.search(sinks + literal, text), path
+        assert not re.search(r'\.work' + literal, text), path
+        assert not re.search(r'Ui\.(?:text|label|quiet|input|progress)\([^,\n]+,\s*"[A-Za-z]', text), path
 
 
 def test_no_old_identity():

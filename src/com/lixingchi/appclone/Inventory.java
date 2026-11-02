@@ -99,12 +99,13 @@ final class Inventory {
         return null;
     }
 
-    static String location(Profile profile) {
-        return profile.clone.name + " · User " + profile.clone.id;
+    static String location(Context context, Profile profile) {
+        return context.getString(R.string.profile_location, Ui.bidi(context, profile.clone.name), Integer.toString(profile.clone.id));
     }
 
-    static String state(Profile profile, String pkg) {
-        return (profile.disabled.contains(pkg) ? "Disabled · " : "")
-                + (profile.clone.running ? "Profile running" : "Profile stopped");
+    static String state(Context context, Profile profile, String pkg) {
+        return context.getString(profile.disabled.contains(pkg)
+                ? (profile.clone.running ? R.string.disabled_profile_running : R.string.disabled_profile_stopped)
+                : (profile.clone.running ? R.string.profile_running : R.string.profile_stopped));
     }
 }

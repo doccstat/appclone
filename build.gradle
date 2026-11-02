@@ -17,6 +17,18 @@ android {
     compileSdk 36
     buildToolsVersion '36.0.0'
     testOptions.unitTests.includeAndroidResources = true
+    testOptions.unitTests.all { systemProperty 'appclone.resources', file('res').absolutePath }
+    androidResources {
+        generateLocaleConfig = true
+        // Advertise app translations, not every language shipped by Material/AppCompat.
+        localeFilters += ['en'] + fileTree('res') { include 'values-*/strings.xml' }.files.collect {
+            com.android.ide.common.resources.configuration.FolderConfiguration
+                    .getConfigForFolder(it.parentFile.name)?.localeQualifier?.value
+        }.findAll { it }
+    }
+    lint {
+        fatal 'MissingTranslation', 'ExtraTranslation', 'StringFormatInvalid', 'StringFormatMatches', 'MissingQuantity'
+    }
     defaultConfig {
         applicationId 'com.lixingchi.appclone'
         minSdk 33
@@ -32,13 +44,21 @@ android {
             assets.srcDirs = ['assets']
         }
         test.java.srcDirs = ['tests']
+        testDebug.java.srcDirs = ['tests-i18n']
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
+        debug { pseudoLocalesEnabled true }
         release { minifyEnabled false }
+    }
+}
+
+androidComponents {
+    onVariants(selector().withBuildType('debug')) { variant ->
+        variant.androidResources.localeFilters.addAll('en-rXA', 'ar-rXB')
     }
 }
 

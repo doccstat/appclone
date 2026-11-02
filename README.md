@@ -171,6 +171,19 @@ recorded in Settings rather than retried continuously. An interrupted job resume
 pending profiles; a process kill before its checkpoint can repeat the last
 operation. Choosing another policy cancels queued work, not an in-flight command.
 
+## Languages
+
+App Clone uses standard Android string/plural resources, RTL layout and Android's
+per-app language settings (**Settings → App language**). Available languages are
+discovered from translation files, not a fixed list in app code. Names, IDs,
+shortcut formats and diagnostic output are not automatically translated.
+
+The current catalog is English; additional translations and a translation service
+are not yet configured. The [localization guide](docs/i18n.md) describes the
+portable Weblate + replaceable AI/MT workflow for adding languages, updating
+changed strings and preserving corrections. Translation happens before release,
+not on your device; the APK needs no model or Internet access.
+
 ## Build and checks
 
 Use JDK 21, Android SDK platform/build-tools 36, Python 3 and the checksum-pinned
@@ -188,9 +201,9 @@ python3 build.py --lint
 python3 build.py
 ```
 
-`--self-check` runs JVM contracts and Robolectric screen smoke tests without
-root/device access. `build.py` keeps Gradle caches/output outside source and
-produces an unsigned release APK. On ARM64 Linux, `ANDROID_AAPT2` may point to a
+`--self-check` runs JVM contracts, Robolectric screen smoke tests and debug-only
+expanded/RTL pseudolocale checks without root/device access. `build.py` keeps
+Gradle caches/output outside source and produces an unsigned release APK. On ARM64 Linux, `ANDROID_AAPT2` may point to a
 compatible aapt2 executable/wrapper. Release signing requires an existing key
 and the explicitly pinned certificate; the build never generates a key.
 

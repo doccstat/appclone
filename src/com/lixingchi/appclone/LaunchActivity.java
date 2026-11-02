@@ -23,7 +23,7 @@ public final class LaunchActivity extends AppCompatActivity {
         String label = getIntent().getStringExtra(EXTRA_LABEL);
         final Apps.App app = new Apps.App(label == null ? "" : label, pkg, activity);
         long serial = getIntent().getLongExtra(EXTRA_SERIAL, -1);
-        progress = Ui.progress(this, "Opening clone app…");
+        progress = Ui.progress(this, getString(R.string.opening_clone_app));
         new Thread(() -> {
             Shell.Result outcome;
             try {
@@ -38,9 +38,9 @@ public final class LaunchActivity extends AppCompatActivity {
                     finish();
                 } else {
                     new MaterialAlertDialogBuilder(this)
-                            .setTitle("Could not open clone app")
-                            .setMessage(result.trim().isEmpty() ? "Root command failed." : result.trim())
-                            .setPositiveButton("Close", null)
+                            .setTitle(R.string.could_not_open_clone_app)
+                            .setMessage(result.trim().isEmpty() ? getString(R.string.root_command_failed) : getString(R.string.error_details, result.trim()))
+                            .setPositiveButton(R.string.close, null)
                             .setOnDismissListener(dialog -> finish())
                             .show();
                 }
