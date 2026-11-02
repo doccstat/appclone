@@ -10,7 +10,10 @@ permissions:
   contents: read
 
 jobs:
+  translations:
+    uses: ./.github/workflows/translations.yml
   build:
+    needs: translations
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

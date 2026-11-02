@@ -1,0 +1,31 @@
+source_locale = "en"
+# Explicit opt-in: add BCP-47 tags after choosing model coverage and review policy.
+target_locales = []
+glossary = "glossary.toml"
+# Send only catalog text/comments; do not scrape code or use cross-project memory.
+context = false
+memory = false
+batch_size = 10
+jobs = 1
+
+[[files]]
+format = "android"
+path = "res/values/strings.xml"
+locale_path = "res/values-{android_locale}/strings.xml"
+
+[provider]
+kind = "ollama"
+# Deliberately unset; generation refuses to choose/download a model for you.
+model = ""
+base_url = "http://127.0.0.1:11434"
+timeout_secs = 300
+
+# These templates contain only placeholders/punctuation, not English prose.
+[keys.ignore]
+profile_picker_item = ["identical"]
+profiles_summary = ["identical"]
+filtered_summary = ["identical"]
+app_summary = ["identical"]
+app_action_message = ["identical"]
+confirm_action = ["identical"]
+action_progress = ["identical"]

@@ -178,15 +178,16 @@ per-app language settings (**Settings → App language**). Available languages a
 discovered from translation files, not a fixed list in app code. Names, IDs,
 shortcut formats and diagnostic output are not automatically translated.
 
-The current catalog is English; additional translations and a translation service
-are not yet configured. The [localization guide](docs/i18n.md) describes the
-portable Weblate + replaceable AI/MT workflow for adding languages, updating
-changed strings and preserving corrections. Translation happens before release,
-not on your device; the APK needs no model or Internet access.
+The current catalog is English. GitHub CI has a separate, manual Polygo/Ollama
+translation workflow; target languages, pinned tooling and a model must be
+selected before generating drafts. Normal builds/releases validate accepted
+catalogs without inference. The [localization guide](docs/i18n.md) covers setup,
+reviewable patches, incremental updates and protected corrections. No persistent
+translation service is needed; the APK contains neither tooling nor a model.
 
 ## Build and checks
 
-Use JDK 21, Android SDK platform/build-tools 36, Python 3 and the checksum-pinned
+Use JDK 21, Android SDK platform/build-tools 36, Python 3.11+ and the checksum-pinned
 [Xposed API 82 jar](https://api.xposed.info/de/robv/android/xposed/api/82/api-82.jar).
 The Gradle 8.13 wrapper verifies its distribution checksum; AGP is 8.11.1.
 
@@ -194,6 +195,8 @@ The Gradle 8.13 wrapper verifies its distribution checksum; AGP is 8.11.1.
 export ANDROID_HOME=/path/to/sdk JAVA_HOME=/path/to/jdk21
 export XPOSED_API_JAR=/path/to/api-82.jar
 export BUILD_DIR="$HOME/.cache/appclone/build"
+python3 tools/check_i18n.py
+python3 -m unittest discover -s tests/i18n_tests -v
 python3 tests/check_package.py
 python3 -m unittest discover -s tests/build_tests -v
 python3 build.py --self-check

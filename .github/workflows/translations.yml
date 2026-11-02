@@ -1,0 +1,178 @@
+name: Translations
+
+on:
+  workflow_call:
+    inputs:
+      generate:
+        type: boolean
+        default: false
+      retry_review:
+        type: boolean
+        default: false
+  workflow_dispatch:
+    inputs:
+      generate:
+        description: Generate drafts with the configured local model (off = checks only)
+        type: boolean
+        default: true
+      retry_review:
+        description: Also retry previously quarantined strings (never overwrite human edits)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  translations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: app
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      POLYGO_REPOSITORY: ${{ vars.POLYGO_REPOSITORY }}
+      POLYGO_REVISION: ${{ vars.POLYGO_REVISION }}
+      OLLAMA_IMAGE: ${{ vars.OLLAMA_IMAGE }}
+      OLLAMA_MODEL_DIGEST: ${{ vars.OLLAMA_MODEL_DIGEST }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: app
+          persist-credentials: false
+      - name: Check explicit configuration
+        id: config
+        env:
+          GENERATE: ${{ inputs.generate }}
+        run: |
+          set -euo pipefail
+          printf 'CARGO_TARGET_DIR=%s/polygo-target\nPOLYGO_BIN=%s/polygo-target/release/polygo\n' \
+            "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          args=()
+          if [ "$GENERATE" = true ]; then args+=(--generation); fi
+          python3 tools/check_i18n.py "${args[@]}"
+          POLYGO_BIN='' python3 -m unittest discover -s tests/i18n_tests -v
+          python3 - <<'PY'
+          import os, re, tomllib
+          from pathlib import Path
+          cfg = tomllib.loads(Path('polygo.toml').read_text())
+          enabled = bool(cfg['target_locales'] or os.environ['POLYGO_REVISION'])
+          if enabled:
+              if not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', os.environ['POLYGO_REPOSITORY']):
+                  raise SystemExit('Set POLYGO_REPOSITORY to the reviewed CLI repository (owner/repo)')
+              if not re.fullmatch(r'[0-9a-f]{40}', os.environ['POLYGO_REVISION']):
+                  raise SystemExit('Set POLYGO_REVISION to a published immutable commit, not a branch/tag')
+          if os.environ['GENERATE'] == 'true':
+              if not re.fullmatch(r'ollama/ollama@sha256:[0-9a-f]{64}', os.environ['OLLAMA_IMAGE']):
+                  raise SystemExit('Pin OLLAMA_IMAGE as ollama/ollama@sha256:<digest>')
+              if not re.fullmatch(r'(sha256:)?[0-9a-f]{64}', os.environ['OLLAMA_MODEL_DIGEST']):
+                  raise SystemExit('Set OLLAMA_MODEL_DIGEST after reviewing model license/coverage/compute')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              print(f'enabled={str(enabled).lower()}', file=out)
+          if not enabled:
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+                  print('English only; no targets or CLI revision selected. Resource/policy checks run; translation generation is not enabled.', file=out)
+          PY
+      - name: Check out immutable translation CLI source
+        if: steps.config.outputs.enabled == 'true'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: ${{ env.POLYGO_REPOSITORY }}
+          ref: ${{ env.POLYGO_REVISION }}
+          path: polygo
+          persist-credentials: false
+      - name: Build CLI with locked dependencies
+        if: steps.config.outputs.enabled == 'true'
+        run: |
+          set -euo pipefail
+          test "$(git -C ../polygo rev-parse HEAD)" = "$POLYGO_REVISION"
+          rustup toolchain install 1.99.1 --profile minimal
+          cargo +1.99.1 build --release --locked --bin polygo --manifest-path ../polygo/Cargo.toml
+          python3 -m unittest discover -s tests/i18n_tests -v
+      - name: Start disposable local inference runtime
+        if: inputs.generate
+        run: |
+          set -euo pipefail
+          docker run --detach --name appclone-ollama \
+            --publish 127.0.0.1:11434:11434 "$OLLAMA_IMAGE"
+          for attempt in {1..60}; do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:11434/api/tags >/dev/null
+          model=$(python3 -c 'import tomllib; print(tomllib.load(open("polygo.toml", "rb"))["provider"]["model"])')
+          docker exec appclone-ollama ollama pull "$model"
+          curl -fsS http://127.0.0.1:11434/api/tags > "$RUNNER_TEMP/ollama-models.json"
+          jq -e --arg model "$model" --arg digest "$OLLAMA_MODEL_DIGEST" \
+            '[.models[] | select(.name == $model or .model == $model) | .digest | ltrimstr("sha256:")] | index($digest | ltrimstr("sha256:")) != null' \
+            "$RUNNER_TEMP/ollama-models.json"
+      - name: Generate only new or changed machine translations
+        if: inputs.generate
+        env:
+          RETRY_REVIEW: ${{ inputs.retry_review }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [ "$RETRY_REVIEW" = true ]; then args+=(--retry-review); fi
+          "$POLYGO_BIN" translate "${args[@]}"
+      - name: Fail on structural errors, stale text, gaps or quarantine
+        if: steps.config.outputs.enabled == 'true'
+        run: |
+          set -euo pipefail
+          "$POLYGO_BIN" check --strict --no-baseline
+          "$POLYGO_BIN" status --json > "$RUNNER_TEMP/polygo-status.json"
+          python3 tools/check_i18n.py --status "$RUNNER_TEMP/polygo-status.json"
+          "$POLYGO_BIN" status --markdown >> "$GITHUB_STEP_SUMMARY"
+      - name: Check Android resource policy
+        run: python3 tests/check_package.py
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        if: inputs.generate
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        if: inputs.generate
+        with:
+          packages: platform-tools
+      - name: Independently validate generated Android catalogs
+        if: inputs.generate
+        env:
+          XPOSED_API_JAR: ${{ runner.temp }}/api-82.jar
+          BUILD_DIR: ${{ runner.temp }}/appclone-build
+        run: |
+          set -euo pipefail
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          curl -fsSLo "$XPOSED_API_JAR" \
+            https://api.xposed.info/de/robv/android/xposed/api/82/api-82.jar
+          echo 'f48c635f1c7469fdec0e00ad2ea0b7a6b2f5b55065784a35b7ca3a84615e8e25  '"$XPOSED_API_JAR" | sha256sum -c -
+          python3 -m unittest discover -s tests/build_tests -v
+          python3 build.py --self-check
+          python3 build.py --lint
+          python3 build.py
+      - name: Prepare review patch, never commit or push from this job
+        if: inputs.generate
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/translation-review"
+          git add -N -- polygo.lock res/values-*/strings.xml
+          git diff --binary -- polygo.lock 'res/values-*/strings.xml' > "$RUNNER_TEMP/translation-review/translations.patch"
+          cp "$RUNNER_TEMP/polygo-status.json" "$RUNNER_TEMP/translation-review/"
+          cp "$RUNNER_TEMP/ollama-models.json" "$RUNNER_TEMP/translation-review/"
+          {
+            printf 'UNREVIEWED MACHINE DRAFTS; structural checks are not semantic approval.\n'
+            printf 'Source commit: %s\nCLI: %s@%s\nRuntime: %s\nModel digest: %s\n' \
+              "$GITHUB_SHA" "$POLYGO_REPOSITORY" "$POLYGO_REVISION" "$OLLAMA_IMAGE" "$OLLAMA_MODEL_DIGEST"
+            printf '\nGeneration configuration:\n'
+            cat polygo.toml
+          } > "$RUNNER_TEMP/translation-review/provenance.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: inputs.generate
+        with:
+          name: translation-drafts-review-required
+          path: ${{ runner.temp }}/translation-review/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Stop disposable inference runtime
+        if: always() && inputs.generate
+        run: docker rm -f appclone-ollama 2>/dev/null || true

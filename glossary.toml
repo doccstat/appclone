@@ -1,0 +1,8 @@
+# Repeated terminology belongs here; sentence corrections belong in locale XML.
+# DELETE is a non-translatable resource, not a glossary rule: glossary matching
+# is case-insensitive and would also match the ordinary verb "delete".
+do_not_translate = [
+    "App Clone", "AOSP", "RUN_ANY_IN_BACKGROUND",
+    "{id}", "{name}", "{clone}", "github.com/doccstat/appclone",
+]
+# Add reviewed locale-specific terminology as [terms.<BCP-47-tag>] tables.
