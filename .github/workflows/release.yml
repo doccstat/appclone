@@ -85,6 +85,9 @@ jobs:
           cat >dist/release-notes.md <<EOF
           ## App Clone $version_name
 
+          - Localization-ready Android text, plurals and right-to-left layouts, with an
+            **App language** shortcut to Android Settings. Only English is bundled so far;
+            additional languages become available when reviewed catalogs are included.
           - Redesigned Material 3 lists show every profile directly beneath its app,
             with Open and a per-instance **⋮** menu instead of Manage.
           - Swipeable Apps / Profiles tabs keep independent search and scroll positions,
@@ -124,8 +127,9 @@ jobs:
           legacy Xposed API 82 (LSPosed or Vector). Scope the module to
           \`system\` (\`android\`). Device-tested on Pixel 11 Pro Fold, Android 17;
           Android 13–16 use the same AOSP clone type but are not yet tested.
-          The UI/app controls pass host checks; 2.2 UI/rename and 2.1 launch/background-policy device acceptance,
-          battery effects and notification delivery are unmeasured. No automatic cleaning or
+          The UI/app controls pass host checks; 2.3 localization/RTL, 2.2 UI/rename and
+          2.1 launch/background-policy device acceptance, battery effects and notification
+          delivery are unmeasured. No automatic cleaning or
           Google-service changes. Restore background settings before clearing App Clone's data.
 
           The APK is signed with the permanent release key; its SHA-256 checksum

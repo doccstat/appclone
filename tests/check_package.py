@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_manifest_identity():
     manifest = (ROOT / "AndroidManifest.xml").read_text()
     assert 'package="com.lixingchi.appclone"' in manifest
-    assert 'android:versionCode="12"' in manifest
-    assert 'android:versionName="2.2.0"' in manifest
+    assert 'android:versionCode="13"' in manifest
+    assert 'android:versionName="2.3.0"' in manifest
     assert 'android:minSdkVersion="33"' in manifest
     assert 'android:label="@string/app_name"' in manifest
     assert 'android:theme="@style/Theme.AppClone"' in manifest
