@@ -15,7 +15,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  translations:
+    uses: ./.github/workflows/translations.yml
   release:
+    needs: translations
     if: github.repository == 'doccstat/appclone' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
