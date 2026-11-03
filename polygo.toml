@@ -1,5 +1,7 @@
 source_locale = "en"
-# Explicit opt-in: add BCP-47 tags after choosing model coverage and review policy.
+# Selected first batch; enable for generation with explicit model/pins (docs/i18n.md):
+# target_locales = ["zh-Hans", "zh-Hant", "es", "hi", "bn", "ru", "ja", "tr"]
+# Keep production English-only until reviewed catalogs and their lockfile land together.
 target_locales = []
 glossary = "glossary.toml"
 # Send only catalog text/comments; do not scrape code or use cross-project memory.
