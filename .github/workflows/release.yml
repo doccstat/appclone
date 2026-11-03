@@ -85,9 +85,10 @@ jobs:
           cat >dist/release-notes.md <<EOF
           ## App Clone $version_name
 
-          - Localization-ready Android text, plurals and right-to-left layouts, with an
-            **App language** shortcut to Android Settings. Only English is bundled so far;
-            additional languages become available when reviewed catalogs are included.
+          - Bundles English, Simplified and Traditional Chinese, Spanish, Hindi, Bengali,
+            Russian, Japanese and Turkish. Choose **Settings → App language** to switch.
+            Translations are AI-authored; fluent-speaker review is still welcome.
+          - Native Android plurals, language fallback and right-to-left layout support.
           - Redesigned Material 3 lists show every profile directly beneath its app,
             with Open and a per-instance **⋮** menu instead of Manage.
           - Swipeable Apps / Profiles tabs keep independent search and scroll positions,

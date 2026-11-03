@@ -1,12 +1,12 @@
 source_locale = "en"
-# Selected first batch; enable for generation with explicit model/pins (docs/i18n.md):
-# target_locales = ["zh-Hans", "zh-Hant", "es", "hi", "bn", "ru", "ja", "tr"]
-# Keep production English-only until reviewed catalogs and their lockfile land together.
-target_locales = []
+# Bundled catalogs; see docs/i18n.md for provenance and optional regeneration.
+target_locales = ["zh-Hans", "zh-Hant", "es", "hi", "bn", "ru", "ja", "tr"]
 glossary = "glossary.toml"
 # Send only catalog text/comments; do not scrape code or use cross-project memory.
 context = false
 memory = false
+# Chinese conveys the same message in fewer characters; keep the length check bounded.
+length_ratio = 4.0
 batch_size = 10
 jobs = 1
 

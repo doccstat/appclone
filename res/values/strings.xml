@@ -241,6 +241,6 @@
     <string name="auto_pin_help">Request a home-screen shortcut as each app is added to a clone. The launcher still asks you to confirm.</string>
     <string name="shortcut_labels_help">Labels apply to shortcuts created from now on. Re-pin an existing shortcut to update its name.</string>
     <string name="about">About</string>
-    <string name="app_version">App Clone %1$s</string>
+    <string name="app_version" translatable="false">App Clone %1$s</string>
     <string name="source_code">Source code · <xliff:g id="url">github.com/doccstat/appclone</xliff:g></string>
 </resources>

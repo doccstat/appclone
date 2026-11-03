@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="module_description">Повышает ограничения на создание профилей-клонов и число одновременно работающих пользователей в прошивках на базе AOSP. Область действия: система.</string>
+    <string name="apps">Приложения</string>
+    <string name="profiles">Профили</string>
+    <string name="profile">Профиль</string>
+    <string name="clone_app">Клон приложения</string>
+    <string name="settings">Настройки</string>
+    <string name="back">Назад</string>
+    <string name="open">Открыть</string>
+    <string name="cancel">Отмена</string>
+    <string name="close">Закрыть</string>
+    <string name="retry">Повторить</string>
+    <string name="refresh">Обновить</string>
+    <string name="save">Сохранить</string>
+    <string name="add">Добавить</string>
+    <string name="create">Создать</string>
+    <string name="delete">Удалить</string>
+    <string name="stop">Остановить</string>
+    <string name="show_system_apps">Показывать системные приложения</string>
+    <string name="system_apps_hidden">Системные приложения скрыты</string>
+    <string name="including_system_apps">Включая системные приложения</string>
+    <string name="export_diagnostics">Экспорт диагностики</string>
+    <string name="new_profile">Новый профиль</string>
+    <string name="add_clone_app">Добавить клон приложения</string>
+    <string name="add_another_clone">Добавить ещё один клон</string>
+    <string name="add_app">Добавить приложение</string>
+    <string name="add_app_to_profile">Добавить приложение в профиль</string>
+    <string name="app_details">Сведения о приложении</string>
+    <string name="app_actions">Действия с приложением</string>
+    <string name="profile_actions">Действия с профилем</string>
+    <string name="view_profile">Просмотреть профиль</string>
+    <string name="view_apps">Просмотреть приложения</string>
+    <string name="rename_profile">Переименовать профиль</string>
+    <string name="delete_profile">Удалить профиль</string>
+    <string name="delete_all_profiles">Удалить все профили</string>
+    <string name="start_profile">Запустить профиль</string>
+    <string name="stop_profile">Остановить профиль</string>
+    <string name="start_stop_profile">Запустить / остановить профиль</string>
+    <string name="running">Работает</string>
+    <string name="stopped">Остановлен</string>
+    <string name="profile_running">Профиль работает</string>
+    <string name="profile_stopped">Профиль остановлен</string>
+    <string name="disabled_profile_running">Отключено · Профиль работает</string>
+    <string name="disabled_profile_stopped">Отключено · Профиль остановлен</string>
+    <string name="user_id">Пользователь <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
+    <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · Пользователь <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
+    <string name="profile_status">Пользователь %1$s · %2$s · %3$s</string>
+    <string name="profile_picker_item">%1$s · %2$s</string>
+    <string name="actions_for">Действия для %1$s</string>
+    <string name="app_actions_in_profile">Действия для %1$s в %2$s</string>
+    <string name="open_in_profile">Открыть %1$s в %2$s</string>
+    <string name="view_apps_in_profile">Приложения в %1$s · %2$s</string>
+    <string name="profiles_summary">%1$s · %2$s</string>
+    <string name="filtered_summary">%1$s · %2$s</string>
+    <string name="app_summary">%1$s · %2$s</string>
+    <plurals name="clone_count">
+        <item quantity="one">%1$d клон</item><item quantity="few">%1$d клона</item>
+        <item quantity="many">%1$d клонов</item><item quantity="other">%1$d клона</item>
+    </plurals>
+    <plurals name="profile_count">
+        <item quantity="one">%1$d профиль</item><item quantity="few">%1$d профиля</item>
+        <item quantity="many">%1$d профилей</item><item quantity="other">%1$d профиля</item>
+    </plurals>
+    <plurals name="running_count">
+        <item quantity="one">%1$d работает</item><item quantity="few">%1$d работают</item>
+        <item quantity="many">%1$d работают</item><item quantity="other">%1$d работают</item>
+    </plurals>
+    <plurals name="app_count">
+        <item quantity="one">%1$d приложение</item><item quantity="few">%1$d приложения</item>
+        <item quantity="many">%1$d приложений</item><item quantity="other">%1$d приложения</item>
+    </plurals>
+    <plurals name="cloned_app_count">
+        <item quantity="one">%1$d клонированное приложение</item><item quantity="few">%1$d клонированных приложения</item>
+        <item quantity="many">%1$d клонированных приложений</item><item quantity="other">%1$d клонированного приложения</item>
+    </plurals>
+    <string name="search_apps_profiles">Поиск приложений или профилей</string>
+    <string name="search_profiles_ids">Поиск профилей или ID пользователей</string>
+    <string name="search_apps_packages">Поиск приложений или пакетов</string>
+    <string name="no_available_apps">Нет доступных приложений (фильтр системных приложений находится в меню)</string>
+    <string name="no_profiles">Профилей пока нет</string>
+    <string name="no_cloned_apps">Клонированных приложений пока нет</string>
+    <string name="no_matches">Совпадений нет</string>
+    <string name="search_help">Попробуйте другое имя или ID пользователя либо очистите поиск.</string>
+    <string name="no_profiles_help">Создайте профиль для хранения отдельного набора данных приложений.</string>
+    <string name="no_cloned_apps_help">Добавьте клон приложения, чтобы начать. Системные приложения доступны через меню.</string>
+    <string name="no_app_clones">У этого приложения нет клонов</string>
+    <string name="no_clones_to_show">Нет клонов для отображения</string>
+    <string name="return_to_apps">Вернитесь в Приложения, чтобы добавить клон.</string>
+    <string name="profile_replaced">Профиль удалён или заменён. Вернитесь в Профили и обновите список.</string>
+    <string name="profile_unavailable">Профиль недоступен</string>
+    <string name="return_to_profiles">Перед любым действием вернитесь в Профили и обновите список.</string>
+    <string name="no_apps_to_show">Нет приложений для отображения</string>
+    <string name="no_apps_help">Добавьте приложение или включите показ системных приложений в меню.</string>
+    <string name="reading_available_apps">Чтение доступных приложений…</string>
+    <string name="add_app_to">Добавить %1$s в…</string>
+    <string name="add_clone_question">Добавить клон?</string>
+    <string name="add_clone_message">%1$s\n%2$s\n\nИспользуется существующий профиль. Другие приложения и состояние работы профиля не изменяются.</string>
+    <string name="adding_clone">Добавление клона…</string>
+    <string name="profile_name">Имя профиля</string>
+    <string name="profile_quantity">Количество профилей (1–500)</string>
+    <string name="append_numbering">Добавлять -1, -2, … к именам</string>
+    <string name="create_profiles_help">Создаёт и запускает указанное число профилей. Имена сохраняются точно как введены, если нумерация не выбрана.</string>
+    <string name="create_profiles_app_help">%1$s\nЗатем устанавливает %2$s. При ошибке установки новый профиль сохраняется.</string>
+    <string name="refresh_profiles_first">Сначала обновите список профилей.</string>
+    <string name="invalid_profile_input">Введите непустое однострочное имя без символов NUL и количество от 1 до 500. Нумерация должна оставаться в поддерживаемом диапазоне.\n\nПодробности: %1$s</string>
+    <string name="invalid_profile_name">Введите непустое однострочное имя без символов NUL, не более 100 кодовых единиц UTF-16 (эмодзи может занимать две).</string>
+    <string name="creating_profiles">Создание профилей…</string>
+    <plurals name="create_profiles_failed">
+        <item quantity="one">Создан %1$d профиль.\n%2$s\nДля получения подробностей выберите Экспорт диагностики в главном меню.</item>
+        <item quantity="few">Создано %1$d профиля.\n%2$s\nДля получения подробностей выберите Экспорт диагностики в главном меню.</item>
+        <item quantity="many">Создано %1$d профилей.\n%2$s\nДля получения подробностей выберите Экспорт диагностики в главном меню.</item>
+        <item quantity="other">Создано %1$d профиля.\n%2$s\nДля получения подробностей выберите Экспорт диагностики в главном меню.</item>
+    </plurals>
+    <plurals name="profile_setup_failed">
+        <item quantity="one">Создан %1$d профиль. Пользователь %2$s сохранён, но настройка не удалась.\n%3$s</item>
+        <item quantity="few">Создано %1$d профиля. Пользователь %2$s сохранён, но настройка не удалась.\n%3$s</item>
+        <item quantity="many">Создано %1$d профилей. Пользователь %2$s сохранён, но настройка не удалась.\n%3$s</item>
+        <item quantity="other">Создано %1$d профиля. Пользователь %2$s сохранён, но настройка не удалась.\n%3$s</item>
+    </plurals>
+    <string name="rename_profile_help">Пользователь %1$s · Серийный номер %2$s\nМеняет имя профиля для всех его приложений. Данные и состояние работы не изменяются. Подписи существующих ярлыков остаются прежними; закрепите их заново, если нужны новые подписи.</string>
+    <string name="renaming_profile">Переименование профиля…</string>
+    <string name="delete_profile_question">Удалить профиль?</string>
+    <string name="delete_profile_message">%1$s\n\nУдаляет ВСЕ данные приложений в этом профиле, включая системные приложения, скрытые фильтром. Другие профили и основной пользователь не затрагиваются.</string>
+    <string name="deleting_profile">Удаление профиля…</string>
+    <string name="delete_all_question">Удалить все профили?</string>
+    <plurals name="delete_all_message">
+        <item quantity="one">Удаляет %1$d профиль-клон и ВСЕ данные его приложений, включая скрытые системные приложения. Основной пользователь, рабочие и личные профили не затрагиваются.</item>
+        <item quantity="few">Удаляет все %1$d профиля-клона и ВСЕ данные их приложений, включая скрытые системные приложения. Основной пользователь, рабочие и личные профили не затрагиваются.</item>
+        <item quantity="many">Удаляет все %1$d профилей-клонов и ВСЕ данные их приложений, включая скрытые системные приложения. Основной пользователь, рабочие и личные профили не затрагиваются.</item>
+        <item quantity="other">Удаляет все %1$d профиля-клона и ВСЕ данные их приложений, включая скрытые системные приложения. Основной пользователь, рабочие и личные профили не затрагиваются.</item>
+    </plurals>
+    <string name="delete_confirmation">Введите <xliff:g id="token" example="DELETE">%1$s</xliff:g> для подтверждения</string>
+    <string name="delete_confirmation_error">Введите в точности <xliff:g id="token" example="DELETE">%1$s</xliff:g></string>
+    <string name="delete_all">Удалить всё</string>
+    <string name="deleting_profiles">Удаление профилей…</string>
+    <string name="delete_batch_failed">Остановка на %1$s. Предыдущие удаления не отменяются.\n%2$s</string>
+    <string name="enable_app">Включить приложение</string>
+    <string name="disable_app_freeze">Отключить приложение (заморозить)</string>
+    <string name="disable_app">Отключить приложение</string>
+    <string name="manifest_default_state">Использовать состояние по умолчанию из манифеста</string>
+    <string name="manifest_default">Использовать значение из манифеста</string>
+    <string name="force_stop_app">Принудительно остановить приложение</string>
+    <string name="pin_shortcut">Закрепить ярлык</string>
+    <string name="remove_from_profile">Удалить из этого профиля</string>
+    <string name="remove_clone_app">Удалить клон приложения</string>
+    <string name="disable_app_help">Останавливает приложение и его уведомления, пока вы явно не включите его. Данные сохраняются. Другие приложения в этом профиле продолжают работать.</string>
+    <string name="enable_app_help">Явно включает это приложение. Остановленный профиль автоматически не запускается.</string>
+    <string name="manifest_default_help">Убирает переопределение включённого/отключённого состояния и использует значение по умолчанию из манифеста приложения. Предыдущее переопределение не восстанавливается.</string>
+    <string name="force_stop_help">Останавливает приложение сейчас, не отключая его и не удаляя данные. Уведомления могут прекратиться до следующего открытия. Это не постоянная заморозка.</string>
+    <string name="remove_clone_app_help">Удаляет данные этого приложения в этом профиле. Сам профиль, другие его приложения и копия основного пользователя сохраняются.</string>
+    <string name="system_app_warning">%1$s\n\nСистемное приложение: его изменение может нарушить работу других приложений в этом профиле.</string>
+    <string name="app_action_message">%1$s\n%2$s\n\n%3$s</string>
+    <string name="confirm_action">%1$s?</string>
+    <string name="action_progress">%1$s…</string>
+    <string name="stopping_profile">Остановка профиля…</string>
+    <string name="starting_profile">Запуск профиля…</string>
+    <string name="stop_profile_question">Остановить профиль?</string>
+    <string name="stop_profile_message">%1$s\n\nОстанавливает ВСЕ приложения и уведомления в этом профиле, сохраняя данные. Открытие приложения снова запускает профиль. Поведение после перезагрузки задаётся в Настройках.</string>
+    <string name="background_activity">Фоновая активность</string>
+    <string name="reading_background">Чтение фоновой настройки…</string>
+    <string name="background_none">Нет</string>
+    <string name="background_allowed">Разрешена (управляется Android)</string>
+    <string name="background_mode_restricted">Ограничена</string>
+    <string name="background_denied">Запрещена</string>
+    <string name="background_foreground">Только на переднем плане</string>
+    <string name="background_current">Текущая: %1$s</string>
+    <string name="background_uid_override">Переопределение для всего UID: %1$s (управляется извне)</string>
+    <string name="background_no_previous">Предыдущая настройка не сохранена.</string>
+    <string name="background_previous">Предыдущая: %1$s</string>
+    <string name="background_help">Ограничение уменьшает фоновую активность Android (RUN_ANY_IN_BACKGROUND). Уведомления и задания могут задерживаться. Оно не останавливает профиль, не отключает приложение и не замораживает его процессы. Настройки не меняются, пока вы не выберете действие.</string>
+    <string name="keep_current">Оставить текущую</string>
+    <string name="restore_previous">Восстановить предыдущую</string>
+    <string name="restoring_background">Восстановление фоновой настройки…</string>
+    <string name="background_restored">Предыдущая фоновая настройка восстановлена</string>
+    <string name="forget_saved_setting">Забыть сохранённую настройку</string>
+    <string name="forget_previous_question">Забыть предыдущую настройку?</string>
+    <string name="forget_previous_message">%1$s\n\nТекущая настройка Android не меняется. Удаляется только запись восстановления App Clone; восстановление больше не будет доступно.</string>
+    <string name="forget">Забыть</string>
+    <string name="forgetting_setting">Удаление сохранённой настройки…</string>
+    <string name="restrict">Ограничить</string>
+    <string name="restricting_background">Ограничение фоновой активности…</string>
+    <string name="background_restricted">Фоновая активность ограничена; предыдущая настройка сохранена</string>
+    <string name="could_not_refresh">Не удалось обновить</string>
+    <string name="refresh_failed_kept">Ошибка обновления. Предыдущий список сохранён.</string>
+    <string name="action_failed">Не удалось выполнить действие</string>
+    <string name="root_command_failed">Команда суперпользователя завершилась ошибкой.</string>
+    <string name="error_details">Подробности:\n%1$s</string>
+    <string name="read_failed_details">Не удалось прочитать клоны приложений. Нажмите для подробностей.</string>
+    <string name="refresh_failed_details">Ошибка обновления; показан предыдущий список. Нажмите для подробностей.</string>
+    <string name="reading_clone_apps">Чтение клонов приложений…</string>
+    <string name="refreshing_kept">Обновление… Показан предыдущий список.</string>
+    <string name="opening_clone_app">Открытие клона приложения…</string>
+    <string name="could_not_open_clone_app">Не удалось открыть клон приложения</string>
+    <string name="cannot_pin_shortcuts">Этот лаунчер не поддерживает закрепление ярлыков</string>
+    <string name="app_icon_unavailable">Значок приложения недоступен; обновите список и повторите</string>
+    <string name="collecting_diagnostics">Сбор диагностики…</string>
+    <string name="report_unavailable">Отчёт больше недоступен</string>
+    <string name="report_unavailable_help">Приложение было перезапущено. Экспортируйте диагностику ещё раз для создания нового отчёта.</string>
+    <string name="diagnostics_saved">Диагностика сохранена</string>
+    <string name="could_not_save_diagnostics">Не удалось сохранить диагностику</string>
+    <string name="appearance_help">Material You · Цвета обоев и светлая/тёмная тема системы</string>
+    <string name="app_language">Язык приложения</string>
+    <string name="app_language_help">Используется язык системы, если другой не выбран в настройках языка приложений Android. Непереведённый текст отображается на английском.</string>
+    <string name="language_settings_unavailable">Настройки языка приложений Android недоступны на этом устройстве.</string>
+    <string name="after_reboot">После перезагрузки</string>
+    <string name="boot_system">По умолчанию системы</string>
+    <string name="boot_start">Запустить все профили</string>
+    <string name="boot_stop">Остановить все профили</string>
+    <string name="boot_help">Выполняется один раз, не ранее чем через 10 секунд после разблокировки основного пользователя после перезагрузки; Android может отложить выполнение. Системный вариант не меняет состояние профилей. Остановка всех профилей сохраняет данные, но приостанавливает уведомления. Root-доступ должен быть уже предоставлен и доступен при загрузке. После этого запуск и ярлыки по-прежнему работают.</string>
+    <string name="boot_save_failed">Не удалось сохранить настройку перезагрузки</string>
+    <string name="boot_save_retry">Не удалось сохранить настройку перезагрузки. Выберите её ещё раз, чтобы повторить.</string>
+    <string name="boot_saved">Сохранено. Применится после следующей перезагрузки и разблокировки.</string>
+    <string name="boot_queued">Действие после перезагрузки в очереди; ожидается выполнение Android.</string>
+    <string name="boot_failed">Действие после перезагрузки не удалось:\n%1$s</string>
+    <string name="boot_not_run">Действия после перезагрузки ещё не выполнялись.</string>
+    <string name="boot_summary">%1$s\nУспешно: %2$d · Ошибок: %3$d · Ожидает: %4$d</string>
+    <string name="boot_last_failure">%1$s\nПоследняя ошибка: %2$s</string>
+    <string name="boot_report">Последний отчёт о перезагрузке (технические сведения):\n%1$s</string>
+    <string name="shortcut_labels">Подписи ярлыков</string>
+    <string name="prefix_app_names">Добавлять префикс к именам клонов приложений</string>
+    <string name="prefix_help">Размещать ID клона перед именем приложения, чтобы различать ярлыки клонов.</string>
+    <string name="format">Формат</string>
+    <string name="shortcut_format">Формат подписи ярлыка</string>
+    <string name="format_tokens">Маркеры: <xliff:g id="id_token">{id}</xliff:g> ID пользователя клона · <xliff:g id="name_token">{name}</xliff:g> имя приложения · <xliff:g id="clone_token">{clone}</xliff:g> имя клона. Допускаются двоеточия и другие символы.</string>
+    <string name="insert_format_token">Вставить <xliff:g id="token" example="{id}">%1$s</xliff:g> в формат ярлыка</string>
+    <string name="label_preview">Предпросмотр: %1$s</string>
+    <string name="automation">Автоматизация</string>
+    <string name="auto_pin">Автоматически закреплять новые клоны приложений</string>
+    <string name="auto_pin_help">Запрашивать ярлык на главном экране при добавлении каждого приложения в клон. Лаунчер по-прежнему запрашивает подтверждение.</string>
+    <string name="shortcut_labels_help">Подписи применяются к ярлыкам, создаваемым с этого момента. Закрепите существующий ярлык заново, чтобы обновить его имя.</string>
+    <string name="about">О приложении</string>
+    <string name="source_code">Исходный код · <xliff:g id="url">github.com/doccstat/appclone</xliff:g></string>
+</resources>
