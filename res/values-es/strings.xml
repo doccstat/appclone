@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="module_description">Aumenta los límites de creación de perfiles clonados y de usuarios en ejecución en sistemas derivados de AOSP. Ámbito: sistema.</string>
+    <string name="apps">Aplicaciones</string>
+    <string name="profiles">Perfiles</string>
+    <string name="profile">Perfil</string>
+    <string name="clone_app">Aplicación clonada</string>
+    <string name="settings">Ajustes</string>
+    <string name="back">Atrás</string>
+    <string name="open">Abrir</string>
+    <string name="cancel">Cancelar</string>
+    <string name="close">Cerrar</string>
+    <string name="retry">Reintentar</string>
+    <string name="refresh">Actualizar</string>
+    <string name="save">Guardar</string>
+    <string name="add">Añadir</string>
+    <string name="create">Crear</string>
+    <string name="delete">Eliminar</string>
+    <string name="stop">Detener</string>
+    <string name="show_system_apps">Mostrar aplicaciones del sistema</string>
+    <string name="system_apps_hidden">Aplicaciones del sistema ocultas</string>
+    <string name="including_system_apps">Incluye aplicaciones del sistema</string>
+    <string name="export_diagnostics">Exportar diagnóstico</string>
+    <string name="new_profile">Nuevo perfil</string>
+    <string name="add_clone_app">Añadir aplicación clonada</string>
+    <string name="add_another_clone">Añadir otro clon</string>
+    <string name="add_app">Añadir aplicación</string>
+    <string name="add_app_to_profile">Añadir aplicación al perfil</string>
+    <string name="app_details">Detalles de la aplicación</string>
+    <string name="app_actions">Acciones de la aplicación</string>
+    <string name="profile_actions">Acciones del perfil</string>
+    <string name="view_profile">Ver perfil</string>
+    <string name="view_apps">Ver aplicaciones</string>
+    <string name="rename_profile">Cambiar nombre del perfil</string>
+    <string name="delete_profile">Eliminar perfil</string>
+    <string name="delete_all_profiles">Eliminar todos los perfiles</string>
+    <string name="start_profile">Iniciar perfil</string>
+    <string name="stop_profile">Detener perfil</string>
+    <string name="start_stop_profile">Iniciar / detener perfil</string>
+    <string name="running">En ejecución</string>
+    <string name="stopped">Detenido</string>
+    <string name="profile_running">Perfil en ejecución</string>
+    <string name="profile_stopped">Perfil detenido</string>
+    <string name="disabled_profile_running">Deshabilitada · Perfil en ejecución</string>
+    <string name="disabled_profile_stopped">Deshabilitada · Perfil detenido</string>
+    <string name="user_id">Usuario <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
+    <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · Usuario <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
+    <string name="profile_status">Usuario %1$s · %2$s · %3$s</string>
+    <string name="profile_picker_item">%1$s · %2$s</string>
+    <string name="actions_for">Acciones para %1$s</string>
+    <string name="app_actions_in_profile">Acciones para %1$s en %2$s</string>
+    <string name="open_in_profile">Abrir %1$s en %2$s</string>
+    <string name="view_apps_in_profile">Ver aplicaciones en %1$s · %2$s</string>
+    <string name="profiles_summary">%1$s · %2$s</string>
+    <string name="filtered_summary">%1$s · %2$s</string>
+    <string name="app_summary">%1$s · %2$s</string>
+    <plurals name="clone_count">
+        <item quantity="one">%1$d clon</item><item quantity="many">%1$d clones</item><item quantity="other">%1$d clones</item>
+    </plurals>
+    <plurals name="profile_count">
+        <item quantity="one">%1$d perfil</item><item quantity="many">%1$d perfiles</item><item quantity="other">%1$d perfiles</item>
+    </plurals>
+    <plurals name="running_count">
+        <item quantity="one">%1$d en ejecución</item><item quantity="many">%1$d en ejecución</item><item quantity="other">%1$d en ejecución</item>
+    </plurals>
+    <plurals name="app_count">
+        <item quantity="one">%1$d aplicación</item><item quantity="many">%1$d aplicaciones</item><item quantity="other">%1$d aplicaciones</item>
+    </plurals>
+    <plurals name="cloned_app_count">
+        <item quantity="one">%1$d aplicación clonada</item><item quantity="many">%1$d aplicaciones clonadas</item><item quantity="other">%1$d aplicaciones clonadas</item>
+    </plurals>
+    <string name="search_apps_profiles">Buscar aplicaciones o perfiles</string>
+    <string name="search_profiles_ids">Buscar perfiles o ID de usuario</string>
+    <string name="search_apps_packages">Buscar aplicaciones o paquetes</string>
+    <string name="no_available_apps">No hay aplicaciones disponibles (el filtro del sistema está en el menú)</string>
+    <string name="no_profiles">Aún no hay perfiles</string>
+    <string name="no_cloned_apps">Aún no hay aplicaciones clonadas</string>
+    <string name="no_matches">Sin coincidencias</string>
+    <string name="search_help">Prueba otro nombre o ID de usuario, o borra la búsqueda.</string>
+    <string name="no_profiles_help">Crea un perfil para mantener otro conjunto de datos de aplicaciones.</string>
+    <string name="no_cloned_apps_help">Añade una aplicación clonada para empezar. Las aplicaciones del sistema están disponibles en el menú.</string>
+    <string name="no_app_clones">No hay clones de esta aplicación</string>
+    <string name="no_clones_to_show">No hay clones que mostrar</string>
+    <string name="return_to_apps">Vuelve a Aplicaciones para añadir un clon.</string>
+    <string name="profile_replaced">El perfil se eliminó o sustituyó. Vuelve a Perfiles y actualiza.</string>
+    <string name="profile_unavailable">Perfil no disponible</string>
+    <string name="return_to_profiles">Vuelve a Perfiles y actualiza antes de realizar cualquier acción.</string>
+    <string name="no_apps_to_show">No hay aplicaciones que mostrar</string>
+    <string name="no_apps_help">Añade una aplicación o muestra las aplicaciones del sistema desde el menú.</string>
+    <string name="reading_available_apps">Leyendo aplicaciones disponibles…</string>
+    <string name="add_app_to">Añadir %1$s a…</string>
+    <string name="add_clone_question">¿Añadir clon?</string>
+    <string name="add_clone_message">%1$s\n%2$s\n\nUsa el perfil existente. Las otras aplicaciones y el estado de ejecución del perfil no cambian.</string>
+    <string name="adding_clone">Añadiendo clon…</string>
+    <string name="profile_name">Nombre del perfil</string>
+    <string name="profile_quantity">Número de perfiles (1–500)</string>
+    <string name="append_numbering">Añadir -1, -2, … a los nombres</string>
+    <string name="create_profiles_help">Crea e inicia los perfiles solicitados. Los nombres se conservan exactamente como se introducen, salvo que se seleccione la numeración.</string>
+    <string name="create_profiles_app_help">%1$s\nDespués instala %2$s. Si la instalación falla, se conserva el nuevo perfil.</string>
+    <string name="refresh_profiles_first">Actualiza primero la lista de perfiles.</string>
+    <string name="invalid_profile_input">Usa un nombre no vacío, de una sola línea y sin caracteres NUL, y una cantidad de 1 a 500. La numeración debe estar dentro del intervalo admitido.\n\nDetalles: %1$s</string>
+    <string name="invalid_profile_name">Usa un nombre no vacío, de una sola línea y sin caracteres NUL, con un máximo de 100 unidades de código UTF-16 (un emoji puede contar como dos).</string>
+    <string name="creating_profiles">Creando perfiles…</string>
+    <plurals name="create_profiles_failed">
+        <item quantity="one">%1$d perfil creado.\n%2$s\nUsa Exportar diagnóstico en el menú principal para ver los detalles.</item>
+        <item quantity="many">%1$d perfiles creados.\n%2$s\nUsa Exportar diagnóstico en el menú principal para ver los detalles.</item>
+        <item quantity="other">%1$d perfiles creados.\n%2$s\nUsa Exportar diagnóstico en el menú principal para ver los detalles.</item>
+    </plurals>
+    <plurals name="profile_setup_failed">
+        <item quantity="one">%1$d perfil creado. Se conserva el usuario %2$s, pero la configuración falló.\n%3$s</item>
+        <item quantity="many">%1$d perfiles creados. Se conserva el usuario %2$s, pero la configuración falló.\n%3$s</item>
+        <item quantity="other">%1$d perfiles creados. Se conserva el usuario %2$s, pero la configuración falló.\n%3$s</item>
+    </plurals>
+    <string name="rename_profile_help">Usuario %1$s · Número de serie %2$s\nCambia el nombre del perfil para todas sus aplicaciones. Los datos y el estado de ejecución no cambian. Las etiquetas de los accesos directos existentes no cambian; vuelve a fijarlos si quieres etiquetas nuevas.</string>
+    <string name="renaming_profile">Cambiando nombre del perfil…</string>
+    <string name="delete_profile_question">¿Eliminar perfil?</string>
+    <string name="delete_profile_message">%1$s\n\nElimina TODOS los datos de las aplicaciones de este perfil, incluidas las aplicaciones del sistema ocultas por el filtro. Los otros perfiles y el usuario principal no se modifican.</string>
+    <string name="deleting_profile">Eliminando perfil…</string>
+    <string name="delete_all_question">¿Eliminar todos los perfiles?</string>
+    <plurals name="delete_all_message">
+        <item quantity="one">Elimina %1$d perfil clonado y TODOS sus datos de aplicaciones, incluidas las aplicaciones del sistema ocultas. El usuario principal y los perfiles de trabajo y privados no se modifican.</item>
+        <item quantity="many">Elimina todos los %1$d perfiles clonados y TODOS sus datos de aplicaciones, incluidas las aplicaciones del sistema ocultas. El usuario principal y los perfiles de trabajo y privados no se modifican.</item>
+        <item quantity="other">Elimina todos los %1$d perfiles clonados y TODOS sus datos de aplicaciones, incluidas las aplicaciones del sistema ocultas. El usuario principal y los perfiles de trabajo y privados no se modifican.</item>
+    </plurals>
+    <string name="delete_confirmation">Escribe <xliff:g id="token" example="DELETE">%1$s</xliff:g> para confirmar</string>
+    <string name="delete_confirmation_error">Escribe exactamente <xliff:g id="token" example="DELETE">%1$s</xliff:g></string>
+    <string name="delete_all">Eliminar todo</string>
+    <string name="deleting_profiles">Eliminando perfiles…</string>
+    <string name="delete_batch_failed">Se detuvo en %1$s. Las eliminaciones anteriores no se deshacen.\n%2$s</string>
+    <string name="enable_app">Habilitar aplicación</string>
+    <string name="disable_app_freeze">Deshabilitar aplicación (congelar)</string>
+    <string name="disable_app">Deshabilitar aplicación</string>
+    <string name="manifest_default_state">Usar el estado predeterminado del manifiesto</string>
+    <string name="manifest_default">Usar el valor predeterminado del manifiesto</string>
+    <string name="force_stop_app">Forzar detención de la aplicación</string>
+    <string name="pin_shortcut">Fijar acceso directo</string>
+    <string name="remove_from_profile">Quitar de este perfil</string>
+    <string name="remove_clone_app">Quitar aplicación clonada</string>
+    <string name="disable_app_help">Detiene esta aplicación y sus notificaciones hasta que la habilites explícitamente. Conserva los datos. Las otras aplicaciones de este perfil siguen ejecutándose.</string>
+    <string name="enable_app_help">Habilita explícitamente esta aplicación. No inicia automáticamente un perfil detenido.</string>
+    <string name="manifest_default_help">Elimina la anulación de habilitado/deshabilitado y usa el valor predeterminado del manifiesto de la aplicación. No reconstruye una anulación anterior.</string>
+    <string name="force_stop_help">Detiene esta aplicación ahora sin deshabilitarla ni borrar datos. Las notificaciones pueden detenerse hasta que se abra de nuevo. No es una congelación permanente.</string>
+    <string name="remove_clone_app_help">Elimina los datos de esta aplicación en este perfil. Se conservan el perfil, sus otras aplicaciones y la copia del usuario principal.</string>
+    <string name="system_app_warning">%1$s\n\nAplicación del sistema: modificarla puede afectar al funcionamiento de otras aplicaciones de este perfil.</string>
+    <string name="app_action_message">%1$s\n%2$s\n\n%3$s</string>
+    <string name="confirm_action">¿%1$s?</string>
+    <string name="action_progress">%1$s…</string>
+    <string name="stopping_profile">Deteniendo perfil…</string>
+    <string name="starting_profile">Iniciando perfil…</string>
+    <string name="stop_profile_question">¿Detener perfil?</string>
+    <string name="stop_profile_message">%1$s\n\nDetiene TODAS las aplicaciones y notificaciones de este perfil, conservando los datos. Abrir una aplicación vuelve a iniciarlo. El comportamiento tras reiniciar se controla en Ajustes.</string>
+    <string name="background_activity">Actividad en segundo plano</string>
+    <string name="reading_background">Leyendo ajuste de segundo plano…</string>
+    <string name="background_none">Ninguno</string>
+    <string name="background_allowed">Permitida (gestionada por Android)</string>
+    <string name="background_mode_restricted">Restringida</string>
+    <string name="background_denied">Denegada</string>
+    <string name="background_foreground">Solo en primer plano</string>
+    <string name="background_current">Actual: %1$s</string>
+    <string name="background_uid_override">Anulación para todo el UID: %1$s (gestionada externamente)</string>
+    <string name="background_no_previous">No hay ningún ajuste anterior guardado.</string>
+    <string name="background_previous">Anterior: %1$s</string>
+    <string name="background_help">Restringir limita la actividad en segundo plano de Android (RUN_ANY_IN_BACKGROUND). Las notificaciones y tareas pueden retrasarse. No detiene este perfil ni deshabilita la aplicación ni congela sus procesos. Ningún ajuste cambia hasta que elijas una acción.</string>
+    <string name="keep_current">Conservar actual</string>
+    <string name="restore_previous">Restaurar anterior</string>
+    <string name="restoring_background">Restaurando ajuste de segundo plano…</string>
+    <string name="background_restored">Ajuste anterior de segundo plano restaurado</string>
+    <string name="forget_saved_setting">Olvidar ajuste guardado</string>
+    <string name="forget_previous_question">¿Olvidar ajuste anterior?</string>
+    <string name="forget_previous_message">%1$s\n\nEl ajuste actual de Android no cambia. Solo se elimina el registro de restauración de App Clone; Restaurar dejará de estar disponible.</string>
+    <string name="forget">Olvidar</string>
+    <string name="forgetting_setting">Olvidando ajuste guardado…</string>
+    <string name="restrict">Restringir</string>
+    <string name="restricting_background">Restringiendo actividad en segundo plano…</string>
+    <string name="background_restricted">Segundo plano restringido; ajuste anterior guardado</string>
+    <string name="could_not_refresh">No se pudo actualizar</string>
+    <string name="refresh_failed_kept">Error al actualizar. Se conserva la lista anterior.</string>
+    <string name="action_failed">La acción falló</string>
+    <string name="root_command_failed">El comando root falló.</string>
+    <string name="error_details">Detalles:\n%1$s</string>
+    <string name="read_failed_details">No se pudieron leer las aplicaciones clonadas. Toca para ver los detalles.</string>
+    <string name="refresh_failed_details">Error al actualizar; se muestra la lista anterior. Toca para ver los detalles.</string>
+    <string name="reading_clone_apps">Leyendo aplicaciones clonadas…</string>
+    <string name="refreshing_kept">Actualizando… Se muestra la lista anterior.</string>
+    <string name="opening_clone_app">Abriendo aplicación clonada…</string>
+    <string name="could_not_open_clone_app">No se pudo abrir la aplicación clonada</string>
+    <string name="cannot_pin_shortcuts">Este lanzador no permite fijar accesos directos</string>
+    <string name="app_icon_unavailable">Icono de la aplicación no disponible; actualiza y reintenta</string>
+    <string name="collecting_diagnostics">Recopilando diagnóstico…</string>
+    <string name="report_unavailable">El informe ya no está disponible</string>
+    <string name="report_unavailable_help">La aplicación se reinició. Vuelve a exportar el diagnóstico para recopilar un informe nuevo.</string>
+    <string name="diagnostics_saved">Diagnóstico guardado</string>
+    <string name="could_not_save_diagnostics">No se pudo guardar el diagnóstico</string>
+    <string name="appearance_help">Material You · Colores del fondo de pantalla y modo claro/oscuro del sistema</string>
+    <string name="app_language">Idioma de la aplicación</string>
+    <string name="app_language_help">Usa el idioma del sistema salvo que elijas otro en los ajustes de idioma de aplicaciones de Android. El texto sin traducir se muestra en inglés.</string>
+    <string name="language_settings_unavailable">Los ajustes de idioma de aplicaciones de Android no están disponibles en este dispositivo.</string>
+    <string name="after_reboot">Después de reiniciar</string>
+    <string name="boot_system">Predeterminado del sistema</string>
+    <string name="boot_start">Iniciar todos los perfiles</string>
+    <string name="boot_stop">Detener todos los perfiles</string>
+    <string name="boot_help">Se aplica una vez, al menos 10 segundos después de que el usuario principal desbloquee tras reiniciar; Android puede retrasarlo. Predeterminado del sistema deja los perfiles intactos. Detener todos conserva los datos, pero pausa las notificaciones. El acceso root debe estar concedido y disponible al arrancar. Iniciar y los accesos directos siguen funcionando después.</string>
+    <string name="boot_save_failed">No se pudo guardar el ajuste de reinicio</string>
+    <string name="boot_save_retry">No se pudo guardar el ajuste de reinicio. Selecciónalo de nuevo para reintentar.</string>
+    <string name="boot_saved">Guardado. Se aplicará después del próximo reinicio y desbloqueo.</string>
+    <string name="boot_queued">Acción de reinicio en cola; esperando a que Android la ejecute.</string>
+    <string name="boot_failed">La acción de reinicio falló:\n%1$s</string>
+    <string name="boot_not_run">No se ha ejecutado ninguna acción de reinicio.</string>
+    <string name="boot_summary">%1$s\nCorrectas: %2$d · Fallidas: %3$d · Pendientes: %4$d</string>
+    <string name="boot_last_failure">%1$s\nÚltimo error: %2$s</string>
+    <string name="boot_report">Último informe de reinicio (detalles técnicos):\n%1$s</string>
+    <string name="shortcut_labels">Etiquetas de accesos directos</string>
+    <string name="prefix_app_names">Añadir prefijo a nombres de aplicaciones clonadas</string>
+    <string name="prefix_help">Pon el ID del clon antes del nombre de la aplicación para distinguir los accesos directos clonados.</string>
+    <string name="format">Formato</string>
+    <string name="shortcut_format">Formato de etiqueta del acceso directo</string>
+    <string name="format_tokens">Marcadores: <xliff:g id="id_token">{id}</xliff:g> ID de usuario del clon · <xliff:g id="name_token">{name}</xliff:g> nombre de la aplicación · <xliff:g id="clone_token">{clone}</xliff:g> nombre del clon. Se permiten dos puntos y otros caracteres.</string>
+    <string name="insert_format_token">Insertar <xliff:g id="token" example="{id}">%1$s</xliff:g> en el formato del acceso directo</string>
+    <string name="label_preview">Vista previa: %1$s</string>
+    <string name="automation">Automatización</string>
+    <string name="auto_pin">Fijar automáticamente nuevas aplicaciones clonadas</string>
+    <string name="auto_pin_help">Solicita un acceso directo en la pantalla de inicio al añadir cada aplicación a un clon. El lanzador sigue pidiendo confirmación.</string>
+    <string name="shortcut_labels_help">Las etiquetas se aplican a los accesos directos creados a partir de ahora. Vuelve a fijar un acceso directo existente para actualizar su nombre.</string>
+    <string name="about">Acerca de</string>
+    <string name="source_code">Código fuente · <xliff:g id="url">github.com/doccstat/appclone</xliff:g></string>
+</resources>

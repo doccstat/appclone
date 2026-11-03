@@ -39,6 +39,30 @@ class FixtureProvider(http.server.BaseHTTPRequestHandler):
 
 @unittest.skipUnless(os.environ.get('POLYGO_BIN'), 'Set POLYGO_BIN to test the actual CLI without inference')
 class PolygoTests(unittest.TestCase):
+    def test_bundled_catalogs_pass_strict_checks_and_reject_truncation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            shutil.copytree(ROOT / 'res', root / 'res')
+            for name in ('polygo.toml', 'polygo.lock', 'glossary.toml'):
+                shutil.copyfile(ROOT / name, root / name)
+
+            def cli(*args):
+                return subprocess.check_output([os.environ['POLYGO_BIN'], '-C', str(root), *args],
+                                               text=True, timeout=60)
+
+            cli('check', '--strict', '--no-baseline')
+            state = json.loads(cli('status', '--json'))
+            policy.check(root, status=state)
+            # The configured bound permits compact Chinese, not a truncated message.
+            zh = root / 'res/values-b+zh+Hans/strings.xml'
+            zh.write_text(re.sub(r'(<string name="delete_profile_message">).*?(</string>)',
+                                r'\g<1>%1$s\\n\\n删除。\g<2>', zh.read_text()))
+            result = subprocess.run([os.environ['POLYGO_BIN'], '-C', str(root), 'check', '--strict',
+                                     '--no-baseline', '--json'], text=True, capture_output=True, timeout=60)
+            self.assertNotEqual(0, result.returncode)
+            self.assertTrue(any(f['key'] == 'delete_profile_message' and f['code'] == 'length'
+                                for f in json.loads(result.stdout)['findings']))
+
     def test_full_catalog_plurals_markup_multiline_incremental_and_corrections(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

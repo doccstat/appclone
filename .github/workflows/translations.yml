@@ -52,7 +52,6 @@ jobs:
           args=()
           if [ "$GENERATE" = true ]; then args+=(--generation); fi
           python3 tools/check_i18n.py "${args[@]}"
-          POLYGO_BIN='' python3 -m unittest discover -s tests/i18n_tests -v
           python3 - <<'PY'
           import os, re, tomllib
           from pathlib import Path
@@ -89,7 +88,6 @@ jobs:
           test "$(git -C ../polygo rev-parse HEAD)" = "$POLYGO_REVISION"
           rustup toolchain install 1.99.1 --profile minimal
           cargo +1.99.1 build --release --locked --bin polygo --manifest-path ../polygo/Cargo.toml
-          python3 -m unittest discover -s tests/i18n_tests -v
       - name: Start disposable local inference runtime
         if: inputs.generate
         run: |
@@ -124,6 +122,12 @@ jobs:
           "$POLYGO_BIN" status --json > "$RUNNER_TEMP/polygo-status.json"
           python3 tools/check_i18n.py --status "$RUNNER_TEMP/polygo-status.json"
           "$POLYGO_BIN" status --markdown >> "$GITHUB_STEP_SUMMARY"
+      - name: Test completed catalogs and translation regressions
+        env:
+          CLI_ENABLED: ${{ steps.config.outputs.enabled }}
+        run: |
+          if [ "$CLI_ENABLED" != true ]; then unset POLYGO_BIN; fi
+          python3 -m unittest discover -s tests/i18n_tests -v
       - name: Check Android resource policy
         run: python3 tests/check_package.py
       - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4

@@ -178,12 +178,16 @@ per-app language settings (**Settings → App language**). Available languages a
 discovered from translation files, not a fixed list in app code. Names, IDs,
 shortcut formats and diagnostic output are not automatically translated.
 
-The current catalog is English. GitHub CI has a separate, manual Polygo/Ollama
-translation workflow; target languages, pinned tooling and a model must be
-selected before generating drafts. Normal builds/releases validate accepted
-catalogs without inference. The [localization guide](docs/i18n.md) covers setup,
-reviewable patches, incremental updates and protected corrections. No persistent
-translation service is needed; the APK contains neither tooling nor a model.
+Bundled languages: **English, Simplified Chinese, Traditional Chinese, Spanish,
+Hindi, Bengali, Russian, Japanese and Turkish**. The translations are AI-authored;
+fluent-speaker corrections are welcome. Untranslated technical output stays in
+its original language.
+
+Normal builds/releases validate the checked-in catalogs without inference.
+The optional manual Polygo/Ollama workflow needs an explicitly selected model
+and runtime pins before generating further drafts. The [localization guide](docs/i18n.md)
+covers provenance, review, incremental updates and protected corrections.
+The APK contains neither translation tooling nor a model.
 
 ## Build and checks
 

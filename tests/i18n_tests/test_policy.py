@@ -107,6 +107,9 @@ class PolicyTests(unittest.TestCase):
         for forbidden in ('secrets.', 'contents: write', 'git push', 'pull_request_target:', 'uses: doccstat/'):
             self.assertNotIn(forbidden, workflow)
         self.assertLess(workflow.index('Independently validate'), workflow.index('actions/upload-artifact@'))
+        # New/missing strings must be generated before the complete-catalog regressions run.
+        self.assertLess(workflow.index('Generate only new'), workflow.index('Test completed catalogs'))
+        self.assertEqual(1, workflow.count('unittest discover -s tests/i18n_tests'))
 
 
 if __name__ == '__main__':
