@@ -135,6 +135,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
       - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
         if: inputs.generate
         with:
@@ -151,6 +152,7 @@ jobs:
             https://api.xposed.info/de/robv/android/xposed/api/82/api-82.jar
           echo 'f48c635f1c7469fdec0e00ad2ea0b7a6b2f5b55065784a35b7ca3a84615e8e25  '"$XPOSED_API_JAR" | sha256sum -c -
           python3 -m unittest discover -s tests/build_tests -v
+          export GRADLE_USER_HOME="$HOME/.gradle"
           python3 build.py --self-check
           python3 build.py --lint
           python3 build.py
