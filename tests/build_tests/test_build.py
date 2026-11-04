@@ -51,6 +51,22 @@ class BuildTests(unittest.TestCase):
                        SIGNING_KEY_PASSWORD="dummy", SIGNING_KEY_ALIAS="dummy")
             self.assert_refused(["--release"], env, "SIGNING_CERT_SHA256")
 
+    def test_repository_download_backoff_is_bounded(self):
+        properties = dict(line.split('=', 1) for line in (ROOT / 'gradle.properties').read_text().splitlines()
+                          if line and not line.startswith('#'))
+        self.assertEqual(properties['systemProp.org.gradle.internal.repository.max.tentatives'], '4')
+        self.assertEqual(properties['systemProp.org.gradle.internal.repository.initial.backoff'], '15000')
+
+    def test_ci_cache_matches_the_gradle_home_used_by_builds(self):
+        for name in ('android.yml', 'release.yml', 'translations.yml'):
+            with self.subTest(workflow=name):
+                workflow = (ROOT / '.github/workflows' / name).read_text()
+                java_setup = workflow.split('uses: actions/setup-java@', 1)[1].split('\n      - ', 1)[0]
+                self.assertIn('cache: gradle', java_setup)
+                home = 'export GRADLE_USER_HOME="$HOME/.gradle"'
+                self.assertIn(home, workflow)
+                self.assertLess(workflow.index(home), workflow.index('python3 build.py'))
+
     def test_manifest_has_stable_identity(self):
         root = ET.parse(ROOT / "AndroidManifest.xml").getroot()
         self.assertEqual(root.attrib["package"], "com.lixingchi.appclone")

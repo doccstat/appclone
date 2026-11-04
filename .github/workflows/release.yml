@@ -34,6 +34,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
       - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
         with:
           packages: platform-tools
@@ -65,6 +66,7 @@ jobs:
           trap 'rm -f "$SIGNING_KEYSTORE"' EXIT
           test -n "$KEYSTORE_BASE64"
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode >"$SIGNING_KEYSTORE"
+          export GRADLE_USER_HOME="$HOME/.gradle"
           python3 build.py --self-check
           python3 build.py --lint
           python3 build.py --release
