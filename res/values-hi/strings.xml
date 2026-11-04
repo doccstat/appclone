@@ -39,11 +39,8 @@
     <string name="start_stop_profile">प्रोफ़ाइल शुरू करें / रोकें</string>
     <string name="running">चल रही है</string>
     <string name="stopped">रुकी हुई है</string>
-    <string name="profile_running">प्रोफ़ाइल चल रही है</string>
-    <string name="profile_stopped">प्रोफ़ाइल रुकी हुई है</string>
     <string name="disabled_profile_running">बंद किया गया · प्रोफ़ाइल चल रही है</string>
     <string name="disabled_profile_stopped">बंद किया गया · प्रोफ़ाइल रुकी हुई है</string>
-    <string name="user_id">उपयोगकर्ता <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
     <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · उपयोगकर्ता <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
     <string name="profile_status">उपयोगकर्ता %1$s · %2$s · %3$s</string>
     <string name="profile_picker_item">%1$s · %2$s</string>
@@ -180,8 +177,10 @@
     <string name="could_not_save_diagnostics">निदान सहेजा नहीं जा सका</string>
     <string name="appearance_help">Material You · वॉलपेपर के रंग और सिस्टम की लाइट/डार्क थीम</string>
     <string name="app_language">ऐप की भाषा</string>
-    <string name="app_language_help">जब तक आप Android की ऐप भाषा सेटिंग्स में दूसरी भाषा नहीं चुनते, सिस्टम की भाषा इस्तेमाल होती है। बिना अनुवाद वाला पाठ अंग्रेज़ी में दिखता है।</string>
-    <string name="language_settings_unavailable">इस डिवाइस पर Android की ऐप भाषा सेटिंग्स उपलब्ध नहीं हैं।</string>
+    <string name="app_language_help">ऐप में शामिल भाषा चुनें या सिस्टम की भाषा इस्तेमाल करें। बिना अनुवाद वाला पाठ अंग्रेज़ी में दिखता है।</string>
+    <string name="language_settings_unavailable">ऐप की भाषा पढ़ी या बदली नहीं जा सकी। कृपया फिर कोशिश करें।</string>
+    <string name="system_language">सिस्टम का डिफ़ॉल्ट</string>
+    <string name="instance_status">उपयोगकर्ता %1$s · %2$s</string>
     <string name="after_reboot">रीबूट के बाद</string>
     <string name="boot_system">सिस्टम डिफ़ॉल्ट</string>
     <string name="boot_start">सभी प्रोफ़ाइलें शुरू करें</string>
@@ -199,12 +198,10 @@
     <string name="shortcut_labels">शॉर्टकट लेबल</string>
     <string name="prefix_app_names">क्लोन ऐप के नामों में उपसर्ग लगाएँ</string>
     <string name="prefix_help">क्लोन शॉर्टकट पहचानने के लिए ऐप के नाम से पहले क्लोन ID लगाएँ।</string>
-    <string name="format">प्रारूप</string>
     <string name="shortcut_format">शॉर्टकट लेबल का प्रारूप</string>
     <string name="format_tokens">टोकन: <xliff:g id="id_token">{id}</xliff:g> क्लोन उपयोगकर्ता ID · <xliff:g id="name_token">{name}</xliff:g> ऐप का नाम · <xliff:g id="clone_token">{clone}</xliff:g> क्लोन का नाम। कोलन और अन्य वर्णों की अनुमति है।</string>
     <string name="insert_format_token">शॉर्टकट प्रारूप में <xliff:g id="token" example="{id}">%1$s</xliff:g> डालें</string>
     <string name="label_preview">पूर्वावलोकन: %1$s</string>
-    <string name="automation">स्वचालन</string>
     <string name="auto_pin">नए क्लोन ऐप्स अपने आप पिन करें</string>
     <string name="auto_pin_help">किसी क्लोन में हर ऐप जोड़ते समय होम स्क्रीन शॉर्टकट का अनुरोध करें। लॉन्चर फिर भी आपसे पुष्टि माँगता है।</string>
     <string name="shortcut_labels_help">लेबल अब से बनाए जाने वाले शॉर्टकट पर लागू होते हैं। मौजूदा शॉर्टकट का नाम बदलने के लिए उसे फिर पिन करें।</string>

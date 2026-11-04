@@ -42,9 +42,12 @@ final class InventoryList extends RecyclerView {
                     context.getResources().getQuantityString(R.plurals.clone_count, entry.profiles.size(), entry.profiles.size()), entry, null);
         }
         static Item instance(android.content.Context context, Inventory.Entry entry, Inventory.Profile profile, boolean appHeading) {
+            String state = Inventory.state(context, profile, entry.app.pkg);
+            String detail = appHeading ? context.getString(R.string.app_summary, state, Ui.bidi(context, entry.app.pkg))
+                    : context.getString(R.string.instance_status, Integer.toString(profile.clone.id), state);
             return new Item(appHeading ? APP_INSTANCE : INSTANCE,
                     "instance:" + profile.clone.id + ":" + profile.serial + ":" + entry.app.pkg,
-                    appHeading ? entry.app.label : profile.clone.name, Inventory.state(context, profile, entry.app.pkg), entry, profile);
+                    appHeading ? entry.app.label : profile.clone.name, detail, entry, profile);
         }
         static Item profile(android.content.Context context, Inventory.Profile profile, int count) {
             return new Item(PROFILE, "profile:" + profile.clone.id + ":" + profile.serial, profile.clone.name,
@@ -64,7 +67,7 @@ final class InventoryList extends RecyclerView {
         setClipToPadding(false);
         setPadding(0, 0, 0, Ui.dp(activity, 16));
         header = Ui.column(activity);
-        header.setPadding(Ui.dp(activity, 16), 0, Ui.dp(activity, 16), Ui.dp(activity, 8));
+        header.setPadding(Ui.dp(activity, 16), 0, Ui.dp(activity, 16), 0);
         LinearLayout notice = Ui.row(activity);
         status = Ui.type(activity, "", com.google.android.material.R.style.TextAppearance_Material3_BodySmall, R.color.muted);
         status.setMaxLines(2);
@@ -132,61 +135,63 @@ final class InventoryList extends RecyclerView {
 
     private static final class Row extends RecyclerView.ViewHolder {
         final InventoryActivity activity;
-        final TextView title, subtitle, detail;
+        final TextView title, subtitle, count;
         final ImageView icon;
-        final TextView avatar;
-        final Button open;
-        final ImageButton more;
+        final ImageButton open, more;
         final LinearLayout labels;
 
         Row(InventoryActivity activity, int kind) {
             super(Ui.column(activity));
             this.activity = activity;
             LinearLayout root = (LinearLayout) itemView;
-            root.setLayoutParams(new RecyclerView.LayoutParams(-1, -2));
+            RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(-1, -2);
+            params.setMargins(Ui.dp(activity, 16), Ui.dp(activity, kind == HEADING || kind == EMPTY ? 16 : 0), Ui.dp(activity, 16), 0);
+            root.setLayoutParams(params);
             LinearLayout line = Ui.row(activity);
-            line.setPaddingRelative(Ui.dp(activity, kind == INSTANCE ? 32 : 16), Ui.dp(activity, 12), Ui.dp(activity, 8), Ui.dp(activity, 12));
-            if (kind == HEADING) {
-                root.setPadding(0, Ui.dp(activity, 16), 0, 0);
-                line.setBackgroundColor(Ui.color(activity, R.color.surface));
-            }
+            line.setPaddingRelative(Ui.dp(activity, kind == INSTANCE ? 12 : 0), Ui.dp(activity, 8), 0, Ui.dp(activity, 8));
             icon = new ImageView(activity);
             icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             line.addView(icon, new LinearLayout.LayoutParams(Ui.dp(activity, 40), Ui.dp(activity, 40)));
             icon.setVisibility(kind == HEADING || kind == APP_INSTANCE ? View.VISIBLE : View.GONE);
-            avatar = Ui.avatar(activity, "");
-            avatar.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            line.addView(avatar);
-            avatar.setVisibility(kind == PROFILE ? View.VISIBLE : View.GONE);
             labels = Ui.column(activity);
             title = Ui.type(activity, "", kind == HEADING || kind == EMPTY
                     ? com.google.android.material.R.style.TextAppearance_Material3_TitleLarge
                     : com.google.android.material.R.style.TextAppearance_Material3_TitleMedium, R.color.ink);
             title.setAccessibilityHeading(kind == HEADING || kind == EMPTY);
             subtitle = Ui.type(activity, "", com.google.android.material.R.style.TextAppearance_Material3_BodyMedium, R.color.muted);
-            detail = Ui.type(activity, "", com.google.android.material.R.style.TextAppearance_Material3_BodySmall, R.color.muted);
-            labels.addView(title); labels.addView(subtitle); labels.addView(detail);
-            line.addView(labels, Ui.weightWithStart(activity, 1, kind == INSTANCE || kind == EMPTY ? 0 : 16));
-            open = Ui.quiet(activity, activity.getString(R.string.open));
-            open.setMinWidth(0);
-            open.setMinimumWidth(0);
-            open.setPadding(Ui.dp(activity, 12), 0, Ui.dp(activity, 12), 0);
+            subtitle.setId(R.id.row_metadata);
+            if (kind == HEADING) {
+                subtitle.setMaxLines(1);
+                subtitle.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
+            }
+            labels.addView(title); labels.addView(subtitle);
+            line.addView(labels, Ui.weightWithStart(activity, 1, kind == HEADING || kind == APP_INSTANCE ? 12 : 0));
+            count = Ui.type(activity, "", com.google.android.material.R.style.TextAppearance_Material3_LabelMedium, R.color.muted);
+            count.setMaxWidth(Ui.dp(activity, 80));
+            count.setPaddingRelative(Ui.dp(activity, 8), 0, 0, 0);
+            line.addView(count);
+            count.setVisibility(kind == HEADING ? View.VISIBLE : View.GONE);
+            open = Ui.iconButton(activity, R.drawable.ic_open);
+            open.setId(R.id.open_clone);
+            open.setTooltipText(activity.getString(R.string.open));
             line.addView(open);
             open.setVisibility(kind == INSTANCE || kind == APP_INSTANCE ? View.VISIBLE : View.GONE);
             more = Ui.overflow(activity);
+            more.setId(R.id.row_actions);
             line.addView(more);
             more.setVisibility(kind == EMPTY ? View.GONE : View.VISIBLE);
             root.addView(line);
-            if (kind != HEADING && kind != EMPTY) root.addView(Ui.divider(activity, kind == INSTANCE ? 32 : 16));
+            if (kind != HEADING && kind != EMPTY) root.addView(Ui.divider(activity, kind == INSTANCE ? 12 : 0));
         }
 
         void bind(Item item) {
             title.setText(item.title);
-            detail.setText(item.detail);
-            detail.setVisibility(View.VISIBLE);
+            subtitle.setText(item.detail);
             icon.setImageDrawable(item.entry == null ? null : item.entry.icon);
             if (item.kind == HEADING) {
                 subtitle.setText(item.entry.app.pkg);
+                subtitle.setTooltipText(item.entry.app.pkg);
+                count.setText(item.detail);
                 more.setContentDescription(activity.getString(R.string.actions_for, Ui.bidi(activity, item.title)));
                 more.setTooltipText(activity.getString(R.string.app_actions));
                 more.setOnClickListener(v -> {
@@ -201,12 +206,9 @@ final class InventoryList extends RecyclerView {
                     menu.show();
                 });
             } else if (item.kind == INSTANCE || item.kind == APP_INSTANCE) {
-                subtitle.setText(item.kind == INSTANCE ? activity.getString(R.string.user_id, Integer.toString(item.profile.clone.id)) : item.entry.app.pkg);
                 AppControls.bind(activity, item.entry, item.profile, open, more);
             } else if (item.kind == PROFILE) {
-                avatar.setText(Integer.toString(item.profile.clone.id));
                 subtitle.setText(item.detail);
-                detail.setVisibility(View.GONE);
                 labels.setBackground(Ui.selectable(activity));
                 labels.setMinimumHeight(Ui.dp(activity, 48));
                 labels.setContentDescription(activity.getString(R.string.view_apps_in_profile, Ui.bidi(activity, item.title), item.detail));
@@ -214,9 +216,6 @@ final class InventoryList extends RecyclerView {
                 more.setContentDescription(activity.getString(R.string.actions_for, Inventory.location(activity, item.profile)));
                 more.setTooltipText(activity.getString(R.string.profile_actions));
                 more.setOnClickListener(v -> ProfileControls.menu(activity, item.profile, more));
-            } else {
-                subtitle.setText(item.detail);
-                detail.setVisibility(View.GONE);
             }
         }
     }

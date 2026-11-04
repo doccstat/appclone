@@ -38,9 +38,11 @@ public final class MainActivity extends InventoryActivity {
         LinearLayout root = Ui.column(this);
         toolbar = Ui.toolbar(this, root, getString(R.string.app_name), false);
         pendingReport = (String) getLastCustomNonConfigurationInstance();
-        toolbar.getMenu().add(0, 1, 0, R.string.settings);
+        toolbar.getMenu().add(0, 1, 0, R.string.settings).setIcon(R.drawable.ic_settings)
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_ALWAYS);
         toolbar.getMenu().add(0, 2, 1, R.string.show_system_apps).setCheckable(true).setChecked(Settings.systemApps(this));
-        toolbar.getMenu().add(0, 3, 2, R.string.refresh);
+        toolbar.getMenu().add(0, 3, 2, R.string.refresh).setIcon(R.drawable.ic_refresh)
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM);
         toolbar.getMenu().add(0, 4, 3, R.string.export_diagnostics);
         toolbar.getMenu().add(0, 5, 4, R.string.delete_all_profiles);
         toolbar.setOnMenuItemClickListener(item -> {
@@ -57,18 +59,21 @@ public final class MainActivity extends InventoryActivity {
         });
         TabLayout tabs = new TabLayout(this);
         tabs.setTabMode(TabLayout.MODE_FIXED);
-        root.addView(tabs);
+        tabs.setBackground(Ui.shape(this, R.color.surface, 24));
+        tabs.setSelectedTabIndicator(Ui.shape(this, R.color.accent_tint, 24));
+        tabs.setSelectedTabIndicatorColor(Ui.color(this, R.color.accent_tint));
+        tabs.setSelectedTabIndicatorGravity(TabLayout.INDICATOR_GRAVITY_STRETCH);
+        tabs.setTabIndicatorFullWidth(true);
+        tabs.setTabTextColors(Ui.color(this, R.color.muted),
+                com.google.android.material.color.MaterialColors.getColor(this,
+                        com.google.android.material.R.attr.colorOnPrimaryContainer, "App Clone"));
+        root.addView(tabs, Ui.margins(this, 16, 0, 16, 8));
         for (int i = 0; i < pages.length; i++) {
             final int page = i;
             pages[i] = new InventoryList(this);
             if (state != null) pages[i].restorePosition(state.getParcelable("position" + i));
             LinearLayout searchForm = Ui.column(this);
-            searches[i] = Ui.input(this, searchForm, getString(i == 0 ? R.string.search_apps_profiles : R.string.search_profiles_ids));
-            com.google.android.material.textfield.TextInputLayout field =
-                    (com.google.android.material.textfield.TextInputLayout) searchForm.getChildAt(0);
-            field.setStartIconDrawable(R.drawable.ic_search);
-            field.setEndIconMode(com.google.android.material.textfield.TextInputLayout.END_ICON_CLEAR_TEXT);
-            searches[i].setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+            searches[i] = Ui.search(this, searchForm, getString(i == 0 ? R.string.search_apps_profiles : R.string.search_profiles_ids));
             if (state != null) searches[i].setText(state.getString("query" + i, ""));
             pages[i].header.addView(searchForm, 0);
             searches[i].addTextChangedListener(new TextWatcher() {
@@ -82,8 +87,8 @@ public final class MainActivity extends InventoryActivity {
         useList(pages[profiles ? 1 : 0]);
         ViewPager pager = new ViewPager(this);
         pager.setOffscreenPageLimit(1);
-        root.addView(pager, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.addAction(this, root, getString(profiles ? R.string.new_profile : R.string.add_clone_app));
+        android.widget.FrameLayout content = Ui.content(this, root, pager);
+        add = Ui.addAction(this, content, getString(profiles ? R.string.new_profile : R.string.add_clone_app), pages);
         Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> {
             if (inventory == null) { refresh(); return; }

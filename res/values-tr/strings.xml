@@ -39,11 +39,8 @@
     <string name="start_stop_profile">Profili başlat / durdur</string>
     <string name="running">Çalışıyor</string>
     <string name="stopped">Durduruldu</string>
-    <string name="profile_running">Profil çalışıyor</string>
-    <string name="profile_stopped">Profil durduruldu</string>
     <string name="disabled_profile_running">Devre dışı · Profil çalışıyor</string>
     <string name="disabled_profile_stopped">Devre dışı · Profil durduruldu</string>
-    <string name="user_id">Kullanıcı <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
     <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · Kullanıcı <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
     <string name="profile_status">Kullanıcı %1$s · %2$s · %3$s</string>
     <string name="profile_picker_item">%1$s · %2$s</string>
@@ -180,8 +177,10 @@
     <string name="could_not_save_diagnostics">Tanılama bilgileri kaydedilemedi</string>
     <string name="appearance_help">Material You · Duvar kâğıdı renkleri ve sistemin açık/koyu modu</string>
     <string name="app_language">Uygulama dili</string>
-    <string name="app_language_help">Android uygulama dili ayarlarında başka bir dil seçmediğiniz sürece sistem dilini kullanır. Çevrilmemiş metinler İngilizce gösterilir.</string>
-    <string name="language_settings_unavailable">Android uygulama dili ayarları bu cihazda kullanılamıyor.</string>
+    <string name="app_language_help">Uygulamadaki dillerden birini seçin veya sistem dilini kullanın. Çevrilmemiş metinler İngilizce gösterilir.</string>
+    <string name="language_settings_unavailable">Uygulama dili okunamadı veya değiştirilemedi. Lütfen tekrar deneyin.</string>
+    <string name="system_language">Sistem varsayılanı</string>
+    <string name="instance_status">Kullanıcı %1$s · %2$s</string>
     <string name="after_reboot">Yeniden başlatma sonrası</string>
     <string name="boot_system">Sistem varsayılanı</string>
     <string name="boot_start">Tüm profilleri başlat</string>
@@ -199,12 +198,10 @@
     <string name="shortcut_labels">Kısayol etiketleri</string>
     <string name="prefix_app_names">Klon uygulama adlarına önek ekle</string>
     <string name="prefix_help">Klon kısayolları ayırt etmek için uygulama adının önüne klon kimliğini koyun.</string>
-    <string name="format">Biçim</string>
     <string name="shortcut_format">Kısayol etiketi biçimi</string>
     <string name="format_tokens">Belirteçler: <xliff:g id="id_token">{id}</xliff:g> klon kullanıcı kimliği · <xliff:g id="name_token">{name}</xliff:g> uygulama adı · <xliff:g id="clone_token">{clone}</xliff:g> klon adı. İki nokta ve diğer karakterler kullanılabilir.</string>
     <string name="insert_format_token">Kısayol biçimine <xliff:g id="token" example="{id}">%1$s</xliff:g> ekle</string>
     <string name="label_preview">Önizleme: %1$s</string>
-    <string name="automation">Otomasyon</string>
     <string name="auto_pin">Yeni klon uygulamaları otomatik sabitle</string>
     <string name="auto_pin_help">Bir klona her uygulama eklendiğinde ana ekran kısayolu isteyin. Başlatıcı yine de onayınızı ister.</string>
     <string name="shortcut_labels_help">Etiketler bundan sonra oluşturulan kısayollara uygulanır. Mevcut bir kısayolun adını güncellemek için yeniden sabitleyin.</string>

@@ -46,14 +46,12 @@
     <string name="start_stop_profile">Start / stop profile</string>
     <string name="running">Running</string>
     <string name="stopped">Stopped</string>
-    <string name="profile_running">Profile running</string>
-    <string name="profile_stopped">Profile stopped</string>
     <string name="disabled_profile_running">Disabled · Profile running</string>
     <string name="disabled_profile_stopped">Disabled · Profile stopped</string>
     <!-- IDs/serials are identifiers, not quantities: preserve their supplied digits. -->
-    <string name="user_id">User <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
     <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · User <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
     <string name="profile_status">User %1$s · %2$s · %3$s</string>
+    <string name="instance_status">User %1$s · %2$s</string>
     <string name="profile_picker_item">%1$s · %2$s</string>
     <string name="actions_for">Actions for %1$s</string>
     <string name="app_actions_in_profile">Actions for %1$s in %2$s</string>
@@ -212,8 +210,9 @@
 
     <string name="appearance_help">Material You · Wallpaper colours and system light/dark mode</string>
     <string name="app_language">App language</string>
-    <string name="app_language_help">Uses your system language unless you choose another in Android\'s app language settings. Untranslated text falls back to English.</string>
-    <string name="language_settings_unavailable">Android\'s app language settings are unavailable on this device.</string>
+    <string name="app_language_help">Choose a bundled language, or follow your system. Untranslated text uses English.</string>
+    <string name="language_settings_unavailable">Could not read or change the app language. Please try again.</string>
+    <string name="system_language">System default</string>
     <string name="after_reboot">After reboot</string>
     <string name="boot_system">System default</string>
     <string name="boot_start">Start all profiles</string>
@@ -231,12 +230,10 @@
     <string name="shortcut_labels">Shortcut labels</string>
     <string name="prefix_app_names">Prefix clone app names</string>
     <string name="prefix_help">Put the clone id before the app name, so cloned shortcuts are distinguishable.</string>
-    <string name="format">Format</string>
     <string name="shortcut_format">Shortcut label format</string>
     <string name="format_tokens">Tokens: <xliff:g id="id_token">{id}</xliff:g> clone user id · <xliff:g id="name_token">{name}</xliff:g> app name · <xliff:g id="clone_token">{clone}</xliff:g> clone name. Colons and other characters are allowed.</string>
     <string name="insert_format_token">Insert <xliff:g id="token" example="{id}">%1$s</xliff:g> into shortcut format</string>
     <string name="label_preview">Preview: %1$s</string>
-    <string name="automation">Automation</string>
     <string name="auto_pin">Auto-pin new clone apps</string>
     <string name="auto_pin_help">Request a home-screen shortcut as each app is added to a clone. The launcher still asks you to confirm.</string>
     <string name="shortcut_labels_help">Labels apply to shortcuts created from now on. Re-pin an existing shortcut to update its name.</string>

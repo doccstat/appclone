@@ -47,7 +47,7 @@ public final class InlineInventoryTest {
         String contents = text(activity.body);
         for (int i = 0; i < 20; i++) assertTrue(contents.contains("Account " + i + "\nUser " + (11 + i)));
         assertTrue(contents.contains("Disabled · Profile running"));
-        assertTrue(contents.contains("Profile stopped"));
+        assertTrue(contents.contains("User 12 · Stopped"));
         assertNull(shadowOf(activity).getNextStartedActivity());
         find(activity.body.header, EditText.class).setText("Account 19");
         assertEquals(22, activity.body.getAdapter().getItemCount());
@@ -65,15 +65,15 @@ public final class InlineInventoryTest {
         RecyclerView.Adapter adapter = activity.body.getAdapter();
         RecyclerView.ViewHolder holder = adapter.createViewHolder(activity.body, adapter.getItemViewType(2));
         adapter.bindViewHolder(holder, 2);
-        assertFalse(findText(holder.itemView, "Open").isEnabled());
+        assertFalse(holder.itemView.findViewById(R.id.open_clone).isEnabled());
         adapter.bindViewHolder(holder, 3);
-        assertTrue(findText(holder.itemView, "Open").isEnabled());
-        ImageButton more = find(holder.itemView, ImageButton.class);
+        assertTrue(holder.itemView.findViewById(R.id.open_clone).isEnabled());
+        ImageButton more = holder.itemView.findViewById(R.id.row_actions);
         assertEquals("Actions for Chat in Account 1 · User 12", more.getContentDescription());
         layout(holder.itemView, Ui.dp(activity, 320), Ui.dp(activity, 200));
         assertEquals(Ui.dp(activity, 48), more.getWidth());
         assertEquals(Ui.dp(activity, 48), more.getHeight());
-        findText(holder.itemView, "Open").performClick();
+        holder.itemView.findViewById(R.id.open_clone).performClick();
         Intent launch = shadowOf(activity).getNextStartedActivity();
         assertEquals(LaunchActivity.class.getName(), launch.getComponent().getClassName());
         assertEquals(12, launch.getIntExtra(LaunchActivity.EXTRA_USER, -1));
@@ -140,7 +140,10 @@ public final class InlineInventoryTest {
             layout(root, width, height);
             assertEquals(View.GONE, add.getVisibility());
             assertTrue("tab content must retain a viewport above the IME: " + pager.getHeight(), pager.getHeight() > 0);
-            assertTrue(activity.body.canScrollVertically(1));
+            assertTrue("list viewport=" + activity.body.getWidth() + "x" + activity.body.getHeight()
+                    + " pager=" + pager.getWidth() + "x" + pager.getHeight()
+                    + " children=" + activity.body.getChildCount() + " landscape=" + landscape,
+                    activity.body.canScrollVertically(1));
             root.dispatchApplyWindowInsets(new android.view.WindowInsets.Builder()
                     .setVisible(android.view.WindowInsets.Type.ime(), false).build());
             layout(root, width, height);

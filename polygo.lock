@@ -1284,60 +1284,60 @@ at = "2026-11-03T16:52:26Z"
 [keys.app_language_help]
 
 [keys.app_language_help.locales.bn]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "503ef2313e250619de17e4d936cbba71"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "19165c881ee0946035cd6cdafc5213af"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_language_help.locales.es]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "4ac0fd2805a1695de501cdffb7e8965d"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "badc244be92304f7a315e56aefb6159a"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_language_help.locales.hi]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "1c74d28668c043c14a14c78e77f6726e"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "cf3957cb24d4acb8f604ffbae57092a5"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_language_help.locales.ja]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "ba9c8d604e5454b5d3b63796679bdbfe"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "e9ec973502002b8a6b0ecbd9aa3d1be7"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_language_help.locales.ru]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "0641b9f3b95314dc55165f7260490233"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "052c44cc5c921d716d7198ad05f79eab"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_language_help.locales.tr]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "80d65f5474a2a5c540d23f28a29ccf8c"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "ca9dc166c26c91dd5906dcdbf3126666"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_language_help.locales.zh-Hans]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "e016fbabe5481e54cd92852ff0e43c92"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "61101d9eae93464e4cb512036b313d0b"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_language_help.locales.zh-Hant]
-source = "413f3cff37ad92f7a5d28bb5078496c9"
-hash = "ccf78a85e565d4c59e8a0513643a0c45"
+source = "d9abc4e771f7bbdd082bbcf43775a2fb"
+hash = "dbd3b0982f5f2cf6cea4489700b89b25"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.app_summary]
 
@@ -1683,64 +1683,6 @@ at = "2026-11-03T16:52:26Z"
 [keys.auto_pin_help.locales.zh-Hant]
 source = "49e853818484fdfd35fe56ff1ac3ed6a"
 hash = "9c201d6e6c39eaa0c63de049cddf8be5"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation]
-
-[keys.automation.locales.bn]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "511d34bb76def5f6373e61fe422f386b"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation.locales.es]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "b84a1d18bd2f1f16f4e18796fce26ef7"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation.locales.hi]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "0b8b45923226dea9276bbbb8c573800e"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation.locales.ja]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "cd2d6f1dcedde0da5da3347cbdf80acc"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation.locales.ru]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "b5c42fdff37ae7631b3bb139fa6e18db"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation.locales.tr]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "f8c4e9cb9a436b745aa6f5f90c87628a"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation.locales.zh-Hans]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "02d8fc03207e9b05b6ddc9f210db283e"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.automation.locales.zh-Hant]
-source = "df58aa3c999ea393c0ec1d868c5aa1a2"
-hash = "cd2d6f1dcedde0da5da3347cbdf80acc"
 provider = "ai-editor"
 model = "gpt-6-astra"
 at = "2026-11-03T16:52:26Z"
@@ -6285,64 +6227,6 @@ provider = "ai-editor"
 model = "gpt-6-astra"
 at = "2026-11-03T16:52:26Z"
 
-[keys.format]
-
-[keys.format.locales.bn]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "2fb83cb428ab4000af2988a3a33f47ed"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.format.locales.es]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "7ec96964308020c9f8c51a1ddf558b33"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.format.locales.hi]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "32c04aa38b5999b53e459d38e69bf2db"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.format.locales.ja]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "e1ba5184a34c75862581dcc3dd117d3d"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.format.locales.ru]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "b01fdf0a76aec5dbeadaffe79d85fe1c"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.format.locales.tr]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "02558f1ce3ffa8a5b0a2857f116498e0"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.format.locales.zh-Hans]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "2f883b0586adfc3c39600b4e2e36f955"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.format.locales.zh-Hant]
-source = "50f40d0368fd83d569ac6c1c8ba736f5"
-hash = "2f883b0586adfc3c39600b4e2e36f955"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
 [keys.format_tokens]
 
 [keys.format_tokens.locales.bn]
@@ -6516,6 +6400,64 @@ hash = "df4098e41434ee0925948386c8a8decd"
 provider = "ai-editor"
 model = "gpt-6-astra"
 at = "2026-11-03T16:52:26Z"
+
+[keys.instance_status]
+
+[keys.instance_status.locales.bn]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "1d35cb970f6d339be3b56b80bd5e01cb"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
+
+[keys.instance_status.locales.es]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "a1730e4287334d3d58482e1396d91493"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
+
+[keys.instance_status.locales.hi]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "78e3dc2bb7a21b3e1913c7869f8ba31d"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
+
+[keys.instance_status.locales.ja]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "41f8c002f441859ebf4dd903e6c3adbf"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
+
+[keys.instance_status.locales.ru]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "ca930e38b19aa7d66636c7b6b29ea579"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
+
+[keys.instance_status.locales.tr]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "f6a89d66ebb3aa0e5f0c5cad89265351"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
+
+[keys.instance_status.locales.zh-Hans]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "65e1a9daf919f8cb16276be5a622adf3"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
+
+[keys.instance_status.locales.zh-Hant]
+source = "f99fec3334b6004699ce7b890003a260"
+hash = "33677025df26ef8c18dde1400c030ae8"
+provider = "ai-editor"
+model = "gpt-6-astra"
+at = "2026-11-04T03:15:37Z"
 
 [keys.invalid_profile_input]
 
@@ -6752,60 +6694,60 @@ at = "2026-11-03T16:52:26Z"
 [keys.language_settings_unavailable]
 
 [keys.language_settings_unavailable.locales.bn]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "5f265c43e310e87fadb804a2fa9f23ad"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "2a9ffdd2f2ade0334c8c77a2a94206cc"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.language_settings_unavailable.locales.es]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "f15df7d0027fa4cc66875e50a50aa046"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "5d9518336c49cbf08883f6ae2a37f698"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.language_settings_unavailable.locales.hi]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "cb98f996bf59d509a18f2e955a6270b5"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "9a6add7e9e32f08ed2ed16c7afa9f71c"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.language_settings_unavailable.locales.ja]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "7778b4795bcfe9faff817fddddd31b70"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "07f79df24613f1e274c8f5d96a255bbe"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.language_settings_unavailable.locales.ru]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "e6890c9dcd74608815760d6294648f8b"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "ec9e48eb638ce526cad3ca08e82e5968"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.language_settings_unavailable.locales.tr]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "da43a415a9664866836edd1537bce988"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "710402426657a2f0eec249eb3c337c4a"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.language_settings_unavailable.locales.zh-Hans]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "5bf692fbb90b56dd67d7ad5d8f1dd4a8"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "3fe3b0b23a1137231ef115cac4cf732e"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.language_settings_unavailable.locales.zh-Hant]
-source = "c9293d80c2323b0865f6405f2bc2830b"
-hash = "2a22a6ac80303f4628ea6fed121a9646"
+source = "7ff10b29c67afd341a8b3a7d30ac7327"
+hash = "0b8d0f72b3a6c3569628dec42f59f1f6"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.manifest_default]
 
@@ -8551,64 +8493,6 @@ provider = "ai-editor"
 model = "gpt-6-astra"
 at = "2026-11-03T16:52:26Z"
 
-[keys.profile_running]
-
-[keys.profile_running.locales.bn]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "2d7d8496890becc6e00dd45995c4b239"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_running.locales.es]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "3d8a35877d0ef2878d1cc9f7b1e3f905"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_running.locales.hi]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "e9f1455b1cd55aaaa60061e96e52ace5"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_running.locales.ja]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "24a5252d5d5e51b96ea9898f084d897b"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_running.locales.ru]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "37ef5f89babe563429df78c8c6c763e9"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_running.locales.tr]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "21992bad0cad1ccf61cac54c92a1279d"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_running.locales.zh-Hans]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "47c9783e30ee24a315e85291e72992eb"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_running.locales.zh-Hant]
-source = "63a197dfc9f2c541e6bf830cb79561b7"
-hash = "760d944e378238b4cd1bd7ea9a3ecde7"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
 [keys."profile_setup_failed#plural.few"]
 
 [keys."profile_setup_failed#plural.few".locales.ru]
@@ -8783,64 +8667,6 @@ at = "2026-11-03T16:52:26Z"
 [keys.profile_status.locales.zh-Hant]
 source = "a613f0e7fa0b94e3eaa0eff8a95cc14a"
 hash = "2909a9a04a1a2c1bb8063e8ff9ba4bef"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped]
-
-[keys.profile_stopped.locales.bn]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "9f1e426cb18c996a66f94f05732698b0"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped.locales.es]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "08a2949ecb9c2fe06c1fc866a56e85b2"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped.locales.hi]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "fe0e804af2ec2c03b4d7081fc7fb0986"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped.locales.ja]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "57a43cd13b993b6abd218971aee58e08"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped.locales.ru]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "739f5763255bf8508c79900cf4198d7d"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped.locales.tr]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "563f9cf31dedd0dc61d90a9303a01bd8"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped.locales.zh-Hans]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "2359775e2e05cec6044d99a157058d9e"
-provider = "ai-editor"
-model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
-
-[keys.profile_stopped.locales.zh-Hant]
-source = "ba59662d4a4d0ba7c5b8ea91afda18e4"
-hash = "439f5f40e88243e2e7c52ee7781c5cd9"
 provider = "ai-editor"
 model = "gpt-6-astra"
 at = "2026-11-03T16:52:26Z"
@@ -11923,63 +11749,63 @@ provider = "ai-editor"
 model = "gpt-6-astra"
 at = "2026-11-03T16:52:26Z"
 
-[keys.user_id]
+[keys.system_language]
 
-[keys.user_id.locales.bn]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "72ced9955bc68a75cee280c80e714202"
+[keys.system_language.locales.bn]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "e09692eb53a9d012f1ae87f3818184d0"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
-[keys.user_id.locales.es]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "3171c05926f1eb0a1c8a1630fef1a18d"
+[keys.system_language.locales.es]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "63d056e2c59d7d23c266468b37f2b4ec"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
-[keys.user_id.locales.hi]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "011bc12921851d40a4798dd9c0195d4a"
+[keys.system_language.locales.hi]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "fd0fd50b760274639ab560117f9cb5b0"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
-[keys.user_id.locales.ja]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "4c9b8aab077a590feb6e1d42ea900a9a"
+[keys.system_language.locales.ja]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "1f9feae4c20ae711bc687f3ae0a3634c"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
-[keys.user_id.locales.ru]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "6c403690f4e0af9840186ef761c7c580"
+[keys.system_language.locales.ru]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "2eaa106512e663f3d0d36a80146fc275"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
-[keys.user_id.locales.tr]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "22a8000d7de8e0980785e12bd574d027"
+[keys.system_language.locales.tr]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "48971b70a0fe1c652d3c64ddf8ec768b"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
-[keys.user_id.locales.zh-Hans]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "89529612f266062b5eef48c3506eb741"
+[keys.system_language.locales.zh-Hans]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "bd24f769520dc3b3159c503d704674ca"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
-[keys.user_id.locales.zh-Hant]
-source = "7cc26dfa326b0a75d749230962874910"
-hash = "19cea938080805affbcfd777cde3770a"
+[keys.system_language.locales.zh-Hant]
+source = "cec1f419fbe6a94c28abe31d7db0b315"
+hash = "e1d3ac799a728bd13b063cd23a5539c4"
 provider = "ai-editor"
 model = "gpt-6-astra"
-at = "2026-11-03T16:52:26Z"
+at = "2026-11-04T03:15:37Z"
 
 [keys.view_apps]
 

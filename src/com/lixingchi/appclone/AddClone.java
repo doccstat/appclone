@@ -34,7 +34,7 @@ final class AddClone {
     private static void picker(InventoryActivity activity, List<Apps.App> apps, Inventory.Profile destination) {
         LinearLayout form = Ui.column(activity);
         form.setPadding(Ui.dp(activity, 24), 0, Ui.dp(activity, 24), 0);
-        EditText search = Ui.input(activity, form, activity.getString(R.string.search_apps_packages));
+        EditText search = Ui.search(activity, form, activity.getString(R.string.search_apps_packages));
         ListView list = new ListView(activity);
         form.addView(list, new LinearLayout.LayoutParams(-1, Ui.dp(activity, 320)));
         List<Apps.App> shown = new ArrayList<>();
