@@ -39,11 +39,8 @@
     <string name="start_stop_profile">啟動 / 停止設定檔</string>
     <string name="running">執行中</string>
     <string name="stopped">已停止</string>
-    <string name="profile_running">設定檔執行中</string>
-    <string name="profile_stopped">設定檔已停止</string>
     <string name="disabled_profile_running">已停用 · 設定檔執行中</string>
     <string name="disabled_profile_stopped">已停用 · 設定檔已停止</string>
-    <string name="user_id">使用者 <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
     <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · 使用者 <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
     <string name="profile_status">使用者 %1$s · %2$s · %3$s</string>
     <string name="profile_picker_item">%1$s · %2$s</string>
@@ -171,8 +168,10 @@
     <string name="could_not_save_diagnostics">無法儲存診斷資訊</string>
     <string name="appearance_help">Material You · 桌布配色及系統淺色/深色模式</string>
     <string name="app_language">應用程式語言</string>
-    <string name="app_language_help">預設使用系統語言，除非您在 Android 的應用程式語言設定中選擇其他語言。未翻譯的文字將以英語顯示。</string>
-    <string name="language_settings_unavailable">此裝置無法使用 Android 的應用程式語言設定。</string>
+    <string name="app_language_help">選擇應用程式內建的語言，或跟隨系統。未翻譯的文字以英語顯示。</string>
+    <string name="language_settings_unavailable">無法讀取或變更應用程式語言，請重試。</string>
+    <string name="system_language">系統預設</string>
+    <string name="instance_status">使用者 %1$s · %2$s</string>
     <string name="after_reboot">重新啟動後</string>
     <string name="boot_system">系統預設</string>
     <string name="boot_start">啟動所有設定檔</string>
@@ -190,12 +189,10 @@
     <string name="shortcut_labels">捷徑標籤</string>
     <string name="prefix_app_names">為複製應用程式名稱加上前綴</string>
     <string name="prefix_help">在應用程式名稱前顯示副本 ID，以區分複製的捷徑。</string>
-    <string name="format">格式</string>
     <string name="shortcut_format">捷徑標籤格式</string>
     <string name="format_tokens">預留位置：<xliff:g id="id_token">{id}</xliff:g> 副本使用者 ID · <xliff:g id="name_token">{name}</xliff:g> 應用程式名稱 · <xliff:g id="clone_token">{clone}</xliff:g> 副本名稱。允許使用冒號及其他字元。</string>
     <string name="insert_format_token">將 <xliff:g id="token" example="{id}">%1$s</xliff:g> 插入捷徑格式</string>
     <string name="label_preview">預覽：%1$s</string>
-    <string name="automation">自動化</string>
     <string name="auto_pin">自動釘選新複製應用程式</string>
     <string name="auto_pin_help">每次將應用程式新增至副本時，要求建立主畫面捷徑。啟動器仍會要求您確認。</string>
     <string name="shortcut_labels_help">標籤僅適用於從現在起建立的捷徑。若要更新現有捷徑的名稱，請重新釘選。</string>

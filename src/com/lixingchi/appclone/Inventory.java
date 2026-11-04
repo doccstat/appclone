@@ -106,6 +106,6 @@ final class Inventory {
     static String state(Context context, Profile profile, String pkg) {
         return context.getString(profile.disabled.contains(pkg)
                 ? (profile.clone.running ? R.string.disabled_profile_running : R.string.disabled_profile_stopped)
-                : (profile.clone.running ? R.string.profile_running : R.string.profile_stopped));
+                : (profile.clone.running ? R.string.running : R.string.stopped));
     }
 }

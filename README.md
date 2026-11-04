@@ -23,7 +23,7 @@ and firmware remain unverified; not every app supports cloning.
 2. Enable the module for **System Framework** (`android`) and reboot.
 3. Open App Clone, grant root, and tap **Add clone app**.
 4. Pick an app, then choose an existing profile or create a new one.
-5. Tap **Open** beside the clone, or pin a home-screen shortcut from its **⋮** menu.
+5. Tap **▶ Open** beside the clone, or pin a home-screen shortcut from its **⋮** menu.
 
 Several apps can share a profile. Another instance of the same app needs a
 different profile.
@@ -59,8 +59,9 @@ changes can also affect boot; keep a recovery method available.
 ## Languages
 
 From version **2.3.1**: English, Simplified Chinese, Traditional Chinese, Spanish,
-Hindi, Bengali, Russian, Japanese and Turkish. Switch in **Settings → App language**.
-Translations are AI-authored; [corrections are welcome](docs/i18n.md).
+Hindi, Bengali, Russian, Japanese and Turkish. Switch in **Settings → App language**;
+choose a bundled language or **System default**. Translations are AI-authored;
+[corrections are welcome](docs/i18n.md).
 
 ## Help and contributions
 

@@ -80,34 +80,67 @@ final class Ui {
         return view;
     }
 
-    static android.widget.ImageButton overflow(Context context) {
+    static android.widget.ImageButton iconButton(Context context, int icon) {
         androidx.appcompat.widget.AppCompatImageButton button = new androidx.appcompat.widget.AppCompatImageButton(context);
-        button.setImageResource(R.drawable.ic_more);
+        button.setImageResource(icon);
         button.setBackground(selectable(context));
         button.setPadding(dp(context, 12), dp(context, 12), dp(context, 12), dp(context, 12));
         button.setLayoutParams(new LinearLayout.LayoutParams(dp(context, 48), dp(context, 48)));
         return button;
     }
 
-    static Button addAction(Context context, LinearLayout root, String label) {
+    static android.widget.ImageButton overflow(Context context) {
+        return iconButton(context, R.drawable.ic_more);
+    }
+
+    static Button addAction(Context context, android.widget.FrameLayout root, String label, InventoryList... lists) {
         com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton button =
                 new com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton(context);
         button.setText(label);
         button.setIconResource(R.drawable.ic_add);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-2, -2);
-        params.gravity = android.view.Gravity.END;
-        params.setMargins(dp(context, 16), dp(context, 8), dp(context, 16), dp(context, 8));
+        button.setSingleLine(false);
+        android.widget.FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(-2, -2,
+                android.view.Gravity.BOTTOM | android.view.Gravity.END);
+        params.setMargins(dp(context, 16), dp(context, 8), dp(context, 16), dp(context, 16));
         root.addView(button, params);
+        button.addOnLayoutChangeListener((v, l, t, r, b, oldL, oldT, oldR, oldB) -> {
+            for (InventoryList list : lists) list.setPadding(0, 0, 0, button.getHeight() + dp(context, 32));
+        });
+        root.setOnApplyWindowInsetsListener((view, insets) -> {
+            // A hidden FAB must not consume a short landscape keyboard viewport.
+            int bottom = insets.isVisible(WindowInsets.Type.ime()) ? 0 : button.getHeight() + dp(context, 32);
+            for (InventoryList list : lists) list.setPadding(0, 0, 0, bottom);
+            return insets;
+        });
         return button;
     }
 
-    /** Tinted square showing a clone's user id. */
-    static TextView avatar(Context context, CharSequence value) {
-        TextView view = type(context, value, com.google.android.material.R.style.TextAppearance_Material3_LabelMedium, R.color.accent);
-        view.setGravity(android.view.Gravity.CENTER);
-        view.setBackground(shape(context, R.color.accent_tint, 14));
-        view.setLayoutParams(new LinearLayout.LayoutParams(dp(context, 44), dp(context, 44)));
-        return view;
+    static android.widget.FrameLayout content(Context context, LinearLayout root, View body) {
+        android.widget.FrameLayout frame = new android.widget.FrameLayout(context);
+        frame.addView(body, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        root.addView(frame, new LinearLayout.LayoutParams(-1, 0, 1));
+        return frame;
+    }
+
+    static TextView setting(Context context, LinearLayout parent, int title, String summary, Runnable action) {
+        LinearLayout row = row(context), labels = column(context);
+        row.setPadding(0, dp(context, 12), 0, dp(context, 12));
+        row.setMinimumHeight(dp(context, 64));
+        row.setBackground(selectable(context));
+        row.setScreenReaderFocusable(true);
+        labels.addView(type(context, context.getString(title),
+                com.google.android.material.R.style.TextAppearance_Material3_TitleMedium, R.color.ink));
+        TextView value = type(context, summary,
+                com.google.android.material.R.style.TextAppearance_Material3_BodyMedium, R.color.muted);
+        labels.addView(value);
+        row.addView(labels, weight(1));
+        android.widget.ImageView arrow = new android.widget.ImageView(context);
+        arrow.setImageResource(R.drawable.ic_next);
+        arrow.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        row.addView(arrow, new LinearLayout.LayoutParams(dp(context, 24), dp(context, 24)));
+        row.setOnClickListener(v -> action.run());
+        parent.addView(row);
+        return value;
     }
 
     static Button quiet(Context context, CharSequence value) {
@@ -199,6 +232,24 @@ final class Ui {
         edit.setSingleLine(true);
         field.addView(edit);
         parent.addView(field, margins(context, 0, 8, 0, 8));
+        return edit;
+    }
+
+    static com.google.android.material.textfield.TextInputEditText search(Context context,
+            LinearLayout parent, String hint) {
+        com.google.android.material.textfield.TextInputEditText edit = input(context, parent, hint);
+        com.google.android.material.textfield.TextInputLayout field =
+                (com.google.android.material.textfield.TextInputLayout) parent.getChildAt(parent.getChildCount() - 1);
+        field.setHintEnabled(false);
+        edit.setHint(hint);
+        field.setBoxBackgroundMode(com.google.android.material.textfield.TextInputLayout.BOX_BACKGROUND_FILLED);
+        field.setBoxCornerRadii(dp(context, 24), dp(context, 24), dp(context, 24), dp(context, 24));
+        field.setBoxBackgroundColor(color(context, R.color.surface));
+        field.setBoxStrokeWidth(0);
+        field.setBoxStrokeWidthFocused(0);
+        field.setStartIconDrawable(R.drawable.ic_search);
+        field.setEndIconMode(com.google.android.material.textfield.TextInputLayout.END_ICON_CLEAR_TEXT);
+        edit.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
         return edit;
     }
 

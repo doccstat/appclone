@@ -39,11 +39,8 @@
     <string name="start_stop_profile">প্রোফাইল চালু করুন / থামান</string>
     <string name="running">চলমান</string>
     <string name="stopped">থামানো</string>
-    <string name="profile_running">প্রোফাইল চলছে</string>
-    <string name="profile_stopped">প্রোফাইল থামানো আছে</string>
     <string name="disabled_profile_running">নিষ্ক্রিয় · প্রোফাইল চলছে</string>
     <string name="disabled_profile_stopped">নিষ্ক্রিয় · প্রোফাইল থামানো আছে</string>
-    <string name="user_id">ব্যবহারকারী <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
     <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · ব্যবহারকারী <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
     <string name="profile_status">ব্যবহারকারী %1$s · %2$s · %3$s</string>
     <string name="profile_picker_item">%1$s · %2$s</string>
@@ -180,8 +177,10 @@
     <string name="could_not_save_diagnostics">ডায়াগনস্টিক তথ্য সংরক্ষণ করা যায়নি</string>
     <string name="appearance_help">Material You · ওয়ালপেপারের রং ও সিস্টেমের হালকা/গাঢ় মোড</string>
     <string name="app_language">অ্যাপের ভাষা</string>
-    <string name="app_language_help">Android-এর অ্যাপের ভাষা সেটিংসে অন্য ভাষা না বাছলে সিস্টেমের ভাষা ব্যবহার করে। অনুবাদ না করা লেখা ইংরেজিতে দেখানো হয়।</string>
-    <string name="language_settings_unavailable">এই ডিভাইসে Android-এর অ্যাপের ভাষা সেটিংস নেই।</string>
+    <string name="app_language_help">অ্যাপে থাকা একটি ভাষা বাছুন বা সিস্টেমের ভাষা ব্যবহার করুন। অনুবাদ না করা লেখা ইংরেজিতে দেখানো হয়।</string>
+    <string name="language_settings_unavailable">অ্যাপের ভাষা পড়া বা বদলানো যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="system_language">সিস্টেমের ডিফল্ট</string>
+    <string name="instance_status">ব্যবহারকারী %1$s · %2$s</string>
     <string name="after_reboot">রিবুটের পরে</string>
     <string name="boot_system">সিস্টেম ডিফল্ট</string>
     <string name="boot_start">সব প্রোফাইল চালু করুন</string>
@@ -199,12 +198,10 @@
     <string name="shortcut_labels">শর্টকাটের লেবেল</string>
     <string name="prefix_app_names">ক্লোন অ্যাপের নামের আগে উপসর্গ দিন</string>
     <string name="prefix_help">ক্লোন শর্টকাট আলাদা করে চিনতে অ্যাপের নামের আগে ক্লোন ID রাখুন।</string>
-    <string name="format">বিন্যাস</string>
     <string name="shortcut_format">শর্টকাট লেবেলের বিন্যাস</string>
     <string name="format_tokens">টোকেন: <xliff:g id="id_token">{id}</xliff:g> ক্লোন ব্যবহারকারীর ID · <xliff:g id="name_token">{name}</xliff:g> অ্যাপের নাম · <xliff:g id="clone_token">{clone}</xliff:g> ক্লোনের নাম। কোলন ও অন্যান্য অক্ষর ব্যবহার করা যায়।</string>
     <string name="insert_format_token">শর্টকাটের বিন্যাসে <xliff:g id="token" example="{id}">%1$s</xliff:g> ঢোকান</string>
     <string name="label_preview">পূর্বরূপ: %1$s</string>
-    <string name="automation">স্বয়ংক্রিয়তা</string>
     <string name="auto_pin">নতুন ক্লোন অ্যাপ নিজে থেকে পিন করুন</string>
     <string name="auto_pin_help">ক্লোনে প্রতিটি অ্যাপ যোগ করার সময় হোম স্ক্রিন শর্টকাটের অনুরোধ করে। লঞ্চার তখনও আপনার নিশ্চিতকরণ চায়।</string>
     <string name="shortcut_labels_help">এখন থেকে তৈরি শর্টকাটে লেবেল প্রযোজ্য হবে। বিদ্যমান শর্টকাটের নাম বদলাতে আবার পিন করুন।</string>

@@ -2,16 +2,16 @@ package com.lixingchi.appclone;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
 import androidx.appcompat.widget.PopupMenu;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /** The same explicitly profile-scoped actions in both navigation directions. */
 final class AppControls {
     static void bind(InventoryActivity activity, Inventory.Entry entry, Inventory.Profile profile,
-                     Button open, View more) {
+                     View open, View more) {
         open.setContentDescription(activity.getString(R.string.open_in_profile, Ui.bidi(activity, entry.app.label), Inventory.location(activity, profile)));
         open.setEnabled(!profile.disabled.contains(entry.app.pkg));
+        open.setAlpha(open.isEnabled() ? 1f : 0.38f);
         open.setOnClickListener(v -> activity.startActivity(new Intent(activity, LaunchActivity.class)
                 .putExtra(LaunchActivity.EXTRA_USER, profile.clone.id)
                 .putExtra(LaunchActivity.EXTRA_SERIAL, profile.serial)

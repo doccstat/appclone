@@ -63,7 +63,7 @@ public final class MaterialScreensTest {
         app.get().inventory = fixture(); app.get().render();
         assertTrue(text(app.get().body).contains("Disabled · Profile stopped"));
         assertTrue(text(app.get().body).contains("Personal\nUser 11"));
-        assertFalse(findText(row(app.get().body, 1), "Open").isEnabled());
+        assertFalse(row(app.get().body, 1).findViewById(R.id.open_clone).isEnabled());
         app.destroy();
         Intent profileIntent = new Intent().putExtra(CloneDetailActivity.EXTRA_ID, 11)
                 .putExtra(CloneDetailActivity.EXTRA_SERIAL, 42L);

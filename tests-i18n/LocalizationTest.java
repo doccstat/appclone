@@ -1,7 +1,6 @@
 package com.lixingchi.appclone;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.LocaleList;
@@ -68,7 +67,7 @@ public final class LocalizationTest {
         assertTrue(text(instance).contains(profile.clone.name));
         assertTrue(text(instance).contains(activity.getString(R.string.disabled_profile_stopped)));
         assertEquals(activity.getString(R.string.app_actions_in_profile, Ui.bidi(activity, "Chat"), Inventory.location(activity, profile)),
-                find(instance, android.widget.ImageButton.class).getContentDescription());
+                instance.findViewById(R.id.row_actions).getContentDescription());
         ProfileControls.rename(activity, profile);
         AlertDialog dialog = (AlertDialog) org.robolectric.shadows.ShadowDialog.getLatestDialog();
         assertTrue(text(dialog.getWindow().getDecorView()).contains(activity.getString(R.string.rename_profile)));
@@ -107,23 +106,13 @@ public final class LocalizationTest {
         instance.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         layout(instance, Ui.dp(activity, 320), Ui.dp(activity, 200));
         LinearLayout line = (LinearLayout) ((LinearLayout) instance).getChildAt(0);
-        assertEquals(Ui.dp(activity, 32), line.getPaddingRight());
-        assertEquals(Ui.dp(activity, 8), line.getPaddingLeft());
+        assertEquals(Ui.dp(activity, 12), line.getPaddingRight());
+        assertEquals(0, line.getPaddingLeft());
         assertTrue(Inventory.location(activity, profile).contains("12"));
         assertEquals("English account", profile.clone.name);
         assertEquals("DELETE", activity.getString(R.string.delete_token));
         for (String token : new String[] {"{id}", "{name}", "{clone}"})
             assertTrue(activity.getString(R.string.format_tokens).contains(token));
-        controller.destroy();
-    }
-
-    @Test public void languageChoiceUsesAndroidSettingsForThisPackage() {
-        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
-        SettingsActivity activity = controller.get();
-        findText(activity.getWindow().getDecorView(), activity.getString(R.string.app_language)).performClick();
-        Intent intent = shadowOf(activity).getNextStartedActivity();
-        assertEquals(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS, intent.getAction());
-        assertEquals("package:" + activity.getPackageName(), intent.getDataString());
         controller.destroy();
     }
 
@@ -149,7 +138,7 @@ public final class LocalizationTest {
     }
 
     @Test public void generatedLocaleConfigDoesNotAdvertiseUntranslatedLibraryLanguages() throws Exception {
-        // Robolectric's LocaleConfig shadow does not read the manifest; inspect compiled XML.
+        // Robolectric's manifest parser omits localeConfig; independently inspect compiled XML.
         Context app = RuntimeEnvironment.getApplication();
         int id = app.getResources().getIdentifier("_generated_res_locale_config", "xml", app.getPackageName());
         assertNotEquals(0, id);

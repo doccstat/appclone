@@ -19,11 +19,13 @@ public final class AppDetailActivity extends InventoryActivity {
         pkg = getIntent().getStringExtra(EXTRA_PKG);
         LinearLayout root = Ui.column(this);
         toolbar = Ui.toolbar(this, root, getString(R.string.clone_app), true);
-        toolbar.getMenu().add(R.string.refresh).setOnMenuItemClickListener(item -> { refresh(); return true; });
+        toolbar.getMenu().add(R.string.refresh).setIcon(R.drawable.ic_refresh)
+                .setOnMenuItemClickListener(item -> { refresh(); return true; })
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM);
         useList(new InventoryList(this));
         if (state != null) body.restorePosition(state.getParcelable("listPosition"));
-        root.addView(body, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.addAction(this, root, getString(R.string.add_another_clone));
+        android.widget.FrameLayout content = Ui.content(this, root, body);
+        add = Ui.addAction(this, content, getString(R.string.add_another_clone), body);
         Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> {
             if (inventory == null) return;

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="open_clone" type="id" />
+    <item name="row_actions" type="id" />
+    <item name="row_metadata" type="id" />
+</resources>

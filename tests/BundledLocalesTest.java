@@ -40,7 +40,7 @@ public final class BundledLocalesTest {
             assertTrue(context.getString(R.string.profile_location, name, "012").contains(name));
             assertTrue(context.getString(R.string.profile_location, name, "012").contains("012"));
             assertEquals("DELETE", context.getString(R.string.delete_token));
-            assertEquals("App Clone 2.3.1", context.getString(R.string.app_version, "2.3.1"));
+            assertEquals("App Clone 2.4.0", context.getString(R.string.app_version, "2.4.0"));
             for (String token : new String[] {"{id}", "{name}", "{clone}"})
                 assertTrue(context.getString(R.string.format_tokens).contains(token));
         }

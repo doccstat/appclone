@@ -25,7 +25,8 @@ public final class CloneDetailActivity extends InventoryActivity {
         toolbar.getMenu().add(0, 1, 0, R.string.start_stop_profile);
         toolbar.getMenu().add(0, 2, 1, R.string.show_system_apps).setCheckable(true).setChecked(Settings.systemApps(this));
         toolbar.getMenu().add(0, 3, 2, R.string.delete_profile);
-        toolbar.getMenu().add(0, 4, 3, R.string.refresh);
+        toolbar.getMenu().add(0, 4, 3, R.string.refresh).setIcon(R.drawable.ic_refresh)
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM);
         toolbar.getMenu().add(0, 5, 0, R.string.rename_profile);
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == 4) { refresh(); return true; }
@@ -40,8 +41,8 @@ public final class CloneDetailActivity extends InventoryActivity {
         });
         useList(new InventoryList(this));
         if (state != null) body.restorePosition(state.getParcelable("listPosition"));
-        root.addView(body, new LinearLayout.LayoutParams(-1, 0, 1));
-        add = Ui.addAction(this, root, getString(R.string.add_app_to_profile));
+        android.widget.FrameLayout content = Ui.content(this, root, body);
+        add = Ui.addAction(this, content, getString(R.string.add_app_to_profile), body);
         Ui.applyInsets(root, 0, 0, 0, 0, add);
         add.setOnClickListener(v -> { Inventory.Profile profile = current(); if (profile != null) AddClone.chooseApp(this, profile); });
         setContentView(root);

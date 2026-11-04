@@ -39,11 +39,8 @@
     <string name="start_stop_profile">プロファイルを開始 / 停止</string>
     <string name="running">実行中</string>
     <string name="stopped">停止中</string>
-    <string name="profile_running">プロファイルは実行中</string>
-    <string name="profile_stopped">プロファイルは停止中</string>
     <string name="disabled_profile_running">無効 · プロファイルは実行中</string>
     <string name="disabled_profile_stopped">無効 · プロファイルは停止中</string>
-    <string name="user_id">ユーザー <xliff:g id="user_id" example="12">%1$s</xliff:g></string>
     <string name="profile_location"><xliff:g id="profile_name" example="Account">%1$s</xliff:g> · ユーザー <xliff:g id="user_id" example="12">%2$s</xliff:g></string>
     <string name="profile_status">ユーザー %1$s · %2$s · %3$s</string>
     <string name="profile_picker_item">%1$s · %2$s</string>
@@ -171,8 +168,10 @@
     <string name="could_not_save_diagnostics">診断情報を保存できませんでした</string>
     <string name="appearance_help">Material You · 壁紙の色とシステムのライト/ダークモード</string>
     <string name="app_language">アプリの言語</string>
-    <string name="app_language_help">Android のアプリ言語設定で別の言語を選ばない限り、システムの言語を使用します。未翻訳のテキストは英語で表示されます。</string>
-    <string name="language_settings_unavailable">このデバイスでは Android のアプリ言語設定を利用できません。</string>
+    <string name="app_language_help">アプリに含まれる言語を選ぶか、システムの言語に従います。未翻訳のテキストは英語で表示されます。</string>
+    <string name="language_settings_unavailable">アプリの言語を読み取りまたは変更できませんでした。もう一度お試しください。</string>
+    <string name="system_language">システムのデフォルト</string>
+    <string name="instance_status">ユーザー %1$s · %2$s</string>
     <string name="after_reboot">再起動後</string>
     <string name="boot_system">システムの既定</string>
     <string name="boot_start">すべてのプロファイルを開始</string>
@@ -190,12 +189,10 @@
     <string name="shortcut_labels">ショートカットのラベル</string>
     <string name="prefix_app_names">クローンアプリ名に接頭辞を付ける</string>
     <string name="prefix_help">クローンのショートカットを区別できるように、アプリ名の前にクローン ID を付けます。</string>
-    <string name="format">書式</string>
     <string name="shortcut_format">ショートカット名の書式</string>
     <string name="format_tokens">トークン：<xliff:g id="id_token">{id}</xliff:g> クローンのユーザー ID · <xliff:g id="name_token">{name}</xliff:g> アプリ名 · <xliff:g id="clone_token">{clone}</xliff:g> クローン名。コロンなどの文字も使用できます。</string>
     <string name="insert_format_token">ショートカットの書式に <xliff:g id="token" example="{id}">%1$s</xliff:g> を挿入</string>
     <string name="label_preview">プレビュー：%1$s</string>
-    <string name="automation">自動化</string>
     <string name="auto_pin">新しいクローンアプリを自動で固定</string>
     <string name="auto_pin_help">クローンにアプリを追加するたびに、ホーム画面のショートカットを要求します。ランチャーによる確認は引き続き必要です。</string>
     <string name="shortcut_labels_help">ラベルは今後作成するショートカットに適用されます。既存のショートカット名を更新するには、再度固定してください。</string>
